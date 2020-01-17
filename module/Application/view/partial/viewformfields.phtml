@@ -1,0 +1,20 @@
+<?php
+/**
+ * Print Container and Label for each Field in Form
+ */
+if(array_key_exists($this->sTab,$this->layout()->aFormFieldsByTab)) {
+    foreach($this->layout()->aFormFieldsByTab[$this->sTab] as $oField) { ?>
+        <!-- Field <?=$oField->fieldkey?> START -->
+        <div class="form-group <?=$oField->class?>">
+            <?php if($oField->type != 'partial') { ?>
+            <label class="plcViewFormLabel" for="<?=$this->sFormName?>_<?=$oField->fieldkey?>">
+                <?=$oField->label?>
+            </label><br/>
+            <?php } ?>
+            <?= $this->partial('partial/viewformfield', ['sFormName'=>$this->sFormName,'oField'=>$oField,'oItem'=>$this->oItem]); ?>
+        </div>
+        <!-- Field <?=$oField->fieldkey?> END -->
+    <?php
+    }
+}
+?>

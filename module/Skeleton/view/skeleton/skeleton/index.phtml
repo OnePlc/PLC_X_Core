@@ -1,0 +1,4 @@
+<div class="container">
+    <h1>Skeleton Index</h1>
+    <?= $this->partial('partial/indextable', ['sTableName'=>$sTableName,'aItems'=>$aItems,'sRoute'=>(isset($sRoute)) ? $sRoute : explode('-',$sTableName)[0]]); ?>
+</div>

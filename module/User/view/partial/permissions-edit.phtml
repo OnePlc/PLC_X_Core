@@ -1,0 +1,37 @@
+<?php
+# Get Partial Data
+$aPermissonsByModules = $this->aPartialData['aPermissions'];
+$aUserPermissions = $this->aPartialData['aUserPermissions'];
+
+# Print List with all Modules and Permissions
+foreach(array_keys($aPermissonsByModules) as $sModule) {
+    $sModule = str_replace(['\\'],['-'],$sModule); ?>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><?=$sModule?></h3>
+            </div>
+
+            <div class="card-body">
+                <ul class="list-group" style="display: inline-block; width:100%;">
+                    <?php foreach($aPermissonsByModules[$sModule] as $oPerm) {
+                        $sModule = str_replace(['\\'],['-'],$sModule);
+                        $bHasPerm = false;
+                        if(array_key_exists($sModule,$aUserPermissions)) {
+                            if(array_key_exists($oPerm->permission_key,$aUserPermissions[$sModule])) {
+                                $bHasPerm = true;
+                            }
+                        }
+                        ?>
+                        <li class="list-group-item col-md-6" style="position: relative; float:left;">
+                            <input type="checkbox"<?=($bHasPerm) ? ' checked' : ''?> name="<?=$this->sFormName?>-permissions[]" value="<?=$oPerm->permission_key?>-<?=$sModule?>" />
+                            <?=$oPerm->label?>
+                        </li>
+                    <?php } ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+<?php
+}
+

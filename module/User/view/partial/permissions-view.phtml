@@ -1,0 +1,26 @@
+<?php
+# Get Partial Data
+$aPermissonsByModules = $this->aPartialData['aPermissions'];
+$aUserPermissions = $this->aPartialData['aUserPermissions'];
+
+# Print List with all Modules and Permissions
+foreach(array_keys($aPermissonsByModules) as $sModule) { ?>
+    <h2><?=$sModule?></h2>
+    <ul class="list-group">
+    <?php foreach($aPermissonsByModules[$sModule] as $oPerm) {
+        $bHasPerm = false;
+        if(array_key_exists($sModule,$aUserPermissions)) {
+            if(array_key_exists($oPerm->permission_key,$aUserPermissions[$sModule])) {
+                $bHasPerm = true;
+            }
+        }
+        ?>
+        <li class="list-group-item">
+            <?=($bHasPerm) ? ' <i class="fas fa-check"></i>' : ''?>
+            <?=$oPerm->label?>
+        </li>
+    <?php } ?>
+    </ul>
+<?php
+}
+

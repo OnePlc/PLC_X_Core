@@ -1,0 +1,62 @@
+<table class="plc-core-basic-table table">
+    <thead>
+        <tr>
+        <?php
+        /**
+         * Print Table Column Headers
+         */
+        foreach($this->layout()->aIndexColumns as $oCol) { ?>
+            <th id="<?=$this->sTableName?>_<?=$oCol->fieldkey?>" style="width:<?=$oCol->width?>;">
+                <?=$oCol->label?>
+            </th>
+        <?php } ?>
+        </tr>
+    </thead>
+    <tbody>
+    <?php
+    /**
+     * Print Item Rows
+     */
+    foreach($this->aItems as $oItem) { ?>
+        <tr>
+            <?php foreach($this->layout()->aIndexColumns as $oCol) { ?>
+                <?= $this->partial('partial/indextablecell', ['oCol'=>$oCol,'oItem'=>$oItem]); ?>
+            <?php } ?>
+        </tr>
+    <?php } ?>
+    </tbody>
+</table>
+
+<?php
+
+/**
+ * Print Pagination Control
+ */
+echo $this->paginationControl(
+// The paginator object:
+    $this->aItems,
+    // The scrolling style:
+    'sliding',
+    // The partial to use to render the control:
+    'partial/paginator',
+    // The route to link to when a user clicks a control link:
+    ['route' => $this->sRoute]
+);
+?>
+<script>
+    $(function() {
+        $( ".plc-core-basic-table thead tr" ).sortable({
+            update: function( event, ui ) {
+                var sortedIDs = $( ".plc-core-basic-table thead tr" ).sortable( "toArray" );
+                $.post('/user/updateindexcolumnsort',{table:'<?=$this->sTableName?>',columns:sortedIDs},function(retVal) {
+                    var oJson = $.parseJSON(retVal);
+                    if(oJson.state == 'success') {
+                        window.location.reload();
+                    } else {
+                        alert('Fehler: '+oJson.message);
+                    }
+                });
+            }
+        });
+    });
+</script>

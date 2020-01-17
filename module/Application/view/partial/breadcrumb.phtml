@@ -1,0 +1,16 @@
+<?php
+if(count($this->aButtons) > 0) {
+    foreach($this->aButtons as $oBtn) {
+        # Get current entity ID from layout
+        $iItemID = (isset($this->layout()->oItem)) ? $this->layout()->oItem->getID() : 0;
+
+        # Build final link for button
+        $sFinalHref = str_replace(['##ID##'],[$iItemID],$oBtn->href); ?>
+
+        <a href="<?=$sFinalHref?>" title="<?=$oBtn->title?>" class="btn btn-<?=$oBtn->class?>">
+            <?=$oBtn->label?>
+        </a>
+    <?php
+    }
+}
+?>

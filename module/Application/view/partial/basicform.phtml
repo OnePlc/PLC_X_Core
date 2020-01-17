@@ -1,0 +1,9 @@
+<form action="" method="POST" enctype="multipart/form-data" class="plc-core-basic-form">
+    <?php if(isset($this->oItem)) { ?>
+    <input type="hidden" name="Item_ID" value="<?=$this->oItem->getID()?>" />
+    <?php } ?>
+    <div class="row">
+        <?= $this->partial('partial/basictabs', ['sFormName'=>$this->sFormName]); ?>
+        <?= $this->partial('partial/basictabcontents', ['sFormName'=>$this->sFormName,'oItem'=>$this->oItem]); ?>
+    </div>
+</form>

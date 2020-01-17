@@ -1,0 +1,22 @@
+<td>
+    <?php
+    /**
+     * Get Column Data based on type
+     */
+    switch($this->oCol->type) {
+        case 'text':
+        case 'email':
+            if($this->oCol->url_view != '') {
+                $sFinalURL = str_replace(['##ID##'],[$this->oItem->getID()],$this->oCol->url_view);
+                echo '<a href="'.$sFinalURL.'">';
+                echo $this->oItem->getTextField($this->oCol->fieldkey);
+                echo '</a>';
+            } else {
+                echo $this->oItem->getTextField($this->oCol->fieldkey);
+            }
+            break;
+        default:
+            break;
+    }
+    ?>
+</td>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true">
+    <testsuites>
+        <testsuite name="Laminas MVC Skeleton Test Suite">
+            <directory>./module/Application/test</directory>
+        </testsuite>
+        <testsuite name="Laminas MVC Skeleton Test Suite">
+            <directory>./module/User/test</directory>
+        </testsuite>
+        <testsuite name="Laminas MVC Skeleton Test Suite">
+            <directory>./module/Skeleton/test</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./module/*/src</directory>
+        </whitelist>
+    </filter>
+</phpunit>

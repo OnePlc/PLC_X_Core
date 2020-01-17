@@ -1,0 +1,36 @@
+<?php
+/**
+ * Print Form Field based on Type
+ */
+switch($oField->type) {
+    case 'password':
+        echo '*********************';
+        break;
+    case 'text':
+    case 'tel':
+    case 'email':
+        echo $this->oItem->getTextField($oField->fieldkey);
+        break;
+    case 'date': ?>
+        <input type="date" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" />
+        <?php
+        break;
+    case 'time': ?>
+        <input type="time" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" />
+        <?php
+        break;
+    case 'partial':
+        $aPartialData = [];
+        $sPartialMode = 'view';
+        if(isset($this->layout()->aPartialData)) {
+            if(array_key_exists($oField->fieldkey,$this->layout()->aPartialData)) {
+                $aPartialData = $this->layout()->aPartialData[$oField->fieldkey];
+            }
+        }
+        ?>
+        <?= $this->partial('partial/'.$oField->fieldkey.'-'.$sPartialMode, ['sFormName'=>$this->sFormName,'oField'=>$oField,'oItem'=>$this->oItem,'aPartialData'=>$aPartialData]); ?>
+        <?php
+        break;
+    default:
+        break;
+}

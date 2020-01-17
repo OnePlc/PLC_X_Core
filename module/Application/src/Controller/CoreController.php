@@ -1,0 +1,379 @@
+<?php
+/**
+ * CoreController.php - Core Controller
+ *
+ * Basic Controller for all other onePlace Module Controllers
+ *
+ * @category Controller
+ * @package Application
+ * @author Verein onePlace
+ * @copyright (C) 2020  Verein onePlace <admin@1plc.ch>
+ * @license https://opensource.org/licenses/BSD-3-Clause
+ * @version 1.0.0
+ * @since 1.0.0
+ */
+
+namespace Application\Controller;
+
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\Session\Container;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\TableGateway\TableGateway;
+use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\Where;
+
+class CoreController extends AbstractActionController {
+    /**
+     * onePlace Session Object
+     *
+     * @var mixed
+     * @since 1.0.0
+     */
+    public static $oSession;
+
+    /**
+     * Core Tables Cache
+     *
+     * @var array
+     * @since 1.0.0
+     */
+    protected $aCoreTables;
+
+    /**
+     * Database Connection
+     *
+     * @var AdapterInterface Active Database connection
+     * @since 1.0.0
+     */
+    protected $oDbAdapter;
+
+    /**
+     * CoreController constructor.
+     *
+     * @param AdapterInterface $oDbAdapter
+     * @since 1.0.0
+     */
+    public function __construct(AdapterInterface $oDbAdapter) {
+        # Get onePlace User Session
+        CoreController::$oSession = new Container('plcauth');
+        $this->oDbAdapter = $oDbAdapter;
+        $this->aCoreTables = [];
+
+        # Init Core Tables
+        $this->aCoreTables['form-button'] = new TableGateway('core_form_button',$this->oDbAdapter);
+        $this->aCoreTables['core-form'] = new TableGateway('core_form',$this->oDbAdapter);
+        $this->aCoreTables['core-form-tab'] = new TableGateway('core_form_tab',$this->oDbAdapter);
+        $this->aCoreTables['form-tab'] = new TableGateway('user_form_tab',$this->oDbAdapter);
+        $this->aCoreTables['form-field'] = new TableGateway('user_form_field',$this->oDbAdapter);
+        $this->aCoreTables['core-form-field'] = new TableGateway('core_form_field',$this->oDbAdapter);
+        $this->aCoreTables['table-col'] = new TableGateway('user_table_column',$this->oDbAdapter);
+        $this->aCoreTables['table-index'] = new TableGateway('core_index_table',$this->oDbAdapter);
+        $this->aCoreTables['permission'] = new TableGateway('permission',$this->oDbAdapter);
+    }
+
+    /**
+     * Get Buttons for current View and current User
+     *
+     * @param string $sView
+     * @return array
+     * @since 1.0.0
+     */
+    public function getViewButtons($sView) {
+        $aButtonsDB = $this->aCoreTables['form-button']->select(['form'=>$sView]);
+        $aButtons = [];
+        if(count($aButtonsDB) > 0) {
+            foreach($aButtonsDB as $oBtn) {
+                $aButtons[] = $oBtn;
+            }
+            return $aButtons;
+        } else {
+            return [];
+        }
+    }
+
+    /**
+     * Set Buttons for current View
+     *
+     * @param string $sView
+     * @since 1.0.0
+     */
+    public function setViewButtons($sView) {
+        $this->layout()->aButtons = $this->getViewButtons($sView);
+    }
+
+    /**
+     * Get Tabs for current View and current User
+     *
+     * @param string $sView
+     * @return array
+     * @since 1.0.0
+     */
+    public function getViewTabs($sView) {
+        # Build Query to get User Based Tabs
+        $oTabSel = new Select($this->aCoreTables['form-tab']->getTable());
+        $oTabSel->join(['core_tab'=>'core_form_tab'],'core_tab.Tab_ID = user_form_tab.tab_idfs');
+        $oTabSel->where(['user_form_tab.user_idfs'=>CoreController::$oSession->oUser->getID(),'core_tab.form'=>$sView]);
+        $oTabSel->order('user_form_tab.sort_id ASC');
+
+        # Get User Based Tabs
+        $aTabsDB = $this->aCoreTables['form-tab']->selectWith($oTabSel);
+        $aTabs = [];
+        if(count($aTabsDB) > 0) {
+            foreach($aTabsDB as $oTab) {
+                $aTabs[] = $oTab;
+            }
+            return $aTabs;
+        } else {
+            return [];
+        }
+    }
+
+    /**
+     * Set Tabs for current View
+     *
+     * @param string $sView
+     * @since 1.0.0
+     */
+    public function setViewTabs($sView) {
+        $this->layout()->aTabs = $this->getViewTabs($sView);
+    }
+
+    /**
+     * Get Fields for select Form and current User
+     *
+     * @param string $sForm
+     * @return array
+     * @since 1.0.0
+     */
+    public function getUserFormFields($sForm) {
+        # Build Query to get User Based Formfields
+        $oFieldSel = new Select($this->aCoreTables['form-field']->getTable());
+        $oFieldSel->join(['core_field'=>'core_form_field'],'core_field.Field_ID = user_form_field.field_idfs');
+        $oFieldSel->where(['user_form_field.user_idfs'=>CoreController::$oSession->oUser->getID(),'core_field.form'=>$sForm]);
+        $oFieldSel->order('user_form_field.sort_id ASC');
+
+        # Get User Based Fields
+        $aFieldsDB = $this->aCoreTables['form-field']->selectWith($oFieldSel);
+        $aFieldsByTab = [];
+        if(count($aFieldsDB) > 0) {
+            foreach($aFieldsDB as $oField) {
+                if(!array_key_exists($oField->tab,$aFieldsByTab)) {
+                    $aFieldsByTab[$oField->tab] = [];
+                }
+                $aFieldsByTab[$oField->tab][] = $oField;
+            }
+            return $aFieldsByTab;
+        } else {
+            return [];
+        }
+    }
+
+    /**
+     * Set Fields for current Form
+     *
+     * @param string $sForm
+     * @since 1.0.0
+     */
+    public function setFormFields($sForm) {
+        $this->layout()->aFormFieldsByTab = $this->getUserFormFields($sForm);
+    }
+
+    /**
+     * Get all possible fields for form
+     * or all forms
+     *
+     * @param string $sForm
+     * @param array $aExcludeTypes
+     * @return array
+     * @since 1.0.0
+     */
+    public function getFormFields($sForm = '',$aExcludeTypes = []) {
+        # Build Query to get User Based Formfields
+        $oFieldSel = new Select($this->aCoreTables['core-form-field']->getTable());
+        if($sForm != '') {
+            $oFieldSel->where(['form' => $sForm]);
+        }
+        //$oFieldSel->order('user_form_field.sort_id ASC');
+
+        # Get Form Based Fields
+        $aFieldsDB = $this->aCoreTables['core-form-field']->selectWith($oFieldSel);
+        $aFields = [];
+        if(count($aFieldsDB) > 0) {
+            foreach($aFieldsDB as $oField) {
+                # Order By Forms if all forms
+                if($sForm == '') {
+                    if(!array_key_exists($oField->form,$aFields)) {
+                        $oForm = $this->aCoreTables['core-form']->select(['form_key'=>$oField->form]);
+                        if(count($oForm) > 0) {
+                            $aFields[$oField->form] = [
+                                'oForm' => $oForm->current(),
+                                'aFields' => [],
+                            ];
+                        }
+                    }
+                    $aFields[$oField->form]['aFields'][] = $oField;
+                } else {
+                    if(!array_key_exists($oField->type,$aExcludeTypes)) {
+                        $aFields[] = $oField;
+                    }
+                }
+            }
+        }
+        return $aFields;
+    }
+
+    /**
+     * Get Columns for current View
+     *
+     * @param string $sView
+     * @return array
+     * @since 1.0.0
+     */
+    public function getIndexColumns($sView) {
+        # Build Query to get User Based Columns
+        $oColumnSel = new Select($this->aCoreTables['table-col']->getTable());
+        $oColumnSel->join(['core_field'=>'core_form_field'],'core_field.Field_ID = user_table_column.field_idfs');
+        $oColumnSel->where(['user_idfs'=>CoreController::$oSession->oUser->getID(),'tbl_name'=>$sView]);
+        $oColumnSel->order('sortID ASC');
+
+        # Get User Based Fields
+        $aColumnsDB = $this->aCoreTables['table-col']->selectWith($oColumnSel);
+        $aColumns = [];
+        if(count($aColumnsDB) > 0) {
+            foreach($aColumnsDB as $oCol) {
+                $aColumns[] = $oCol;
+            }
+            return $aColumns;
+        } else {
+            return [];
+        }
+    }
+
+    /**
+     * Set Columns for current View
+     *
+     * @param string $sView
+     * @since 1.0.0
+     */
+    public function setIndexColumns($sView) {
+        $this->layout()->aIndexColumns = $this->getIndexColumns($sView);
+    }
+
+    /**
+     * Get Index Tables
+     *
+     * @return array
+     * @since 1.0.0
+     */
+    public function getIndexTables() {
+        # Get Index Tables
+        $aIndexTables = [];
+        $oTablesDB = $this->aCoreTables['table-index']->select();
+        foreach($oTablesDB as $oTbl) {
+            $aIndexTables[] = $oTbl;
+        }
+        return $aIndexTables;
+    }
+
+    /**
+     * Get Index Tables with
+     * all possible fields (columns)
+     *
+     * @return array
+     * @since 1.0.0
+     */
+    public function getIndexTablesWithColumns() {
+        $aTablesWithColumns = [];
+
+        # Get Tables
+        $aTables = $this->getIndexTables();
+
+        # Get Fields for Tables
+        foreach($aTables as $oTbl) {
+            # Get Fields but filter unnecessary types
+            $aFields = $this->getFormFields($oTbl->form,['partial'=>true,'password'=>true]);
+            $aTablesWithColumns[$oTbl->table_name] = ['oTable'=>$oTbl,'aFields'=>$aFields];
+        }
+
+        return $aTablesWithColumns;
+    }
+
+    /**
+     * Set Entity for current View
+     *
+     * @param mixed $oItem
+     * @since 1.0.0
+     */
+    public function setViewEntity($oItem) {
+        $this->layout()->oItem = $oItem;
+    }
+
+    /**
+     * Get Tabs for all Forms
+     *
+     * @return array
+     * @since 1.0.0
+     */
+    public function getFormTabs() {
+        $aTabsByForms = [];
+
+        # Get Tabs from Database
+        $oTabsDB = $this->aCoreTables['core-form-tab']->select();
+        foreach($oTabsDB as $oTab) {
+            # Order by Form
+            if(!array_key_exists($oTab->form,$aTabsByForms)) {
+                # Load Form Info
+                $oForm = $this->aCoreTables['core-form']->select(['form_key'=>$oTab->form]);
+                if(count($oForm) > 0) {
+                    $aTabsByForms[$oTab->form] = [
+                        'oForm'=>$oForm->current(),
+                        'aTabs'=>[],
+                    ];
+                }
+            }
+            $aTabsByForms[$oTab->form]['aTabs'][$oTab->Tab_ID] = $oTab;
+        }
+
+        return $aTabsByForms;
+    }
+
+    /**
+     * Load all permissions based on Modules
+     *
+     * @return array
+     * @since 1.0.0
+     */
+    protected function getPermissions() {
+        $aPermissionsByModules = [];
+
+        # Load Permissions from database
+        $oPermsFromDB = $this->aCoreTables['permission']->select();
+        foreach($oPermsFromDB as $oPerm) {
+            $sModule = str_replace(['\\'],['-'],$oPerm->module);
+            # Order by module
+            if(!array_key_exists($sModule,$aPermissionsByModules)) {
+                $aPermissionsByModules[$sModule] = [];
+            }
+            $aPermissionsByModules[$sModule][] = $oPerm;
+        }
+
+        return $aPermissionsByModules;
+    }
+
+    /**
+     * Set Partial Data in Layout
+     *
+     * @param $sPartial
+     * @param $aData
+     * @since 1.0.0
+     */
+    protected function setPartialData($sPartial,$aData) {
+        $aPartialData = [];
+        if(!isset($this->layout()->aPartialData)) {
+            $this->layout()->aPartialData = [];
+        }
+        $aPartialData[$sPartial] = array_merge($aData);
+        $this->layout()->aPartialData = array_merge($this->layout()->aPartialData,$aPartialData);
+    }
+}

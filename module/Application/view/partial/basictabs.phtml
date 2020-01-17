@@ -1,0 +1,18 @@
+<div class="col-md-12">
+    <ul class="nav nav-tabs" id="<?=$this->sFormName?>Form" role="tablist">
+    <?php
+    if(count($this->layout()->aTabs) > 0) {
+        $iTabCount = 1;
+        foreach($this->layout()->aTabs as $oTab) { ?>
+            <li class="nav-item">
+                <a class="nav-link<?=($iTabCount == 1) ? ' active' : ''?>" id="<?=$oTab->Tab_ID?>-tab" data-toggle="tab" href="#<?=$oTab->Tab_ID?>" role="tab" aria-controls="<?=$oTab->Tab_ID?>" aria-selected="<?=($iTabCount == 1) ? 'true' : 'false'?>">
+                    <i class="<?=$oTab->icon?>"></i> <?=$oTab->title?><br /><small><?=$oTab->subtitle?></small>
+                </a>
+            </li>
+        <?php
+            $iTabCount++;
+        }
+    }
+    ?>
+    </ul>
+</div>
