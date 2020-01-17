@@ -29,6 +29,9 @@ class IndexController extends CoreController {
         # Set Layout based on users theme
         $this->layout('layout/layout-'.CoreController::$oSession->oUser->getTheme());
 
+        $aMeasureEnd = getrusage();
+        $this->logPerfomance('application-index',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
+
         return new ViewModel([
             'oUser'=>CoreController::$oSession->oUser,
         ]);

@@ -16,6 +16,7 @@
 namespace Application\Controller;
 
 use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Exception\RuntimeException;
 use Laminas\View\Model\ViewModel;
 use Laminas\Session\Container;
 use Laminas\Db\Adapter\AdapterInterface;
@@ -49,6 +50,22 @@ class CoreController extends AbstractActionController {
     protected $oDbAdapter;
 
     /**
+     * Single Form
+     *
+     * @var string Single Form Name
+     * @since 1.0.0
+     */
+    protected $sSingleForm;
+
+    /**
+     * Rusage Store for Perfomance Log
+     *
+     * @var array rusage information
+     * @since 1.0.0
+     */
+    public static $aPerfomanceLogStart = [];
+
+    /**
      * CoreController constructor.
      *
      * @param AdapterInterface $oDbAdapter
@@ -61,6 +78,7 @@ class CoreController extends AbstractActionController {
         $this->aCoreTables = [];
 
         # Init Core Tables
+        $this->aCoreTables['core-log-performance'] = new TableGateway('core_perfomance_log',$this->oDbAdapter);
         $this->aCoreTables['form-button'] = new TableGateway('core_form_button',$this->oDbAdapter);
         $this->aCoreTables['core-form'] = new TableGateway('core_form',$this->oDbAdapter);
         $this->aCoreTables['core-form-tab'] = new TableGateway('core_form_tab',$this->oDbAdapter);
@@ -375,5 +393,125 @@ class CoreController extends AbstractActionController {
         }
         $aPartialData[$sPartial] = array_merge($aData);
         $this->layout()->aPartialData = array_merge($this->layout()->aPartialData,$aPartialData);
+    }
+
+    /**
+     * Parse Raw Data from Form based on DB Fields
+     *
+     * @param array $aRawData
+     * @return array parsed Form Data
+     * @since 1.0.0
+     */
+    protected function parseFormData(array $aRawData) {
+        $aFormData = [];
+
+        foreach(array_keys($aRawData) as $sKey) {
+            $sFieldName = substr($sKey,strlen($this->sSingleForm.'_'));
+            $oField = $this->aCoreTables['core-form-field']->select(['form'=>$this->sSingleForm,'fieldkey'=>$sFieldName]);
+            if(count($oField) > 0) {
+                $oField = $oField->current();
+                switch($oField->type) {
+                    case 'password':
+                        $aFormData[$sFieldName] = password_hash($_REQUEST[$sKey],PASSWORD_DEFAULT);
+                        break;
+                    case 'datetime':
+                        $aFormData[$sFieldName] = $_REQUEST[$sKey].' '.$_REQUEST[$sKey.'-time'];
+                        break;
+                    default:
+                        $aFormData[$sFieldName] = $_REQUEST[$sKey];
+                        break;
+                }
+            }
+        }
+
+        return $aFormData;
+    }
+
+    /**
+     * Attach Raw Data from Form based on DB Fields
+     *
+     * @param array $aRawData
+     * @param mixed $oEntity
+     * @return mixed Entity with data from Form
+     * @since 1.0.0
+     */
+    protected function attachFormData(array $aRawData,$oEntity) {
+        foreach(array_keys($aRawData) as $sKey) {
+            $sFieldName = substr($sKey,strlen($this->sSingleForm.'_'));
+            $oField = $this->aCoreTables['core-form-field']->select(['form'=>$this->sSingleForm,'fieldkey'=>$sFieldName]);
+            if(count($oField) > 0) {
+                $oField = $oField->current();
+                switch($oField->type) {
+                    case 'password':
+                        // DO NEVER UPDATE PASSWORD
+                        break;
+                    case 'datetime':
+                        if(!$oEntity->setTextField($sFieldName,$aRawData[$sKey].' '.$aRawData[$sKey.'-time'])) {
+                            echo 'could not save field '.$sFieldName;
+                        }
+                        break;
+                    default:
+                        if(!$oEntity->setTextField($sFieldName,$aRawData[$sKey])) {
+                            echo 'could not save field '.$sFieldName;
+                        }
+                        break;
+                }
+            }
+        }
+
+        return $oEntity;
+    }
+
+    /**
+     * Sets Layout based on theme
+     *
+     * @param string $sLayout Module or Custom Layout
+     * @since 1.0.0
+     */
+    protected function setThemeBasedLayout(string $sLayout) {
+        # Check if Theme based module layout exists
+        $template = 'layout/'.$sLayout.'-'.CoreController::$oSession->oUser->getTheme();
+        $resolver = $this->getEvent()
+            ->getApplication()
+            ->getServiceManager()
+            ->get('Laminas\View\Resolver\TemplatePathStack');
+
+        if (false === $resolver->resolve($template)) {
+            # Theme not found in module
+
+            # check if theme exists in general
+            $template = 'layout/layout-'.CoreController::$oSession->oUser->getTheme();
+            $resolver = $this->getEvent()
+                ->getApplication()
+                ->getServiceManager()
+                ->get('Laminas\View\Resolver\TemplatePathStack');
+
+            if (false === $resolver->resolve($template)) {
+                # Theme not found at all
+
+                # Set default layout
+                $this->layout('layout/layout-default');
+            } else {
+                $this->layout('layout/layout-'.CoreController::$oSession->oUser->getTheme());
+            }
+        } else {
+            $this->layout('layout/'.$sLayout.'-'.CoreController::$oSession->oUser->getTheme());
+        }
+    }
+
+    protected function logPerfomance($sAction,$fUtime,$fStime) {
+        $this->aCoreTables['core-log-performance']->insert([
+            'action'=>$sAction,
+            'utime'=>(float)$fUtime,
+            'stime'=>(float)$fStime,
+            'date'=>date('Y-m-d H:i:s',time()),
+        ]);
+        $this->layout()->recentPerfU = (float)$fUtime;
+        $this->layout()->recentPerfS = (float)$fStime;
+    }
+
+    protected function rutime($ru, $rus, $index) {
+        return ($ru["ru_$index.tv_sec"]*1000 + intval($ru["ru_$index.tv_usec"]/1000))
+            -  ($rus["ru_$index.tv_sec"]*1000 + intval($rus["ru_$index.tv_usec"]/1000));
     }
 }

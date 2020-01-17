@@ -7,13 +7,24 @@ switch($oField->type) {
         echo '*********************';
         break;
     case 'text':
+    case 'textarea':
     case 'tel':
     case 'email':
         echo $this->oItem->getTextField($oField->fieldkey);
         break;
-    case 'date': ?>
-        <input type="date" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" />
-        <?php
+    case 'date':
+        if($this->oItem->getTextField($oField->fieldkey) != '0000-00-00 00:00:00') {
+            echo date('d.m.Y',strtotime($this->oItem->getTextField($oField->fieldkey)));
+        } else {
+            echo '-';
+        }
+        break;
+    case 'datetime':
+        if($this->oItem->getTextField($oField->fieldkey) != '0000-00-00 00:00:00') {
+            echo date('d.m.Y H:i',strtotime($this->oItem->getTextField($oField->fieldkey)));
+        } else {
+            echo '-';
+        }
         break;
     case 'time': ?>
         <input type="time" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" />

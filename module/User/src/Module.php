@@ -15,6 +15,7 @@
 
 namespace User;
 
+use Application\Controller\CoreController;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
@@ -79,6 +80,8 @@ class Module
      */
     public function onBootstrap(\Laminas\EventManager\EventInterface $e)
     {
+        CoreController::$aPerfomanceLogStart = getrusage();
+
         $app = $e->getApplication();
         $sm = $app->getServiceManager();
         $app->getEventManager()->attach(

@@ -16,6 +16,6 @@ return [
     // Database
     'db' => [
         'driver' => 'Pdo',
-        'dsn'    => 'mysql:dbname=YOURDBNAMEHERE;host=localhost;charset=utf8',
+        'dsn'    => 'mysql:dbname=plc_todo;host=localhost;charset=utf8',
     ],
 ];

@@ -1,12 +1,13 @@
 <?php
 # Get Partial Data
-$aTabsByForm = $this->aPartialData['aTabs'];
-$aUserTabs = $this->aPartialData['aUserTabs'];
+$aFieldsByForm = $this->aPartialData['aFields'];
+$aUserFields = $this->aPartialData['aUserFields'];
 
-# Print List with all Modules and Tabs
-foreach(array_keys($aTabsByForm) as $sTable) {
-    $oForm = $aTabsByForm[$sTable]['oForm'];
-    $aTabs = $aTabsByForm[$sTable]['aTabs']; ?>
+
+# Print List with all Modules and Fields
+foreach(array_keys($aFieldsByForm) as $sForm) {
+    $oForm = $aFieldsByForm[$sForm]['oForm'];
+    $aFields = $aFieldsByForm[$sForm]['aFields']; ?>
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
@@ -15,19 +16,19 @@ foreach(array_keys($aTabsByForm) as $sTable) {
 
             <div class="card-body">
                 <ul class="list-group" style="display: inline-block; width:100%;">
-                    <?php foreach($aTabs as $oTab) {
+                    <?php foreach($aFields as $oField) {
                         //var_dump($oField);
                         $bHasPerm = false;
 
-                        if(array_key_exists($oForm->form_key,$aUserTabs)) {
-                            if(array_key_exists($oTab->Tab_ID,$aUserTabs[$oForm->form_key])) {
+                        if(array_key_exists($oForm->form_key,$aUserFields)) {
+                            if(array_key_exists($oField->Field_ID,$aUserFields[$oForm->form_key])) {
                                 $bHasPerm = true;
                             }
                         }
                         ?>
                         <li class="list-group-item col-md-6" style="position: relative; float:left;">
-                            <?=($bHasPerm) ? ' <i class="fas fa-check"></i>' : ''?>
-                            <?=$oTab->title?>
+                            <input type="checkbox"<?=($bHasPerm) ? ' checked' : ''?> name="<?=$this->sFormName?>-formfields[]" value="<?=$oField->Field_ID?>_<?=$oForm->form_key?>" />
+                            <?=$oField->label?>
                         </li>
                     <?php } ?>
                 </ul>

@@ -8,6 +8,10 @@ switch($oField->type) {
                value="<?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?>" />
         <?php
         break;
+    case 'textarea': ?>
+        <textarea class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"><?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?></textarea>
+        <?php
+        break;
     case 'password': ?>
         <input type="password" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
                value="<?=(isset($this->oItem)) ? '*****************' : ''?>" />
@@ -23,7 +27,15 @@ switch($oField->type) {
         <?php
         break;
     case 'date': ?>
-        <input type="date" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" />
+        <input type="date" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
+               value="<?=(isset($this->oItem)) ? date('Y-m-d',strtotime($this->oItem->getTextField($oField->fieldkey))) : ''?>" />
+        <?php
+        break;
+    case 'datetime': ?>
+        <input type="date" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
+               value="<?=(isset($this->oItem)) ? date('Y-m-d',strtotime($this->oItem->getTextField($oField->fieldkey))) : ''?>" />
+        <input type="time" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>-time"
+               value="<?=(isset($this->oItem)) ? date('H:i',strtotime($this->oItem->getTextField($oField->fieldkey))) : ''?>" />
         <?php
         break;
     case 'time': ?>

@@ -34,14 +34,6 @@ class UserController extends CoreController {
     private $oTableGateway;
 
     /**
-     * Single Form Name
-     *
-     * @var string
-     * @since 1.0.0
-     */
-    private $sSingleForm;
-
-    /**
      * UserController constructor.
      *
      * @param AdapterInterface $oDbAdapter
@@ -62,7 +54,7 @@ class UserController extends CoreController {
      */
     public function indexAction() {
         # Set Layout based on users theme
-        $this->layout('layout/user-'.CoreController::$oSession->oUser->getTheme());
+        $this->setThemeBasedLayout('user');
 
         # Add Buttons for breadcrumb
         $this->setViewButtons('user-index');
@@ -76,6 +68,9 @@ class UserController extends CoreController {
         $iPage = ($iPage < 1) ? 1 : $iPage;
         $oPaginator->setCurrentPageNumber($iPage);
         $oPaginator->setItemCountPerPage(3);
+
+        $aMeasureEnd = getrusage();
+        $this->logPerfomance('user-index',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         return new ViewModel([
             'sTableName'=>'user-index',
@@ -149,7 +144,7 @@ class UserController extends CoreController {
      */
     public function deniedAction() {
         # Set Layout based on users theme
-        $this->layout('layout/user-'.CoreController::$oSession->oUser->getTheme());
+        $this->setThemeBasedLayout('user');
 
         $sPermission = $this->params()->fromRoute('id', 'Def');
 
@@ -166,7 +161,7 @@ class UserController extends CoreController {
      */
     public function addAction() {
         # Set Layout based on users theme
-        $this->layout('layout/user-'.CoreController::$oSession->oUser->getTheme());
+        $this->setThemeBasedLayout('user');
 
         # Get Request to decide wether to save or display form
         $oRequest = $this->getRequest();
@@ -187,6 +182,31 @@ class UserController extends CoreController {
                 'aPermissions'=>$this->getPermissions(),
             ];
             $this->setPartialData('permissions',$aPartialData);
+
+            # Get User Index Columns
+            $aPartialData = [
+                'aColumns'=>$this->getIndexTablesWithColumns(),
+                'aUserColumns'=>[],
+            ];
+            $this->setPartialData('indexcolumns',$aPartialData);
+
+            # Get User Tabs
+            $aPartialData = [
+                'aTabs'=>$this->getFormTabs(),
+                'aUserTabs'=>[],
+            ];
+            $this->setPartialData('tabs',$aPartialData);
+
+            # Get User Fields
+            $aPartialData = [
+                'aFields'=>$this->getFormFields(),
+                'aUserFields'=>[],
+            ];
+            $this->setPartialData('formfields',$aPartialData);
+
+            # Log Performance in DB
+            $aMeasureEnd = getrusage();
+            $this->logPerfomance('user-add',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
             # Pass Data to View
             return new ViewModel([
@@ -214,8 +234,25 @@ class UserController extends CoreController {
         $iUserID = $this->oTableGateway->saveSingle($oUser);
         $oUser = $this->oTableGateway->getSingle($iUserID);
 
-        # Save Permissions
-        $oUser->updatePermissions($_REQUEST[$this->sSingleForm.'-permissions']);
+        # Update Permissions
+        $aDataPermission = (is_array($_REQUEST[$this->sSingleForm.'-permissions'])) ? $_REQUEST[$this->sSingleForm.'-permissions'] : [];
+        $oUser->updatePermissions($aDataPermission);
+
+        # Update Index Columns
+        $aDataIndexColumn = (is_array($_REQUEST[$this->sSingleForm.'-indexcolumns'])) ? $_REQUEST[$this->sSingleForm.'-indexcolumns'] : [];
+        $oUser->updateIndexColumns($aDataIndexColumn);
+
+        # Update Form Tabs
+        $aDataTabs = (is_array($_REQUEST[$this->sSingleForm.'-tabs'])) ? $_REQUEST[$this->sSingleForm.'-tabs'] : [];
+        $oUser->updateFormTabs($aDataTabs);
+
+        # Update Form Fields
+        $aDataFields = (is_array($_REQUEST[$this->sSingleForm.'-formfields'])) ? $_REQUEST[$this->sSingleForm.'-formfields'] : [];
+        $oUser->updateFormFields($aDataFields);
+
+        # Log Performance in DB
+        $aMeasureEnd = getrusage();
+        $this->logPerfomance('user-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         # Display Success Message and View New User
         $this->flashMessenger()->addSuccessMessage('User successfully created');
@@ -230,7 +267,7 @@ class UserController extends CoreController {
      */
     public function viewAction() {
         # Set Layout based on users theme
-        $this->layout('layout/user-'.CoreController::$oSession->oUser->getTheme());
+        $this->setThemeBasedLayout('user');
 
         # Get User ID from route
         $iUserID = $this->params()->fromRoute('id', 0);
@@ -277,6 +314,10 @@ class UserController extends CoreController {
         ];
         $this->setPartialData('formfields',$aPartialData);
 
+        # Log Performance in DB
+        $aMeasureEnd = getrusage();
+        $this->logPerfomance('user-view',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
+
         return new ViewModel([
             'sFormName'=>$this->sSingleForm,
             'oUser'=>$oUser,
@@ -291,7 +332,7 @@ class UserController extends CoreController {
      */
     public function editAction() {
         # Set Layout based on users theme
-        $this->layout('layout/user-'.CoreController::$oSession->oUser->getTheme());
+        $this->setThemeBasedLayout('user');
 
         # Get Request to decide wether to save or display form
         $oRequest = $this->getRequest();
@@ -344,6 +385,10 @@ class UserController extends CoreController {
             ];
             $this->setPartialData('formfields',$aPartialData);
 
+            # Log Performance in DB
+            $aMeasureEnd = getrusage();
+            $this->logPerfomance('user-edit',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
+
             # Pass Data to View
             return new ViewModel([
                 'sFormName'=>$this->sSingleForm,
@@ -376,16 +421,24 @@ class UserController extends CoreController {
         $iUserID = $this->oTableGateway->saveSingle($oUser);
 
         # Update Permissions
-        $oUser->updatePermissions($_REQUEST[$this->sSingleForm.'-permissions']);
+        $aDataPermission = (is_array($_REQUEST[$this->sSingleForm.'-permissions'])) ? $_REQUEST[$this->sSingleForm.'-permissions'] : [];
+        $oUser->updatePermissions($aDataPermission);
 
         # Update Index Columns
-        $oUser->updateIndexColumns($_REQUEST[$this->sSingleForm.'-indexcolumns']);
+        $aDataIndexColumn = (is_array($_REQUEST[$this->sSingleForm.'-indexcolumns'])) ? $_REQUEST[$this->sSingleForm.'-indexcolumns'] : [];
+        $oUser->updateIndexColumns($aDataIndexColumn);
 
         # Update Form Tabs
-        $oUser->updateFormTabs($_REQUEST[$this->sSingleForm.'-tabs']);
+        $aDataTabs = (is_array($_REQUEST[$this->sSingleForm.'-tabs'])) ? $_REQUEST[$this->sSingleForm.'-tabs'] : [];
+        $oUser->updateFormTabs($aDataTabs);
 
         # Update Form Fields
-        $oUser->updateFormFields($_REQUEST[$this->sSingleForm.'-formfields']);
+        $aDataFields = (is_array($_REQUEST[$this->sSingleForm.'-formfields'])) ? $_REQUEST[$this->sSingleForm.'-formfields'] : [];
+        $oUser->updateFormFields($aDataFields);
+
+        # Log Performance in DB
+        $aMeasureEnd = getrusage();
+        $this->logPerfomance('user-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         # Display Success Message and View New User
         $this->flashMessenger()->addSuccessMessage('User successfully saved');

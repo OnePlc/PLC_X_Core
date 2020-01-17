@@ -15,6 +15,25 @@
                 echo $this->oItem->getTextField($this->oCol->fieldkey);
             }
             break;
+        case 'textarea':
+            echo substr($this->oItem->getTextField($this->oCol->fieldkey),0,50);
+            break;
+        case 'date':
+            $sDate = $this->oItem->getTextField($this->oCol->fieldkey);
+            if($sDate != '0000-00-00 00:00:00' && !empty($sDate)) {
+                echo date('d.m.Y',strtotime($sDate));
+            } else {
+                echo '-';
+            }
+            break;
+        case 'datetime':
+            $sDate = $this->oItem->getTextField($this->oCol->fieldkey);
+            if($sDate != '0000-00-00 00:00:00' && !empty($sDate)) {
+                echo date('d.m.Y H:i',strtotime($sDate));
+            } else {
+                echo '-';
+            }
+            break;
         default:
             break;
     }

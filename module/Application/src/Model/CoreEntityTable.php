@@ -69,6 +69,14 @@ class CoreEntityTable {
                         case 'tel':
                             $aData[$sFieldName] = $oObject->$sFieldName;
                             break;
+                        case 'date':
+                        case 'datetime':
+                            if($oObject->$sFieldName != '' && $oObject->$sFieldName != '0000-00-00 00:00:00') {
+                                $aData[$sFieldName] = date('Y-m-d H:i:s',strtotime($oObject->$sFieldName));
+                            } else {
+                                $aData[$sFieldName] = '0000-00-00 00:00:00';
+                            }
+                            break;
                         default:
                             break;
                     }

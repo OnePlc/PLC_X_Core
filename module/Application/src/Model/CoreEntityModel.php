@@ -129,7 +129,6 @@ class CoreEntityModel {
         if(count($oMyFieldsDB) > 0) {
             foreach($oMyFieldsDB as $oField) {
                 $sFieldName = $oField->fieldkey;
-                $sFieldDefVal = '';
                 if(!property_exists($this,$sFieldName)) {
                     # Assign Value from Object to Data based on type
                     switch($oField->type) {
@@ -137,7 +136,11 @@ class CoreEntityModel {
                         case 'textarea':
                         case 'email':
                         case 'tel':
-                            $this->$sFieldName = $sFieldDefVal;
+                            $this->$sFieldName = '';
+                            break;
+                        case 'date':
+                        case 'datetime':
+                            $this->$sFieldName = '0000-00-00 00:00:00';
                             break;
                         default:
                             break;

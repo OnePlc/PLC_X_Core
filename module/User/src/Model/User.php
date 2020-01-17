@@ -54,6 +54,14 @@ class User extends CoreEntityModel {
     public $password;
 
     /**
+     * User Selected Theme
+     *
+     * @var string selected theme name
+     * @since 1.0.0
+     */
+    public $theme;
+
+    /**
      * User Permissions (Cache)
      *
      * @var array contains users permissions
@@ -125,6 +133,7 @@ class User extends CoreEntityModel {
         $this->username = !empty($data['username']) ? $data['username'] : '';
         $this->full_name = !empty($data['full_name']) ? $data['full_name'] : '';
         $this->password = !empty($data['password']) ? $data['password'] : '';
+        $this->theme = !empty($data['theme']) ? $data['theme'] : 'default';
     }
 
     /**
@@ -195,7 +204,7 @@ class User extends CoreEntityModel {
      * @since 1.0.0
      */
     public function getTheme() {
-        return 'default';
+        return $this->theme;
     }
 
     /**

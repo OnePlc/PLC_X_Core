@@ -30,7 +30,6 @@ class SkeletonController extends CoreController {
      * @since 1.0.0
      */
     private $oTableGateway;
-    private $sSingleForm;
 
     /**
      * SkeletonController constructor.
@@ -53,7 +52,7 @@ class SkeletonController extends CoreController {
      */
     public function indexAction() {
         # Set Layout based on users theme
-        $this->layout('layout/skeleton-'.CoreController::$oSession->oUser->getTheme());
+        $this->setThemeBasedLayout('skeleton');
 
         # Add Buttons for breadcrumb
         $this->setViewButtons('skeleton-index');
@@ -67,6 +66,10 @@ class SkeletonController extends CoreController {
         $iPage = ($iPage < 1) ? 1 : $iPage;
         $oPaginator->setCurrentPageNumber($iPage);
         $oPaginator->setItemCountPerPage(3);
+
+        # Log Performance in DB
+        $aMeasureEnd = getrusage();
+        $this->logPerfomance('skeleton-index',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         return new ViewModel([
             'sTableName'=>'skeleton-index',
@@ -82,7 +85,7 @@ class SkeletonController extends CoreController {
      */
     public function addAction() {
         # Set Layout based on users theme
-        $this->layout('layout/skeleton-'.CoreController::$oSession->oUser->getTheme());
+        $this->setThemeBasedLayout('skeleton');
 
         # Get Request to decide wether to save or display form
         $oRequest = $this->getRequest();
@@ -98,30 +101,27 @@ class SkeletonController extends CoreController {
             # Load Fields for View Form
             $this->setFormFields($this->sSingleForm);
 
+            # Log Performance in DB
+            $aMeasureEnd = getrusage();
+            $this->logPerfomance('skeleton-add',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
+
             return new ViewModel([
                 'sFormName' => $this->sSingleForm,
             ]);
         }
 
         # Get and validate Form Data
-        $aFormData = [];
-        foreach(array_keys($_REQUEST) as $sKey) {
-            $sFieldName = substr($sKey,strlen($this->sSingleForm.'_'));
-            switch($sFieldName) {
-                case 'password':
-                    $aFormData[$sFieldName] = password_hash($_REQUEST[$sKey],PASSWORD_DEFAULT);
-                    break;
-                default:
-                    $aFormData[$sFieldName] = $_REQUEST[$sKey];
-                    break;
-            }
-        }
+        $aFormData = $this->parseFormData($_REQUEST);
 
         # Save Add Form
         $oSkeleton = new Skeleton($this->oDbAdapter);
         $oSkeleton->exchangeArray($aFormData);
         $iSkeletonID = $this->oTableGateway->saveSingle($oSkeleton);
         $oSkeleton = $this->oTableGateway->getSingle($iSkeletonID);
+
+        # Log Performance in DB
+        $aMeasureEnd = getrusage();
+        $this->logPerfomance('skeleton-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         # Display Success Message and View New Skeleton
         $this->flashMessenger()->addSuccessMessage('Skeleton successfully created');
@@ -136,7 +136,7 @@ class SkeletonController extends CoreController {
      */
     public function editAction() {
         # Set Layout based on users theme
-        $this->layout('layout/skeleton-'.CoreController::$oSession->oUser->getTheme());
+        $this->setThemeBasedLayout('skeleton');
 
         # Get Request to decide wether to save or display form
         $oRequest = $this->getRequest();
@@ -167,6 +167,10 @@ class SkeletonController extends CoreController {
             # Load Fields for View Form
             $this->setFormFields($this->sSingleForm);
 
+            # Log Performance in DB
+            $aMeasureEnd = getrusage();
+            $this->logPerfomance('skeleton-edit',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
+
             return new ViewModel([
                 'sFormName' => $this->sSingleForm,
                 'oSkeleton' => $oSkeleton,
@@ -176,26 +180,15 @@ class SkeletonController extends CoreController {
         $iSkeletonID = $oRequest->getPost('Item_ID');
         $oSkeleton = $this->oTableGateway->getSingle($iSkeletonID);
 
-        # Get and validate Form Data
-        $aFormData = [];
-        foreach(array_keys($_REQUEST) as $sKey) {
-            $sFieldName = substr($sKey,strlen($this->sSingleForm.'_'));
-            switch($sFieldName) {
-                case 'password':
-                    //$aFormData[$sFieldName] = password_hash($_REQUEST[$sKey],PASSWORD_DEFAULT);
-                    break;
-                default:
-                    if($sFieldName != '') {
-                        if(!$oSkeleton->setTextField($sFieldName,$_REQUEST[$sKey])) {
-                            echo 'could not save field '.$sFieldName;
-                        }
-                    }
-                    break;
-            }
-        }
+        # Update Skeleton with Form Data
+        $oSkeleton = $this->attachFormData($_REQUEST,$oSkeleton);
 
         # Save Skeleton
         $iSkeletonID = $this->oTableGateway->saveSingle($oSkeleton);
+
+        # Log Performance in DB
+        $aMeasureEnd = getrusage();
+        $this->logPerfomance('skeleton-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         # Display Success Message and View New User
         $this->flashMessenger()->addSuccessMessage('Skeleton successfully saved');
@@ -210,7 +203,7 @@ class SkeletonController extends CoreController {
      */
     public function viewAction() {
         # Set Layout based on users theme
-        $this->layout('layout/skeleton-'.CoreController::$oSession->oUser->getTheme());
+        $this->setThemeBasedLayout('skeleton');
 
         # Get Skeleton ID from URL
         $iSkeletonID = $this->params()->fromRoute('id', 0);
@@ -234,6 +227,10 @@ class SkeletonController extends CoreController {
 
         # Load Fields for View Form
         $this->setFormFields($this->sSingleForm);
+
+        # Log Performance in DB
+        $aMeasureEnd = getrusage();
+        $this->logPerfomance('skeleton-view',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         return new ViewModel([
             'sFormName'=>$this->sSingleForm,
