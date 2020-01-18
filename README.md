@@ -1,6 +1,6 @@
 # oneplace-core
 
-[![Build Status](https://travis-ci.com/OnePlc/PLC_X_Core.svg?branch=masterr)](https://travis-ci.com/laminas/laminas-paginator)
+[![Build Status](https://travis-ci.com/OnePlc/PLC_X_Core.svg?branch=master)](https://travis-ci.com/OnePlc/PLC_X_Core)
 [![Coverage Status](https://coveralls.io/repos/github/OnePlc/PLC_X_Core/badge.svg?branch=master)](https://coveralls.io/github/OnePlc/PLC_X_Core?branch=master)
 
 ## Introduction
