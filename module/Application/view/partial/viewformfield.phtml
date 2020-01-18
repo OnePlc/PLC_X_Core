@@ -37,6 +37,10 @@ switch($oField->type) {
             echo '-';
         }
         break;
+    case 'gallery': ?>
+        <div id="drag-drop-area"></div>
+        <?php
+        break;
     case 'partial':
         $aPartialData = [];
         $sPartialMode = 'view';

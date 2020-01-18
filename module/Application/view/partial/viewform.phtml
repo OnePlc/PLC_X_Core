@@ -1,6 +1,85 @@
 <div class="plc-core-basic-view">
     <div class="row">
-        <?= $this->partial('partial/basictabs', ['sFormName'=>$this->sFormName]); ?>
-        <?= $this->partial('partial/basictabview', ['sFormName'=>$this->sFormName,'oItem'=>$this->oItem]); ?>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div style="max-width:250px; margin:auto;">
+                        <!-- We'll transform this input into a pond -->
+                        <input type="file" class="filepond" id="filepondtest">
+                    </div>
+                    <h2><?=$oItem->getLabel()?></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card px-0">
+                <div class="card-body px-0 py-2">
+                    <?= $this->partial('partial/basictabs', ['sFormName'=>$this->sFormName]); ?>
+                    <?= $this->partial('partial/basictabview', ['sFormName'=>$this->sFormName,'oItem'=>$this->oItem]); ?>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<!-- Load FilePond library -->
+<script src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-validate-size/dist/filepond-plugin-image-validate-size.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-resize/dist/filepond-plugin-image-resize.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-crop/dist/filepond-plugin-image-crop.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+<!-- Turn all file input elements into ponds -->
+<script>
+    FilePond.registerPlugin(FilePondPluginImageExifOrientation);
+    FilePond.registerPlugin(FilePondPluginFileValidateSize);
+    FilePond.registerPlugin(FilePondPluginFileValidateType);
+    FilePond.registerPlugin(FilePondPluginImageValidateSize);
+    FilePond.registerPlugin(FilePondPluginImagePreview);
+    FilePond.registerPlugin(FilePondPluginImageTransform);
+    FilePond.registerPlugin(FilePondPluginImageCrop);
+    FilePond.registerPlugin(FilePondPluginImageResize);
+    // We register the plugins required to do
+    // image previews, cropping, resizing, etc.
+    /**
+     FilePond.registerPlugin(
+     FilePondPluginFileValidateType,
+     FilePondPluginImageExifOrientation,
+     FilePondPluginImagePreview,
+     FilePondPluginImageCrop,
+     FilePondPluginImageResize,
+     FilePondPluginImageTransform,
+     FilePondPluginImageEdit
+     );
+     **/
+
+    // Select the file input and use
+    // create() to turn it into a pond
+    FilePond.create(
+        document.getElementById('filepondtest'),
+        {
+            labelIdle: `Drag & Drop your picture or <span class="filepond--label-action">Browse</span>`,
+            stylePanelLayout: 'compact circle',
+            styleLoadIndicatorPosition: 'center bottom',
+            styleProgressIndicatorPosition: 'right bottom',
+            styleButtonRemoveItemPosition: 'left bottom',
+            styleButtonProcessItemPosition: 'right bottom',
+            imagePreviewHeight: 170,
+            imageCropAspectRatio: '1:1',
+            imageResizeTargetWidth: 200,
+            imageResizeTargetHeight: 200,
+            maxFileSize:'1MB',
+            acceptedFileTypes:['image/png', 'image/jpeg'],
+            imageValidateSizeMinWidth:500,
+            imageValidateSizeMinHeight:500
+        }
+    );
+
+    const pond = document.getElementById('filepondtest');
+    pond.addEventListener('FilePond:error', e => {
+        $('#filepondtest').printMessage('Fehler',e.detail.error.main,'error');
+    });
+
+</script>

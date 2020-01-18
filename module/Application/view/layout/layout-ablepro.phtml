@@ -14,12 +14,17 @@
     <!-- Le styles -->
     <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
         ->prependStylesheet($this->basePath('themes/ablepro/css/style.css'))
+        ->prependStylesheet($this->basePath('vendor/select2/css/select2.min.css'))
         ->prependStylesheet($this->basePath('vendor/fontawesome/css/all.min.css'))
     ?>
 
+    <!-- Filepond stylesheet -->
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+
     <!-- Scripts -->
     <?= $this->inlineScript()
-        ->prependFile($this->basePath('js/listener.js'))
+        ->prependFile($this->basePath('vendor/select2/js/select2.full.min.js'))
         ->prependFile($this->basePath('js/jquery-3.4.1.min.js'))
     ?>
 </head>
@@ -300,6 +305,14 @@
 
 <!-- custom-chart js -->
 <script src="/themes/ablepro/js/pages/dashboard-crm.js"></script>
+
+<!-- sweet alert for all alerts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+<!-- oneplace core scripts -->
+<script src="/js/listener.js"></script>
+<script src="/js/plc-message.js"></script>
+
 </body>
 
 </html>

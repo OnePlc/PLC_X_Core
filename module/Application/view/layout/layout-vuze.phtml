@@ -1,3 +1,6 @@
+<?php
+use Application\Controller\CoreController;
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,12 +20,16 @@
         ->prependStylesheet($this->basePath('vendor/fontawesome/css/all.min.css'))
     ?>
 
+    <!-- Filepond stylesheet -->
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
     <!-- Scripts -->
     <?= $this->inlineScript()
-        ->prependFile($this->basePath('js/listener.js'))
         ->prependFile($this->basePath('vendor/select2/js/select2.full.min.js'))
         ->prependFile($this->basePath('themes/vuze/js/app.js'))
     ?>
+    <link href="https://transloadit.edgly.net/releases/uppy/v1.8.0/uppy.min.css" rel="stylesheet">
+
 </head>
 
 <body>
@@ -85,7 +92,7 @@
                             </div>
                         </a>
                         <a class="nav-link nav-link-user dropdown-toggle d-none d-sm-inline-block" href="#" data-toggle="dropdown">
-                            <img src="https://via.placeholder.com/156x156" class="avatar img-fluid rounded mr-1" alt="Kathy Davis" /> <span class="text-dark">Kathy Davis</span>
+                            <img src="https://via.placeholder.com/156x156" class="avatar img-fluid rounded mr-1" alt="<?=CoreController::$oSession->oUser->getLabel()?>" /> <span class="text-dark"><?=CoreController::$oSession->oUser->getLabel()?></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="pages-profile.html">Profile</a>
@@ -271,6 +278,67 @@
 </div>
 
 <script src="js/app.js"></script>
+
+<script src="vendor/jquery-ui/jquery-ui.min.js" />
+
+<!-- sweet alert for all alerts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+<!-- oneplace core scripts -->
+<script src="/js/listener.js"></script>
+<script src="/js/plc-message.js"></script>
+
+<script src="https://transloadit.edgly.net/releases/uppy/v1.8.0/uppy.min.js"></script>
+<script>
+    $(function() {
+        const GoogleDrive = Uppy.GoogleDrive;
+        const Dashboard = Uppy.Dashboard;
+        const Dropbox = Uppy.Dropbox;
+        const Instagram = Uppy.Instagram;
+        const Facebook = Uppy.Facebook;
+        const OneDrive = Uppy.OneDrive;
+        const Webcam = Uppy.Webcam;
+        const Tus = Uppy.Tus;
+
+        const uppy = Uppy.Core({
+            debug: true,
+            autoProceed: false,
+            restrictions: {
+                maxFileSize: 1000000,
+                maxNumberOfFiles: 3,
+                minNumberOfFiles: 2,
+                allowedFileTypes: ['image/*', 'video/*']
+            }
+        })
+        .use(Dashboard, {
+            trigger: '.UppyModalOpenerBtn',
+            inline: true,
+            target: '#drag-drop-area',
+            replaceTargetContent: true,
+            showProgressDetails: true,
+            note: 'Images and video only, 2–3 files, up to 1 MB',
+            height: 470,
+            metaFields: [
+                { id: 'name', name: 'Name', placeholder: 'file name' },
+                { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
+            ],
+            browserBackButtonClose: true
+        })
+        //.use(GoogleDrive, { target: '#drag-drop-area', companionUrl: 'https://companion.uppy.io' })
+        //.use(Dropbox, { target: '#drag-drop-area', companionUrl: 'https://companion.uppy.io' })
+        //.use(Instagram, { target: '#drag-drop-area', companionUrl: 'https://companion.uppy.io' })
+        //.use(Facebook, { target: '#drag-drop-area', companionUrl: 'https://companion.uppy.io' })
+        //.use(OneDrive, { target: '#drag-drop-area', companionUrl: 'https://companion.uppy.io' })
+        //.use(Webcam, { target: '#drag-drop-area' })
+        //.use(Tus, { endpoint: 'https://master.tus.io/files/' })
+
+        uppy.on('complete', result => {
+            console.log('successful files:', result.successful)
+            console.log('failed files:', result.failed)
+        })
+    });
+
+</script>
 </body>
 
 </html>
