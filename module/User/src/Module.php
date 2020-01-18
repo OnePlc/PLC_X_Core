@@ -151,9 +151,7 @@ class Module
                         'Location',
                         $e->getRouter()->assemble(
                             [],
-                            ['name' => 'login'],
-                        )
-                    );
+                            ['name' => 'login']));
                     $response->setStatusCode(302);
                     return $response;
                 }
