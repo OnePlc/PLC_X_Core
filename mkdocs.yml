@@ -1,0 +1,16 @@
+docs_dir: docs/book
+site_dir: docs/html
+nav:
+  - Home: index.md
+  - Introduction: intro.md
+  - 'Quick Start': quick-start.md
+  - Reference:
+      - 'Available Controllers': controllers.md
+      - 'Controller Plugins': plugins.md
+      - Examples: examples.md
+site_name: oneplace-core
+site_description: "onePlace Application Framework Core Module"
+repo_url: 'https://github.com/OnePlc/PLC_X_Core'
+theme: readthedocs
+extra:
+  project: onePlc
