@@ -35,5 +35,5 @@ return [
     'Laminas\Validator',
     'Application',
     'User',
-    'Skeleton',
+    'OnePlace\Skeleton',
 ];

@@ -7,9 +7,6 @@
         <testsuite name="Laminas MVC Skeleton Test Suite">
             <directory>./module/User/test</directory>
         </testsuite>
-        <testsuite name="Laminas MVC Skeleton Test Suite">
-            <directory>./module/Skeleton/test</directory>
-        </testsuite>
     </testsuites>
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
