@@ -34,6 +34,6 @@ return [
     'Laminas\Router',
     'Laminas\Validator',
     'Application',
-    'User',
+    'OnePlace\User',
     'OnePlace\Skeleton',
 ];
