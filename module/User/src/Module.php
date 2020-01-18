@@ -125,9 +125,7 @@ class Module
                             'Location',
                             $e->getRouter()->assemble(
                                 ['id'=>$aRouteInfo['action']],
-                                ['name' => 'denied'],
-                        )
-                        );
+                                ['name' => 'denied']));
                         $response->setStatusCode(302);
                         return $response;
                     }
