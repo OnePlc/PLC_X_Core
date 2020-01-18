@@ -25,7 +25,6 @@ matrix:
       env:
         - DEPS=latest
         - CS_CHECK=true
-        - TEST_COVERAGE=true
     - php: 7.2
       env:
         - DEPS=lowest
@@ -33,7 +32,6 @@ matrix:
       env:
         - DEPS=latest
         - CS_CHECK=true
-        - TEST_COVERAGE=true
 
 before_install:
   - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
