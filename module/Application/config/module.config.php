@@ -44,6 +44,22 @@ return [
                     ],
                 ],
             ],
+            'api' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/api[/:module[/:action[/:id]]]',
+                    'constraints' => [
+                        'module' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'     => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\ApiController::class,
+                        'module'     => 'core',
+                        'action'    => 'index',
+                    ],
+                ],
+            ],
         ],
     ],
     'view_manager' => [

@@ -69,6 +69,13 @@ class Module {
                         $container->get(Model\SkeletonTable::class)
                     );
                 },
+                Controller\ApiController::class => function($container) {
+                    $oDbAdapter = $container->get(AdapterInterface::class);
+                    return new Controller\ApiController(
+                        $oDbAdapter,
+                        $container->get(Model\SkeletonTable::class)
+                    );
+                },
             ],
         ];
     }

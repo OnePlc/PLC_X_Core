@@ -108,12 +108,12 @@ class Module
                 $bLoggedIn = false;
 
                 $sRouteName = $routeMatch->getMatchedRouteName();
+                $aRouteInfo = $routeMatch->getParams();
 
                 # check if user is logged in
                 if(isset($container->oUser)) {
                     $bLoggedIn = true;
                     # check permissions
-                    $aRouteInfo = $routeMatch->getParams();
 
                     //echo 'check for '.$aRouteInfo['action'].'-'.$aRouteInfo['controller'];
 
@@ -130,6 +130,17 @@ class Module
                         );
                         $response->setStatusCode(302);
                         return $response;
+                    }
+                }
+
+                /**
+                 * Api Login
+                 */
+                $bIsApiController = stripos($aRouteInfo['controller'],'ApiController');
+                if(isset($_REQUEST['authkey']) && $bIsApiController !== false) {
+                    # todo: replace with database based authkey list so keys can be revoked
+                    if($_REQUEST['authkey'] == 'DEVRANDOMKEY') {
+                        $bLoggedIn = true;
                     }
                 }
 
