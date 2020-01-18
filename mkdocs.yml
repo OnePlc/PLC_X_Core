@@ -5,9 +5,13 @@ nav:
   - Introduction: intro.md
   - 'Quick Start': quick-start.md
   - Reference:
-      - 'Available Controllers': controllers.md
-      - 'Controller Plugins': plugins.md
+      - 'Dynamic Fields': dynamic-fields.md
       - Examples: examples.md
+  - 'User Management':
+      - Permissions: user-permissions.md
+      - 'Form Tabs': user-formtabs.md
+      - 'Form Fields': user-formfields.md
+      - 'Index Columns': user-indexcols.md
 site_name: oneplace-core
 site_description: "onePlace Application Framework Core Module"
 repo_url: 'https://github.com/OnePlc/PLC_X_Core'

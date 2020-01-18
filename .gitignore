@@ -8,3 +8,4 @@ data/cache/*
 phpunit.xml
 composer.lock
 .phpunit.result.cache
+docs/html/
