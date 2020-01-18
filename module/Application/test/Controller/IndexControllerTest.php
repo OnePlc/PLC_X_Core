@@ -23,8 +23,7 @@ use Laminas\Stdlib\ArrayUtils;
 use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Laminas\Session\Container;
 use Laminas\Db\Adapter\AdapterInterface;
-use OnePlace\User\Model\TestUser;
-use OnePlace\User\Model\User;
+use Application\Model\TestUser;
 
 class IndexControllerTest extends AbstractHttpControllerTestCase {
     public function setUp() : void {

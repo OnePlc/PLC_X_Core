@@ -21,6 +21,13 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\ModuleManager\ModuleManager;
 
 class Module {
+    /**
+     * Module Version
+     *
+     * @since 1.0.2
+     */
+    const VERSION = '1.0.2';
+
     public function getConfig() : array {
         return include __DIR__ . '/../config/module.config.php';
     }
@@ -35,13 +42,17 @@ class Module {
                 Controller\IndexController::class => function($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\IndexController(
-                        $oDbAdapter
+                        $oDbAdapter,
+                        false,
+                        $container
                     );
                 },
                 Controller\ApiController::class => function($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\ApiController(
-                        $oDbAdapter
+                        $oDbAdapter,
+                        false,
+                        $container
                     );
                 },
             ],

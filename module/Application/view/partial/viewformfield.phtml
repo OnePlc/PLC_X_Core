@@ -30,6 +30,13 @@ switch($oField->type) {
         <input type="time" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" />
         <?php
         break;
+    case 'select':
+        if($this->oItem->getSelectFieldID($oField->fieldkey) != 0) {
+            echo $this->oItem->getSelectField($oField->fieldkey)->getLabel();
+        } else {
+            echo '-';
+        }
+        break;
     case 'partial':
         $aPartialData = [];
         $sPartialMode = 'view';

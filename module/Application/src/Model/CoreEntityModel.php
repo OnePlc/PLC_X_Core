@@ -15,6 +15,7 @@
 
 namespace Application\Model;
 
+use Application\Controller\CoreController;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Sql\Select;
@@ -118,6 +119,34 @@ class CoreEntityModel {
         }
     }
 
+    public function getSelectFieldID($sField) {
+        # Only Set Value of Property already exists
+        if(property_exists($this,$sField)) {
+            return $this->$sField;
+        } else {
+            return 0;
+        }
+    }
+
+    public function getSelectField($sField) {
+        # Only Set Value of Property already exists
+        if(property_exists($this,$sField)) {
+            $iSelectIDFS = $this->$sField;
+            $oField = CoreEntityModel::$aEntityTables['core-form-fields']->select(['fieldkey'=>$sField]);
+            if(count($oField) > 0) {
+                $oField = $oField->current();
+                if(!array_key_exists($oField->tbl_cached_name,CoreEntityModel::$aEntityTables)) {
+                    CoreEntityModel::$aEntityTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
+                    //CoreEntityModel::$aEntityTables[$oField->tbl_name] = CoreController::$oServiceManager->get('OnePlace\Contact\Model\ContactTable');
+                }
+                return CoreEntityModel::$aEntityTables[$oField->tbl_cached_name]->getSingle($iSelectIDFS);
+            }
+        }
+
+        # Item Not found
+        return false;
+    }
+
     /**
      * Attach Dynamic Fields to Model
      *
@@ -137,6 +166,9 @@ class CoreEntityModel {
                         case 'email':
                         case 'tel':
                             $this->$sFieldName = '';
+                            break;
+                        case 'select':
+                            $this->$sFieldName = 0;
                             break;
                         case 'date':
                         case 'datetime':

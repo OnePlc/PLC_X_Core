@@ -69,6 +69,9 @@ class CoreEntityTable {
                         case 'tel':
                             $aData[$sFieldName] = $oObject->$sFieldName;
                             break;
+                        case 'select':
+                            $aData[$sFieldName] = $oObject->$sFieldName;
+                            break;
                         case 'date':
                         case 'datetime':
                             if($oObject->$sFieldName != '' && $oObject->$sFieldName != '0000-00-00 00:00:00') {

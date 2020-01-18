@@ -15,6 +15,7 @@
 
 namespace Application\Controller;
 
+use Application\Model\CoreEntityModel;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Exception\RuntimeException;
 use Laminas\View\Model\ViewModel;
@@ -65,15 +66,18 @@ class CoreController extends AbstractActionController {
      */
     public static $aPerfomanceLogStart = [];
 
+    public static $oServiceManager;
+
     /**
      * CoreController constructor.
      *
      * @param AdapterInterface $oDbAdapter
      * @since 1.0.0
      */
-    public function __construct(AdapterInterface $oDbAdapter) {
+    public function __construct(AdapterInterface $oDbAdapter,$oTableGateway = false,$oServiceManager) {
         # Get onePlace User Session
         CoreController::$oSession = new Container('plcauth');
+        CoreController::$oServiceManager = $oServiceManager;
         $this->oDbAdapter = $oDbAdapter;
         $this->aCoreTables = [];
 
@@ -252,7 +256,7 @@ class CoreController extends AbstractActionController {
         # Build Query to get User Based Columns
         $oColumnSel = new Select($this->aCoreTables['table-col']->getTable());
         $oColumnSel->join(['core_field'=>'core_form_field'],'core_field.Field_ID = user_table_column.field_idfs');
-        $oColumnSel->where(['user_idfs'=>CoreController::$oSession->oUser->getID(),'tbl_name'=>$sView]);
+        $oColumnSel->where(['user_idfs'=>CoreController::$oSession->oUser->getID(),'user_table_column.tbl_name'=>$sView]);
         $oColumnSel->order('sortID ASC');
 
         # Get User Based Fields

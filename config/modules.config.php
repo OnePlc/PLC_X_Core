@@ -36,4 +36,5 @@ return [
     'Application',
     'OnePlace\User',
     'OnePlace\Skeleton',
+    'OnePlace\Contact',
 ];
