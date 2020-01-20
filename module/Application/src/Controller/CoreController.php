@@ -84,6 +84,7 @@ class CoreController extends AbstractActionController {
         # Init Core Tables
         CoreController::$aCoreTables['core-log-performance'] = new TableGateway('core_perfomance_log',$this->oDbAdapter);
         CoreController::$aCoreTables['form-button'] = new TableGateway('core_form_button',$this->oDbAdapter);
+        CoreController::$aCoreTables['core-tag'] = new TableGateway('core_tag',$this->oDbAdapter);
         CoreController::$aCoreTables['core-form'] = new TableGateway('core_form',$this->oDbAdapter);
         CoreController::$aCoreTables['core-form-tab'] = new TableGateway('core_form_tab',$this->oDbAdapter);
         CoreController::$aCoreTables['form-tab'] = new TableGateway('user_form_tab',$this->oDbAdapter);
@@ -460,6 +461,30 @@ class CoreController extends AbstractActionController {
                     case 'datetime':
                         if(!$oEntity->setTextField($sFieldName,$aRawData[$sKey].' '.$aRawData[$sKey.'-time'])) {
                             echo 'could not save field '.$sFieldName;
+                        }
+                        break;
+                    case 'select':
+                        # If not numberic - its a new dataset
+                        if(!is_numeric($aRawData[$sKey])) {
+                            # check if table connection already exists
+                            if(!array_key_exists($oField->tbl_cached_name,CoreController::$aCoreTables)) {
+                                CoreController::$aCoreTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
+                            }
+                            # check if addMinimal exists on TableModel
+                            if(method_exists(CoreController::$aCoreTables[$oField->tbl_cached_name],'addMinimal')) {
+                                $iNewEntryID = CoreController::$aCoreTables[$oField->tbl_cached_name]->addMinimal($aRawData[$sKey],$this->sSingleForm,$oField->fieldkey);
+                                # Save New Entry
+                                if(!$oEntity->setTextField($sFieldName,$iNewEntryID)) {
+                                    echo 'could not save field '.$sFieldName;
+                                }
+                            }
+
+                            # if we are here - field is ignored
+                        } else {
+                            # save entry
+                            if(!$oEntity->setTextField($sFieldName,$aRawData[$sKey])) {
+                                echo 'could not save field '.$sFieldName;
+                            }
                         }
                         break;
                     default:

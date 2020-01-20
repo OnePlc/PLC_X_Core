@@ -69,6 +69,9 @@ class CoreEntityTable {
                         case 'tel':
                             $aData[$sFieldName] = $oObject->$sFieldName;
                             break;
+                        case 'currency':
+                            $aData[$sFieldName] = (float)$oObject->$sFieldName;
+                            break;
                         case 'select':
                             $aData[$sFieldName] = $oObject->$sFieldName;
                             break;

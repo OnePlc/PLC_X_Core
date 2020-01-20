@@ -2,21 +2,28 @@
 /**
  * Print Form Field based on Type
  */
+
+use Application\Controller\CoreController;
+
 $iItemID = (isset($this->oItem)) ? $this->oItem->getID() : 0;
+$sExtraAttributes = '';
+if($oField->readonly == 1) {
+    $sExtraAttributes .= ' readonly';
+}
 switch($oField->type) {
     /**
      * Text Field
      */
     case 'text': ?>
         <input type="text" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
-               value="<?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?>" />
+               value="<?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?>"<?=$sExtraAttributes?> />
         <?php
         break;
     /**
      * Textarea
      */
     case 'textarea': ?>
-        <textarea class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"><?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?></textarea>
+        <textarea class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"<?=$sExtraAttributes?> ><?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?></textarea>
         <?php
         break;
     /**
@@ -24,7 +31,7 @@ switch($oField->type) {
      */
     case 'password': ?>
         <input type="password" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
-               value="<?=(isset($this->oItem)) ? '*****************' : ''?>" />
+               value="<?=(isset($this->oItem)) ? '*****************' : ''?>"<?=$sExtraAttributes?> />
         <?php
         break;
     /**
@@ -32,14 +39,14 @@ switch($oField->type) {
      */
     case 'email': ?>
         <input type="email" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
-               value="<?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?>" />
+               value="<?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?>"<?=$sExtraAttributes?> />
         <?php
         break;
     /**
      * Tel (phone) field
      */
     case 'tel': ?>
-        <input type="tel" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" />
+        <input type="tel" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"<?=$sExtraAttributes?> />
         <?php
         break;
     /**
@@ -47,7 +54,7 @@ switch($oField->type) {
      */
     case 'date': ?>
         <input type="date" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
-               value="<?=(isset($this->oItem)) ? date('Y-m-d',strtotime($this->oItem->getTextField($oField->fieldkey))) : ''?>" />
+               value="<?=(isset($this->oItem)) ? date('Y-m-d',strtotime($this->oItem->getTextField($oField->fieldkey))) : ''?>"<?=$sExtraAttributes?> />
         <?php
         break;
     /**
@@ -55,9 +62,9 @@ switch($oField->type) {
      */
     case 'datetime': ?>
         <input type="date" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
-               value="<?=(isset($this->oItem)) ? date('Y-m-d',strtotime($this->oItem->getTextField($oField->fieldkey))) : ''?>" />
+               value="<?=(isset($this->oItem)) ? date('Y-m-d',strtotime($this->oItem->getTextField($oField->fieldkey))) : ''?>"<?=$sExtraAttributes?> />
         <input type="time" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>-time"
-               value="<?=(isset($this->oItem)) ? date('H:i',strtotime($this->oItem->getTextField($oField->fieldkey))) : ''?>" />
+               value="<?=(isset($this->oItem)) ? date('H:i',strtotime($this->oItem->getTextField($oField->fieldkey))) : ''?>"<?=$sExtraAttributes?> />
         <?php
         break;
     /**
@@ -71,7 +78,7 @@ switch($oField->type) {
      * Select field
      */
     case 'select':?>
-        <select class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" id="plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>">
+        <select class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" id="plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>"<?=$sExtraAttributes?> >
             <?php if(isset($this->oItem)) { ?>
                 <?php if($this->oItem->getSelectFieldID($oField->fieldkey) != 0) { ?>
                     <option value="<?= $this->oItem->getSelectFieldID($oField->fieldkey) ?>">
@@ -88,6 +95,13 @@ switch($oField->type) {
                     url: '<?=str_replace(['##ID##'],[$iItemID],$oField->url_ist)?>',
                     dataType: 'json'
                 },
+                <?php
+                if($oField->tbl_permission != '') {
+                    $aPermissionInfo = explode('-', $oField->tbl_permission);
+                    if(CoreController::$oSession->oUser->hasPermission($aPermissionInfo[0], $aPermissionInfo[1])) { ?>
+                tags: true,
+                    <?php }
+                }?>
                 // tags: true, - allow creation of new entries
                 <?php if($oField->allow_clear == 1) { ?>
                 allowClear: true,
@@ -140,6 +154,22 @@ switch($oField->type) {
         </script>
         <?php
         break;
+    /**
+     * Currency Field
+     */
+    case 'currency': ?>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">€</span>
+            </div>
+            <input type="text" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
+                   value="<?=(isset($this->oItem)) ? number_format($this->oItem->getTextField($oField->fieldkey),2) : ''?>"<?=$sExtraAttributes?> />
+        </div>
+        <?php
+        break;
+    /**
+     * Partial Field
+     */
     case 'partial':
         $aPartialData = [];
         $sPartialMode = (isset($this->oItem)) ? 'edit' : 'add';

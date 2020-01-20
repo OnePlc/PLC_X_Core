@@ -13,7 +13,7 @@ switch($oField->type) {
         echo $this->oItem->getTextField($oField->fieldkey);
         break;
     case 'date':
-        if($this->oItem->getTextField($oField->fieldkey) != '0000-00-00 00:00:00') {
+        if($this->oItem->getTextField($oField->fieldkey) != '0000-00-00 00:00:00' && $this->oItem->getTextField($oField->fieldkey) != '0000-00-00') {
             echo date('d.m.Y',strtotime($this->oItem->getTextField($oField->fieldkey)));
         } else {
             echo '-';
@@ -50,6 +50,18 @@ switch($oField->type) {
         <div id="drag-drop-area"></div>
         <?php
         break;
+    /**
+     * Currency Field - View
+     */
+    case 'currency': ?>
+        <div class="input-group mb-3">
+            € <?=number_format($this->oItem->getTextField($oField->fieldkey),2,',','.')?>
+        </div>
+        <?php
+        break;
+    /**
+     * Partial Field - View
+     */
     case 'partial':
         $aPartialData = [];
         $sPartialMode = 'view';

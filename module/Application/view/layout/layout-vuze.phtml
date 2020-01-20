@@ -42,20 +42,18 @@ use Application\Controller\CoreController;
             </a>
 
             <ul class="sidebar-nav">
-                <li class="sidebar-header">
-                    Main
-                </li>
-                <li class="sidebar-item active">
-                    <a href="#dashboards" data-toggle="collapse" class="font-weight-bold sidebar-link">
-                        <i class="align-middle" data-feather="home"></i> <span class="align-middle">Dashboard</span>
-                        <span class="sidebar-badge badge badge-primary">14</span>
-                    </a>
-                    <ul id="dashboards" class="sidebar-dropdown list-unstyled collapse show">
-                        <li class="sidebar-item active"><a class="sidebar-link" href="/">Home</a></li>
-                        <li class="sidebar-item"><a class="sidebar-link" href="/skeleton">Skeleton</a></li>
-                        <li class="sidebar-item"><a class="sidebar-link" href="/user">Users</a></li>
-                    </ul>
-                </li>
+                <?php
+                try {
+                    echo $this->partial('partial/nav-'.CoreController::$oSession->oUser->getTheme());
+                } catch(\RuntimeException $e) {
+                    try {
+                        // no nav partial for theme found - load default
+                        echo $this->partial('partial/nav');
+                    } catch(\RuntimeException $e) {
+                        // no nav partial found
+                    }
+                }
+                ?>
             </ul>
 
             <div class="sidebar-cta">
