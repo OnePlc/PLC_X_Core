@@ -37,6 +37,15 @@ switch($oField->type) {
             echo '-';
         }
         break;
+    case 'multiselect':
+        if(count($this->oItem->getMultiSelectFieldIDs($oField->fieldkey)) != 0) {
+            foreach($this->oItem->getMultiSelectField($oField->fieldkey) as $oItem) {
+                echo $oItem->text.', ';
+            }
+        } else {
+            echo '-';
+        }
+        break;
     case 'gallery': ?>
         <div id="drag-drop-area"></div>
         <?php

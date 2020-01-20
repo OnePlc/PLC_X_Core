@@ -119,6 +119,13 @@ class CoreEntityModel {
         }
     }
 
+    /**
+     * Get Real Value (ID) of select field
+     *
+     * @param $sField name of field (fieldkey)
+     * @return int ID of linked entity
+     * @since 1.0.0
+     */
     public function getSelectFieldID($sField) {
         # Only Set Value of Property already exists
         if(property_exists($this,$sField)) {
@@ -128,23 +135,97 @@ class CoreEntityModel {
         }
     }
 
+    /**
+     * Get linked object of select field
+     *
+     * @param $sField name of field (fieldkey)
+     * @return bool|mixed false if not found, otherwise Entity Model
+     * @since 1.0.0
+     */
     public function getSelectField($sField) {
         # Only Set Value of Property already exists
         if(property_exists($this,$sField)) {
             $iSelectIDFS = $this->$sField;
-            $oField = CoreEntityModel::$aEntityTables['core-form-fields']->select(['fieldkey'=>$sField]);
-            if(count($oField) > 0) {
-                $oField = $oField->current();
-                if(!array_key_exists($oField->tbl_cached_name,CoreEntityModel::$aEntityTables)) {
-                    CoreEntityModel::$aEntityTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
-                    //CoreEntityModel::$aEntityTables[$oField->tbl_name] = CoreController::$oServiceManager->get('OnePlace\Contact\Model\ContactTable');
+            if($iSelectIDFS != 0) {
+                $oField = CoreEntityModel::$aEntityTables['core-form-fields']->select(['fieldkey' => $sField]);
+                if (count($oField) > 0) {
+                    $oField = $oField->current();
+                    if (!array_key_exists($oField->tbl_cached_name, CoreEntityModel::$aEntityTables)) {
+                        CoreEntityModel::$aEntityTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
+                        //CoreEntityModel::$aEntityTables[$oField->tbl_name] = CoreController::$oServiceManager->get('OnePlace\Contact\Model\ContactTable');
+                    }
+                    return CoreEntityModel::$aEntityTables[$oField->tbl_cached_name]->getSingle($iSelectIDFS);
                 }
-                return CoreEntityModel::$aEntityTables[$oField->tbl_cached_name]->getSingle($iSelectIDFS);
             }
         }
 
         # Item Not found
         return false;
+    }
+
+    /**
+     * Get Real Values (IDs) of multiselect field
+     *
+     * @param $sField name of field (fieldkey)
+     * @return array array with IDs of linked entity
+     * @since 1.0.2
+     */
+    public function getMultiSelectFieldIDs($sField) {
+        $oField = CoreController::$aCoreTables['core-form-field']->select([
+            'fieldkey'=>$sField,
+            'form'=>$this->sSingleForm
+        ]);
+        if(count($oField) > 0) {
+            $oField = $oField->current();
+            $sEntityType = explode('-',$this->sSingleForm)[0];
+
+            $oMultiSel = new Select(CoreController::$aCoreTables['core-entity-tag-entity']->getTable());
+            $oMultiSel->join(['core_entity_tag'=>'core_entity_tag'],'core_entity_tag.Entitytag_ID = core_entity_tag_entity.entity_tag_idfs');
+            $oMultiSel->where([
+                'core_entity_tag_entity.entity_idfs'=>$this->getID(),
+                'core_entity_tag_entity.entity_type'=>$sEntityType,
+                'core_entity_tag.tag_idfs'=>1,
+            ]);
+
+            $aFieldIDs = [];
+            $oIDsFromDB = CoreController::$aCoreTables['core-entity-tag-entity']->selectWith($oMultiSel);
+            if(count($oIDsFromDB) > 0) {
+                foreach($oIDsFromDB as $oEntityTag) {
+                    $aFieldIDs[] = $oEntityTag->entity_tag_idfs;
+                }
+            }
+
+            return $aFieldIDs;
+
+        } else {
+            throw new \RuntimeException(sprintf(
+                'Could not find field with identifier %s',
+                $sField
+            ));
+        }
+    }
+
+    /**
+     * Get array with linked objects of multiselect field
+     *
+     * @param $sField name of field (fieldkey)
+     * @return bool|array false if not found, otherwise array with Entity Models
+     * @since 1.0.2
+     */
+    public function getMultiSelectField($sField) {
+        $aEntityTagIDs = $this->getMultiSelectFieldIDs($sField);
+        $aEntityModels = [];
+        if(count($aEntityTagIDs) > 0) {
+            foreach($aEntityTagIDs as $iEntityTagID) {
+                $oEntityTag = CoreController::$aCoreTables['core-entity-tag']->select(['Entitytag_ID'=>$iEntityTagID]);
+                if(count($oEntityTag) > 0) {
+                    $oEntityTag = $oEntityTag->current();
+                    $aEntityModels[] = (object)['id'=>$iEntityTagID,'text'=>$oEntityTag->tag_value];
+                }
+            }
+        }
+
+        return $aEntityModels;
     }
 
     /**

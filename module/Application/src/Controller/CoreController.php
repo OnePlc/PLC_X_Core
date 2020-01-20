@@ -40,7 +40,7 @@ class CoreController extends AbstractActionController {
      * @var array
      * @since 1.0.0
      */
-    protected $aCoreTables;
+    public static $aCoreTables;
 
     /**
      * Database Connection
@@ -79,19 +79,21 @@ class CoreController extends AbstractActionController {
         CoreController::$oSession = new Container('plcauth');
         CoreController::$oServiceManager = $oServiceManager;
         $this->oDbAdapter = $oDbAdapter;
-        $this->aCoreTables = [];
+        CoreController::$aCoreTables = [];
 
         # Init Core Tables
-        $this->aCoreTables['core-log-performance'] = new TableGateway('core_perfomance_log',$this->oDbAdapter);
-        $this->aCoreTables['form-button'] = new TableGateway('core_form_button',$this->oDbAdapter);
-        $this->aCoreTables['core-form'] = new TableGateway('core_form',$this->oDbAdapter);
-        $this->aCoreTables['core-form-tab'] = new TableGateway('core_form_tab',$this->oDbAdapter);
-        $this->aCoreTables['form-tab'] = new TableGateway('user_form_tab',$this->oDbAdapter);
-        $this->aCoreTables['form-field'] = new TableGateway('user_form_field',$this->oDbAdapter);
-        $this->aCoreTables['core-form-field'] = new TableGateway('core_form_field',$this->oDbAdapter);
-        $this->aCoreTables['table-col'] = new TableGateway('user_table_column',$this->oDbAdapter);
-        $this->aCoreTables['table-index'] = new TableGateway('core_index_table',$this->oDbAdapter);
-        $this->aCoreTables['permission'] = new TableGateway('permission',$this->oDbAdapter);
+        CoreController::$aCoreTables['core-log-performance'] = new TableGateway('core_perfomance_log',$this->oDbAdapter);
+        CoreController::$aCoreTables['form-button'] = new TableGateway('core_form_button',$this->oDbAdapter);
+        CoreController::$aCoreTables['core-form'] = new TableGateway('core_form',$this->oDbAdapter);
+        CoreController::$aCoreTables['core-form-tab'] = new TableGateway('core_form_tab',$this->oDbAdapter);
+        CoreController::$aCoreTables['form-tab'] = new TableGateway('user_form_tab',$this->oDbAdapter);
+        CoreController::$aCoreTables['form-field'] = new TableGateway('user_form_field',$this->oDbAdapter);
+        CoreController::$aCoreTables['core-form-field'] = new TableGateway('core_form_field',$this->oDbAdapter);
+        CoreController::$aCoreTables['table-col'] = new TableGateway('user_table_column',$this->oDbAdapter);
+        CoreController::$aCoreTables['core-entity-tag'] = new TableGateway('core_entity_tag',$this->oDbAdapter);
+        CoreController::$aCoreTables['core-entity-tag-entity'] = new TableGateway('core_entity_tag_entity',$this->oDbAdapter);
+        CoreController::$aCoreTables['table-index'] = new TableGateway('core_index_table',$this->oDbAdapter);
+        CoreController::$aCoreTables['permission'] = new TableGateway('permission',$this->oDbAdapter);
     }
 
     /**
@@ -102,7 +104,7 @@ class CoreController extends AbstractActionController {
      * @since 1.0.0
      */
     public function getViewButtons($sView) {
-        $aButtonsDB = $this->aCoreTables['form-button']->select(['form'=>$sView]);
+        $aButtonsDB = CoreController::$aCoreTables['form-button']->select(['form'=>$sView]);
         $aButtons = [];
         if(count($aButtonsDB) > 0) {
             foreach($aButtonsDB as $oBtn) {
@@ -133,13 +135,13 @@ class CoreController extends AbstractActionController {
      */
     public function getViewTabs($sView) {
         # Build Query to get User Based Tabs
-        $oTabSel = new Select($this->aCoreTables['form-tab']->getTable());
+        $oTabSel = new Select(CoreController::$aCoreTables['form-tab']->getTable());
         $oTabSel->join(['core_tab'=>'core_form_tab'],'core_tab.Tab_ID = user_form_tab.tab_idfs');
         $oTabSel->where(['user_form_tab.user_idfs'=>CoreController::$oSession->oUser->getID(),'core_tab.form'=>$sView]);
         $oTabSel->order('user_form_tab.sort_id ASC');
 
         # Get User Based Tabs
-        $aTabsDB = $this->aCoreTables['form-tab']->selectWith($oTabSel);
+        $aTabsDB = CoreController::$aCoreTables['form-tab']->selectWith($oTabSel);
         $aTabs = [];
         if(count($aTabsDB) > 0) {
             foreach($aTabsDB as $oTab) {
@@ -170,13 +172,13 @@ class CoreController extends AbstractActionController {
      */
     public function getUserFormFields($sForm) {
         # Build Query to get User Based Formfields
-        $oFieldSel = new Select($this->aCoreTables['form-field']->getTable());
+        $oFieldSel = new Select(CoreController::$aCoreTables['form-field']->getTable());
         $oFieldSel->join(['core_field'=>'core_form_field'],'core_field.Field_ID = user_form_field.field_idfs');
         $oFieldSel->where(['user_form_field.user_idfs'=>CoreController::$oSession->oUser->getID(),'core_field.form'=>$sForm]);
         $oFieldSel->order('user_form_field.sort_id ASC');
 
         # Get User Based Fields
-        $aFieldsDB = $this->aCoreTables['form-field']->selectWith($oFieldSel);
+        $aFieldsDB = CoreController::$aCoreTables['form-field']->selectWith($oFieldSel);
         $aFieldsByTab = [];
         if(count($aFieldsDB) > 0) {
             foreach($aFieldsDB as $oField) {
@@ -207,26 +209,32 @@ class CoreController extends AbstractActionController {
      *
      * @param string $sForm
      * @param array $aExcludeTypes
+     * @param string $sOnlyType get only this type
      * @return array
      * @since 1.0.0
      */
-    public function getFormFields($sForm = '',$aExcludeTypes = []) {
+    public function getFormFields($sForm = '',$aExcludeTypes = [],$sOnlyType = '') {
         # Build Query to get User Based Formfields
-        $oFieldSel = new Select($this->aCoreTables['core-form-field']->getTable());
+        $oFieldSel = new Select(CoreController::$aCoreTables['core-form-field']->getTable());
+        $aWhere = [];
         if($sForm != '') {
-            $oFieldSel->where(['form' => $sForm]);
+            $aWhere['form'] = $sForm;
         }
+        if($sOnlyType != '') {
+            $aWhere['type'] = $sOnlyType;
+        }
+        $oFieldSel->where($aWhere);
         //$oFieldSel->order('user_form_field.sort_id ASC');
 
         # Get Form Based Fields
-        $aFieldsDB = $this->aCoreTables['core-form-field']->selectWith($oFieldSel);
+        $aFieldsDB = CoreController::$aCoreTables['core-form-field']->selectWith($oFieldSel);
         $aFields = [];
         if(count($aFieldsDB) > 0) {
             foreach($aFieldsDB as $oField) {
                 # Order By Forms if all forms
                 if($sForm == '') {
                     if(!array_key_exists($oField->form,$aFields)) {
-                        $oForm = $this->aCoreTables['core-form']->select(['form_key'=>$oField->form]);
+                        $oForm = CoreController::$aCoreTables['core-form']->select(['form_key'=>$oField->form]);
                         if(count($oForm) > 0) {
                             $aFields[$oField->form] = [
                                 'oForm' => $oForm->current(),
@@ -254,13 +262,13 @@ class CoreController extends AbstractActionController {
      */
     public function getIndexColumns($sView) {
         # Build Query to get User Based Columns
-        $oColumnSel = new Select($this->aCoreTables['table-col']->getTable());
+        $oColumnSel = new Select(CoreController::$aCoreTables['table-col']->getTable());
         $oColumnSel->join(['core_field'=>'core_form_field'],'core_field.Field_ID = user_table_column.field_idfs');
         $oColumnSel->where(['user_idfs'=>CoreController::$oSession->oUser->getID(),'user_table_column.tbl_name'=>$sView]);
         $oColumnSel->order('sortID ASC');
 
         # Get User Based Fields
-        $aColumnsDB = $this->aCoreTables['table-col']->selectWith($oColumnSel);
+        $aColumnsDB = CoreController::$aCoreTables['table-col']->selectWith($oColumnSel);
         $aColumns = [];
         if(count($aColumnsDB) > 0) {
             foreach($aColumnsDB as $oCol) {
@@ -291,7 +299,7 @@ class CoreController extends AbstractActionController {
     public function getIndexTables() {
         # Get Index Tables
         $aIndexTables = [];
-        $oTablesDB = $this->aCoreTables['table-index']->select();
+        $oTablesDB = CoreController::$aCoreTables['table-index']->select();
         foreach($oTablesDB as $oTbl) {
             $aIndexTables[] = $oTbl;
         }
@@ -341,12 +349,12 @@ class CoreController extends AbstractActionController {
         $aTabsByForms = [];
 
         # Get Tabs from Database
-        $oTabsDB = $this->aCoreTables['core-form-tab']->select();
+        $oTabsDB = CoreController::$aCoreTables['core-form-tab']->select();
         foreach($oTabsDB as $oTab) {
             # Order by Form
             if(!array_key_exists($oTab->form,$aTabsByForms)) {
                 # Load Form Info
-                $oForm = $this->aCoreTables['core-form']->select(['form_key'=>$oTab->form]);
+                $oForm = CoreController::$aCoreTables['core-form']->select(['form_key'=>$oTab->form]);
                 if(count($oForm) > 0) {
                     $aTabsByForms[$oTab->form] = [
                         'oForm'=>$oForm->current(),
@@ -370,7 +378,7 @@ class CoreController extends AbstractActionController {
         $aPermissionsByModules = [];
 
         # Load Permissions from database
-        $oPermsFromDB = $this->aCoreTables['permission']->select();
+        $oPermsFromDB = CoreController::$aCoreTables['permission']->select();
         foreach($oPermsFromDB as $oPerm) {
             $sModule = str_replace(['\\'],['-'],$oPerm->module);
             # Order by module
@@ -411,7 +419,7 @@ class CoreController extends AbstractActionController {
 
         foreach(array_keys($aRawData) as $sKey) {
             $sFieldName = substr($sKey,strlen($this->sSingleForm.'_'));
-            $oField = $this->aCoreTables['core-form-field']->select(['form'=>$this->sSingleForm,'fieldkey'=>$sFieldName]);
+            $oField = CoreController::$aCoreTables['core-form-field']->select(['form'=>$this->sSingleForm,'fieldkey'=>$sFieldName]);
             if(count($oField) > 0) {
                 $oField = $oField->current();
                 switch($oField->type) {
@@ -442,7 +450,7 @@ class CoreController extends AbstractActionController {
     protected function attachFormData(array $aRawData,$oEntity) {
         foreach(array_keys($aRawData) as $sKey) {
             $sFieldName = substr($sKey,strlen($this->sSingleForm.'_'));
-            $oField = $this->aCoreTables['core-form-field']->select(['form'=>$this->sSingleForm,'fieldkey'=>$sFieldName]);
+            $oField = CoreController::$aCoreTables['core-form-field']->select(['form'=>$this->sSingleForm,'fieldkey'=>$sFieldName]);
             if(count($oField) > 0) {
                 $oField = $oField->current();
                 switch($oField->type) {
@@ -503,8 +511,36 @@ class CoreController extends AbstractActionController {
         }
     }
 
+    protected function updateMultiSelectFields($aRawFormData,$oItem,$sForm,$sEntityTypeOverWrite = '') {
+        $aFields = $this->getFormFields($sForm,[],'multiselect');
+        $sEntityType = ($sEntityTypeOverWrite != '') ? $sEntityTypeOverWrite : explode('-',$sForm)[0];
+        if(count($aFields) > 0) {
+            # lets loop over all multiselect fields of this form
+            foreach($aFields as $oField) {
+                # lets see if we find data for this field
+                if(array_key_exists($sForm.'_'.$oField->fieldkey,$aRawFormData)) {
+                    # Reset all tags for this entity
+                    CoreController::$aCoreTables['core-entity-tag-entity']->delete([
+                        'entity_idfs'=>$oItem->getID(),
+                        'entity_type'=>$sEntityType,
+                    ]);
+                    # save new tags for entity
+                    if(count($aRawFormData[$sForm.'_'.$oField->fieldkey]) > 0) {
+                        foreach($aRawFormData[$sForm.'_'.$oField->fieldkey] as $iVal) {
+                            CoreController::$aCoreTables['core-entity-tag-entity']->insert([
+                                'entity_idfs'=>$oItem->getID(),
+                                'entity_tag_idfs'=>$iVal,
+                                'entity_type'=>$sEntityType,
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     protected function logPerfomance($sAction,$fUtime,$fStime) {
-        $this->aCoreTables['core-log-performance']->insert([
+        CoreController::$aCoreTables['core-log-performance']->insert([
             'action'=>$sAction,
             'utime'=>(float)$fUtime,
             'stime'=>(float)$fStime,
