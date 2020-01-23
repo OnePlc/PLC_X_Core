@@ -160,6 +160,7 @@ class IndexController extends CoreController {
                 'permission'=>'index',
                 'module'=>'Application\Controller\IndexController',
             ]);
+
             # Updates
             $oUserPermTbl->insert([
                 'user_idfs'=>$iAdminUserID,
@@ -349,7 +350,7 @@ class IndexController extends CoreController {
 
             echo 'theme files installed';
 
-            return $this->redirect()->toRoute('logout');
+            return $this->redirect()->toRoute('application',['action'=>'themes']);
         }
     }
 
@@ -364,7 +365,7 @@ class IndexController extends CoreController {
                 'update' => [],
             ];
 
-            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/*', GLOB_NOSORT) as $sModulePath) {
+            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/*', GLOB_ONLYDIR) as $sModulePath) {
                 $sModule = basename($sModulePath);
                 $sModuleName = explode('-',$sModule)[1];
 
@@ -385,7 +386,7 @@ class IndexController extends CoreController {
                 'update' => [],
             ];
 
-            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/*', GLOB_NOSORT) as $sModulePath) {
+            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/*', GLOB_ONLYDIR) as $sModulePath) {
                 $sModule = basename($sModulePath);
                 $sModuleName = explode('-',$sModule)[1];
 

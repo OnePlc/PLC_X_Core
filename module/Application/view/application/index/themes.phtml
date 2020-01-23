@@ -11,7 +11,7 @@ use Application\Controller\CoreController; ?>
                     Default
                     <?=(CoreController::$oSession->oUser->getTheme() != 'default') ? '<a href="/user/settheme/default">Activate</a>' : ''?>
                 </li>
-                <?php foreach(glob($_SERVER['DOCUMENT_ROOT'].'/themes/*',GLOB_NOSORT) as $sThemeLocation) {
+                <?php foreach(glob($_SERVER['DOCUMENT_ROOT'].'/themes/*',GLOB_ONLYDIR) as $sThemeLocation) {
                     $sTheme = basename($sThemeLocation); ?>
                     <li class="list-group-item">
                         <?=ucfirst($sTheme)?>
