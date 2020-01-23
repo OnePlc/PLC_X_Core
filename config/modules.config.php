@@ -33,10 +33,6 @@ return [
     'Laminas\Db',
     'Laminas\Router',
     'Laminas\Validator',
-    'OnePlace\Tag',
-    'OnePlace\Article',
     'Application',
     'OnePlace\User',
-    'OnePlace\Skeleton',
-    'OnePlace\Contact',
 ];
