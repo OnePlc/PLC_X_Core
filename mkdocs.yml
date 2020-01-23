@@ -4,9 +4,6 @@ nav:
   - Home: index.md
   - Introduction: intro.md
   - 'Quick Start': quick-start.md
-  - Reference:
-      - 'Dynamic Fields': dynamic-fields.md
-      - Examples: examples.md
   - 'User Management':
       - Permissions: user-permissions.md
       - 'Form Tabs': user-formtabs.md
