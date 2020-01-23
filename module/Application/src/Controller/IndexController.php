@@ -349,7 +349,7 @@ class IndexController extends CoreController {
 
             echo 'theme files installed';
 
-            return $this->redirect()->toRoute('application',['action'=>'themes']);
+            return $this->redirect()->toRoute('logout');
         }
     }
 
@@ -407,8 +407,6 @@ class IndexController extends CoreController {
                     $this->parseSQLInstallFile($filename, $this->oDbAdapter);
                 }
             }
-
-            return false;
 
             return $this->redirect()->toRoute('home');
         }

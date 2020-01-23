@@ -15,6 +15,11 @@ Once you have, use the `create-project` command to create a new application:
 $ composer create-project oneplace/oneplace-core my-app
 ```
 
+Fix permissions while installing
+```bash
+chmod -R 777 my-app
+```
+
 ## Setup
 Open the browser and go to your configured URL for onePlace.
 You will see the setup screen.
