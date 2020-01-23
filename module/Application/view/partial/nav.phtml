@@ -3,7 +3,10 @@
 use Application\Controller\CoreController;
 
 # Load User Index Permissions as base for navigation
-$aIndexPermissions = CoreController::$oSession->oUser->getMyPermissions('index',true);
+$aIndexPermissions = [];
+if(is_object(CoreController::$oSession->oUser)) {
+    $aIndexPermissions = CoreController::$oSession->oUser->getMyPermissions('index', true);
+}
 ?>
 <li class="sidebar-header">
     Main

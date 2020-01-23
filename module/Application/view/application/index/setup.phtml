@@ -1,2 +1,92 @@
-<h1>Welcome to onePlace</h1>
-<p>Lets setup the software first</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title">Welcome to onePlace</h1>
+                    <p>Lets setup the software first</p>
+                </div>
+                <div class="card-body">
+                    <form action="" method="POST">
+                        <div class="form-row align-items-center">
+                            <!-- Database host -->
+                            <div class="col-auto">
+                                <label for="setup_dbhost">DB Host</label>
+                                <input type="text" class="form-control" name="setup_dbhost" aria-describedby="dbhostHelp" placeholder="localhost" />
+                                <small id="dbhostHelp" class="form-text text-muted">Host of MySQL Database</small>
+                            </div>
+                            <!-- Database host -->
+
+                            <!-- Database name -->
+                            <div class="col-auto">
+                                <label for="setup_dbname">DB Name</label>
+                                <input type="text" class="form-control" name="setup_dbname" aria-describedby="dbnameHelp" placeholder="oneplace" />
+                                <small id="dbnameHelp" class="form-text text-muted">Name of MySQL Database</small>
+                            </div>
+                            <!-- Database name -->
+
+                            <!-- Database user -->
+                            <div class="col-auto">
+                                <label for="setup_dbuser">DB User</label>
+                                <input type="text" class="form-control" name="setup_dbuser" aria-describedby="dbuserHelp" placeholder="DB User" />
+                                <small id="dbuserHelp" class="form-text text-muted">User for MySQL Database.</small>
+                            </div>
+                            <!-- Database user -->
+
+                            <!-- Database password -->
+                            <div class="col-auto">
+                                <label for="setup_dbpass">DB User Password</label>
+                                <input type="password" class="form-control" name="setup_dbpass" aria-describedby="dbpassHelp" placeholder="DB User Password here" />
+                                <small id="dbpassHelp" class="form-text text-muted">Password of MySQL User</small>
+                            </div>
+                            <!-- Database password -->
+                        </div>
+
+                        <hr/>
+
+                        <div class="form-row align-items-center">
+                            <!-- Admin name -->
+                            <div class="col-auto">
+                                <label for="setup_adminname">Admin Username</label>
+                                <input type="text" class="form-control" name="setup_adminname" aria-describedby="adminNameHelp" placeholder="plcadmin" />
+                                <small id="adminNameHelp" class="form-text text-muted">Admin Username</small>
+                            </div>
+                            <!-- Admin name -->
+
+                            <!-- Admin email -->
+                            <div class="col-auto">
+                                <label for="setup_adminemail">Admin E-Mail</label>
+                                <input type="text" class="form-control" name="setup_adminemail" aria-describedby="adminMailHelp" placeholder="Your E-Mail" />
+                                <small id="adminMailHelp" class="form-text text-muted">Admin E-Mail</small>
+                            </div>
+                            <!-- Admin email -->
+
+                            <!-- Admin password -->
+                            <div class="col-auto">
+                                <label for="setup_adminpass">Admin Password</label>
+                                <input type="password" class="form-control" name="setup_adminpass" aria-describedby="adminPassHelp" placeholder="Password" />
+                                <small id="adminPassHelp" class="form-text text-muted">Admin Password</small>
+                            </div>
+                            <!-- Admin password -->
+
+                            <!-- Admin password repeat -->
+                            <div class="col-auto">
+                                <label for="setup_adminpassrep">Repeat Password</label>
+                                <input type="password" class="form-control" name="setup_adminpassrep" aria-describedby="adminPassHelpRep" placeholder="Repeat" />
+                                <small id="adminPassHelpRep" class="form-text text-muted">Repeat Password</small>
+                            </div>
+                            <!-- Admin password repeat -->
+                        </div>
+
+                        <hr/>
+
+                        <div class="form-row">
+                            <!-- Submit -->
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

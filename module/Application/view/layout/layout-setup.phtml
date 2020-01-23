@@ -23,7 +23,6 @@ use Application\Controller\CoreController;
 
         <!-- Scripts -->
         <?= $this->inlineScript()
-            ->prependFile($this->basePath('js/listener.js'))
             ->prependFile($this->basePath('js/bootstrap.min.js'))
             ->prependFile($this->basePath('js/jquery-3.4.1.min.js'))
         ?>
@@ -36,39 +35,16 @@ use Application\Controller\CoreController;
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <a class="navbar-brand" href="<?= $this->url('home') ?>">
-                        <img src="<?= $this->basePath('img/laminas-logo.svg') ?>" height="28" alt="Laminas MVC Skeleton"/>&nbsp;onePlace X
+                        onePlace X
                     </a>
                 </div>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto">
-                        <?php
-                        if(is_object(CoreController::$oSession->oUser)) {
-                            try {
-                                echo $this->partial('partial/nav-' . CoreController::$oSession->oUser->getTheme());
-                            } catch (\RuntimeException $e) {
-                                try {
-                                    // no nav partial for theme found - load default
-                                    echo $this->partial('partial/nav');
-                                } catch (\RuntimeException $e) {
-                                    // no nav partial found
-                                }
-                            }
-                        } else {
-                            // no nav partial for theme found - load default
-                            echo $this->partial('partial/nav');
-                        }
-                        ?>
-                    </ul>
+                    Setup
                 </div>
             </div>
         </nav>
         <div class="container">
-            <?= $this->partial('partial/breadcrumb', ['aButtons'=>isset($this->aButtons) ? $this->aButtons : [], 'pages'=>[]]); ?>
-            <div class="row py-4">
-                <div class="col-md-12 py-4">
-                    <?= $this->content ?>
-                </div>
-            </div>
+            <?= $this->content ?>
             <hr>
             <footer>
                 <p>&copy; 2010-<?= date('Y') ?> by Verein onePlace. Alle Rechte vorbehalten.</p>
