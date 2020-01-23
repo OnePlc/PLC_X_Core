@@ -160,6 +160,12 @@ class IndexController extends CoreController {
                 'permission'=>'index',
                 'module'=>'Application\Controller\IndexController',
             ]);
+            # Updates
+            $oUserPermTbl->insert([
+                'user_idfs'=>$iAdminUserID,
+                'permission'=>'updates',
+                'module'=>'Application\Controller\IndexController',
+            ]);
             # User Index
             $oUserPermTbl->insert([
                 'user_idfs'=>$iAdminUserID,
@@ -344,6 +350,67 @@ class IndexController extends CoreController {
             echo 'theme files installed';
 
             return $this->redirect()->toRoute('application',['action'=>'themes']);
+        }
+    }
+
+    public function updateAction() {
+        $oRequest = $this->getRequest();
+
+        if(!$oRequest->isPost()) {
+            $this->setThemeBasedLayout('application');
+
+            $aInfo = [
+                'install' => [],
+                'update' => [],
+            ];
+
+            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/*', GLOB_NOSORT) as $sModulePath) {
+                $sModule = basename($sModulePath);
+                $sModuleName = explode('-',$sModule)[1];
+
+                try {
+                    $oBaseTbl = new TableGateway($sModuleName,$this->oDbAdapter);
+                    $oBaseTbl->select();
+                } catch(\RuntimeException $e) {
+                    $aInfo['install'][] = $sModuleName;
+                }
+            }
+
+            return new ViewModel([
+                'aInfo'=>$aInfo,
+            ]);
+        } else {
+            $aInfo = [
+                'install' => [],
+                'update' => [],
+            ];
+
+            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/*', GLOB_NOSORT) as $sModulePath) {
+                $sModule = basename($sModulePath);
+                $sModuleName = explode('-',$sModule)[1];
+
+                try {
+                    $oBaseTbl = new TableGateway($sModuleName,$this->oDbAdapter);
+                    $oBaseTbl->select();
+                } catch(\RuntimeException $e) {
+                    $aInfo['install'][] = $sModule;
+                }
+            }
+
+            $this->layout('layout/json');
+            foreach($aInfo['install'] as $sInstallMod) {
+                # Core DB Structure
+                $filename = $_SERVER['DOCUMENT_ROOT'] . '/../vendor/oneplace/'.$sInstallMod.'/data/install.sql';
+                echo 'update '.$sInstallMod;
+                if (file_exists($filename)) {
+                    echo 'go';
+                    $this->parseSQLInstallFile($filename, $this->oDbAdapter);
+                }
+            }
+
+            return false;
+
+            return $this->redirect()->toRoute('home');
         }
     }
 }

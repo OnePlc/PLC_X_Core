@@ -9,3 +9,9 @@ INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES
 ('noreply-port', '587'),
 ('noreply-pw', 'EMAILACCOUNTPASS'),
 ('noreply-server', 'SMTPHOSTNAME');
+
+INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav_href`, `show_in_menu`) VALUES
+('index', 'Application\\Controller\\IndexController', 'Home', 'Home', '/', 0),
+('update', 'Application\\Controller\\IndexController', 'Updates', '', '', 0),
+('addtheme', 'Application\\Controller\\IndexController', 'Upload Theme', '', '/application/addtheme', 0),
+('themes', 'Application\\Controller\\IndexController', 'Theme Selection', '', '/application/themes', 0);

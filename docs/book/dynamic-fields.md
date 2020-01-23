@@ -23,11 +23,18 @@ INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `
 ### Text
 
 ### Textarea
+```sql
+ALTER TABLE `skeleton` ADD `description` TEXT NOT NULL DEFAULT '' AFTER `label`; 
+INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `form`, `class`, `url_view`, `url_ist`, `show_widget_left`, `allow_clear`, `readonly`, `tbl_cached_name`, `tbl_class`, `tbl_permission`) VALUES (NULL, 'textarea', 'Description', 'description', 'skeleton-base', 'skeleton-single', 'col-md-12', '', '', '0', '1', '0', '', '', ''); 
+```
 
 ### Date 
 
 ### Datetime
-
+```sql
+ALTER TABLE `skeleton` ADD `custom_date` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' AFTER `modified_date`; 
+INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `form`, `class`, `url_view`, `url_ist`, `show_widget_left`, `allow_clear`, `readonly`, `tbl_cached_name`, `tbl_class`, `tbl_permission`) VALUES (NULL, 'datetime', 'Custom Date', 'custom_date', 'skeleton-base', 'skeleton-single', 'col-md-3', '', '', '0', '1', '0', '', '', ''); 
+```
 ### Time
 
 ### Tel
@@ -35,3 +42,10 @@ INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `
 ### E-Mail
 
 ### Partial
+
+## After SQL installation of field
+
+Then go to selected user, edit, and add the new fields so you can see/edit them
+You can also add to index column if you like.
+
+Have fun

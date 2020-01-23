@@ -44,6 +44,16 @@ return [
                     ],
                 ],
             ],
+            'update' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/update',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'update',
+                    ],
+                ],
+            ],
             'application' => [
                 'type'    => Segment::class,
                 'options' => [
