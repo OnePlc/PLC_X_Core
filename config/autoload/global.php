@@ -1,8 +1,7 @@
 <?php
-
-return [
-    'db' => [
+return array(
+    'db' => array(
         'driver' => 'Pdo',
-        'dsn' => 'YOURDNSHERE',
-    ],
-];
+        'dsn' => 'mysql:dbname=plcdemo;host=localhost;charset=utf8',
+    ),
+);

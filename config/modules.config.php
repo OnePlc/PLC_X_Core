@@ -20,6 +20,9 @@
  * This should be an array of module namespaces used in the application.
  */
 return [
+    'Laminas\Log',
+    'Laminas\Form',
+    'Laminas\InputFilter',
     'Laminas\Paginator',
     'Laminas\Mvc\Plugin\FilePrg',
     'Laminas\Mvc\Plugin\FlashMessenger',

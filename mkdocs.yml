@@ -15,6 +15,7 @@ nav:
 site_name: oneplace-core
 site_description: "onePlace Application Framework Core Module"
 repo_url: 'https://github.com/OnePlc/PLC_X_Core'
-theme: readthedocs
+theme:
+  name: bootstrap4
 extra:
   project: onePlc

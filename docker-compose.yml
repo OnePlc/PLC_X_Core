@@ -1,7 +1,13 @@
-laminas:
+oneplc:
   build: .
   dockerfile: Dockerfile
   ports:
    - "8080:80"
   volumes:
    - .:/var/www
+localhost:
+  image: mariadb
+  restart: always
+  environment:
+    MYSQL_ROOT_PASSWORD: example
+    MYSQL_DATABASE: plcdemo
