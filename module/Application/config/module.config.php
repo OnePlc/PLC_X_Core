@@ -34,6 +34,16 @@ return [
                     ],
                 ],
             ],
+            'setup' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/setup',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'setup',
+                    ],
+                ],
+            ],
             'application' => [
                 'type'    => Segment::class,
                 'options' => [

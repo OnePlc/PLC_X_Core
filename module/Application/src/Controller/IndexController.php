@@ -36,4 +36,17 @@ class IndexController extends CoreController {
             'oUser'=>CoreController::$oSession->oUser,
         ]);
     }
+
+    /**
+     * Initial Setup
+     *
+     * @since 1.0.2
+     * @return ViewModel - View Object with Data from Controller
+     */
+    public function setupAction() {
+        # Set Layout based on users theme
+        $this->layout('layout/layout');
+
+        return new ViewModel([]);
+    }
 }
