@@ -43,6 +43,8 @@ class IndexControllerTest extends AbstractHttpControllerTestCase {
 
     public function initTestSession() {
         $this->dispatch('/login', 'POST', ['plc_login_user'=>'travis@1plc.ch','plc_login_pass'=>'1234']);
+        $this->assertResponseStatusCode(302);
+        $this->assertRedirectTo('home');
         /**
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
@@ -72,6 +74,7 @@ class IndexControllerTest extends AbstractHttpControllerTestCase {
         $this->assertControllerName(IndexController::class); // as specified in router's controller name alias
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');
+        $this->assertRedirectTo('login');
     }
 
     public function testInvalidRouteDoesNotCrash() {
