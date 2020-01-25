@@ -22,6 +22,9 @@ matrix:
 
 before_install:
   - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
+  - mysql -u travis --password="" < module/Application/data/bootstrap.sql
+  - mysql -u travis --password="" < module/Application/data/structure.sql
+  - mysql -u travis --password="" < module/Application/data/data.sql
 
 install:
   - travis_retry composer install $COMPOSER_ARGS --ignore-platform-reqs
