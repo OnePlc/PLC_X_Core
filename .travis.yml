@@ -22,15 +22,13 @@ matrix:
 
 before_install:
   - mysql -u travis --password="" < module/Application/data/travis.sql
-  - if [[ $TEST_COVERAGE == 'true' ]]; then composer test-coverage ; else composer test ; fi
+  - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
 
 install:
   - travis_retry composer install $COMPOSER_ARGS --ignore-platform-reqs
   - if [[ $LEGACY_DEPS != '' ]]; then travis_retry composer update $COMPOSER_ARGS --with-dependencies $LEGACY_DEPS ; fi
   - if [[ $DEPS == 'latest' ]]; then travis_retry composer update $COMPOSER_ARGS ; fi
   - if [[ $DEPS == 'lowest' ]]; then travis_retry composer update --prefer-lowest --prefer-stable $COMPOSER_ARGS ; fi
-  - if [[ $TEST_COVERAGE == 'true' ]]; then travis_retry composer require --dev $COMPOSER_ARGS $COVERAGE_DEPS ; fi
-  - stty cols 120 && composer show
   - cp config/autoload/global.php.dist config/autoload/global.php
   - cp config/autoload/local.php.dist config/autoload/local.php
   - mysql -u travis --password="" "travis" < module/Application/data/structure.sql
@@ -38,8 +36,15 @@ install:
   - mysql -u travis --password="" "travis" < vendor/oneplace/oneplace-user/data/data.sql
   - mysql -u travis --password="" "travis" < module/Application/data/bootstrap.sql
   - mysql -u travis --password="" "travis" < module/Application/data/data.sql
+  - if [[ $TEST_COVERAGE == 'true' ]]; then travis_retry composer require --dev $COMPOSER_ARGS $COVERAGE_DEPS ; fi
+  - stty cols 120 && composer show
+
+script:
+  - if [[ $TEST_COVERAGE == 'true' ]]; then composer test-coverage ; else composer test ; fi
+  - if [[ $CS_CHECK == 'true' ]]; then composer cs-check ; fi
 
 after_script:
+  - if [[ $TEST_COVERAGE == 'true' ]]; then vendor/bin/php-coveralls -v ; fi
 
 services:
   - mysql
