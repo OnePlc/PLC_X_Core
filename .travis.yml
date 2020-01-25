@@ -23,6 +23,10 @@ matrix:
 before_install:
   - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
   - mysql -u travis --password="" < module/Application/data/travis.sql
+  - mysql -u travis --password="" "travis" < module/Application/data/structure.sql
+  - mysql -u travis --password="" "travis" < vendor/oneplace/oneplace-user/data/structure.sql
+  - mysql -u travis --password="" "travis" < vendor/oneplace/oneplace-user/data/data.sql
+  - mysql -u travis --password="" "travis" < module/Application/data/data.sql
 
 install:
   - travis_retry composer install $COMPOSER_ARGS --ignore-platform-reqs
