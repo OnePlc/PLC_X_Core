@@ -37,6 +37,42 @@ how to utilize user manager
 
 how to create own modules
 
+## Integration to 3rd party services
+
+We also have tons of 3rd party plugins readdy for you to use - and, skeleton
+plugins for you to make your own plugins ! 
+
+The first we release is our wordpress plugin boilerplate and skeleton.
+
+You have built an onePlace Module based on Skeleton? Well, you get your corresponding
+wordpress plugin to show off your Skeleton Entities e.G in Sliders, as easy-to-use Elementor
+Widgets - just for free and added on top. If you use Skeleton compatible API - you wont need to
+code a single line of code to make your wordpress plugin - and even publishing it on wordpress.org
+
+[oneplace-wordpress-plugin-skeleton](https://github.com/OnePlc/WP_PLC_Skeleton)
+[oneplace-wordpress-plugin-boilerplate](https://github.com/OnePlc/WP_PLC_Boilerplate)
+
+A lot more will follow as we are porting them from our closed source version, almost
+any integration you can possibly imagine:
+
+* github.com / git
+* extended email support (receive/send)
+* telegram bot api
+* whatsapp business integration
+* online banking integrations (iso certified qr payments supported)
+* hardware integrations - RFID login to app for example
+* control your coffee machine with oneplace..
+* face recognization
+* a lot more ... you will see soon
+
+and just because ..its oneplace:
+
+* unity (we have a game ...and - guess what, a game skeleton for your own game based on oneplace)
+
+> Contact us if you can't wait for a certain api / integration - its already working
+in our closed source projects and we are working hard to release it under BSD-3, which requires
+ a lot of refactoring - maybe you can help. [hello@1plc.ch](hello@1plc.ch) or [Telegram](t.me/OnePLC)
+
 ## Documentation
 
 Documentation will be extended soon.
