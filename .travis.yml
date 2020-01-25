@@ -39,7 +39,9 @@ install:
   - mysql -u travis --password="" "travis" < module/Application/data/bootstrap.sql
   - mysql -u travis --password="" "travis" < module/Application/data/data.sql
 
-script:
+script: "sbt clean coverage test"
+
+after_success: "sbt coveralls"
 
 after_script:
 
