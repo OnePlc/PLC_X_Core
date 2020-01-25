@@ -24,6 +24,11 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
+use Laminas\Mail;
+use Laminas\Mail\Transport\Smtp as SmtpTransport;
+use Laminas\Mail\Transport\SmtpOptions;
+use Laminas\Mime\Message as MimeMessage;
+use Laminas\Mime\Part as MimePart;
 
 class CoreController extends AbstractActionController {
     /**
@@ -66,6 +71,14 @@ class CoreController extends AbstractActionController {
      */
     public static $aPerfomanceLogStart = [];
 
+    /**
+     * Application wide settings
+     *
+     * @var array $aGlobalSettings
+     * @since 1.0.4
+     */
+    public static $aGlobalSettings = [];
+
     public static $oServiceManager;
 
     /**
@@ -95,6 +108,9 @@ class CoreController extends AbstractActionController {
         CoreController::$aCoreTables['core-entity-tag-entity'] = new TableGateway('core_entity_tag_entity',$this->oDbAdapter);
         CoreController::$aCoreTables['table-index'] = new TableGateway('core_index_table',$this->oDbAdapter);
         CoreController::$aCoreTables['permission'] = new TableGateway('permission',$this->oDbAdapter);
+        CoreController::$aCoreTables['settings'] = new TableGateway('settings',$this->oDbAdapter);
+
+        $this->loadSettings();
     }
 
     /**
@@ -578,5 +594,75 @@ class CoreController extends AbstractActionController {
     protected function rutime($ru, $rus, $index) {
         return ($ru["ru_$index.tv_sec"]*1000 + intval($ru["ru_$index.tv_usec"]/1000))
             -  ($rus["ru_$index.tv_sec"]*1000 + intval($rus["ru_$index.tv_usec"]/1000));
+    }
+
+    protected function sendEmail($sTemplate,$aTemplateData,$sToMail,$sToName,$sSubject) {
+        $viewRenderer = CoreController::$oServiceManager->get('ViewRenderer');
+
+        # Get E-Mail html based on template
+        $sBodyHtml = $viewRenderer->render($sTemplate, $aTemplateData);
+
+        # Build Mime-part
+        $oHtml = new MimePart($sBodyHtml);
+        $oHtml->type = "text/html";
+
+        # Build Body
+        $oBody = new MimeMessage();
+        $oBody->addPart($oHtml);
+
+        # Build Message
+        $oMail = new Mail\Message();
+        $oMail->setEncoding('UTF-8');
+        $oMail->setBody($oBody);
+        $oMail->setFrom('no-reply@1plc.ch', 'onePlace');
+        $oMail->addTo($sToMail, $sToName);
+        $oMail->setSubject($sSubject);
+
+        # Setup SMTP Transport for proper email sending
+        $oTransport = new SmtpTransport();
+        $aOptions   = new SmtpOptions([
+            'name'              => 'mail.cyon.ch',
+            'host'              => 'mail.cyon.ch',
+            'port'              => 587,
+            'connection_class'  => 'login',
+            'connection_config' => [
+                'username' => 'no-reply@1plc.ch',
+                'password' => 'gH:KFPb8<!9D',
+                'ssl'      => 'tls',
+            ],
+        ]);
+        $oTransport->setOptions($aOptions);
+        $oTransport->send($oMail);
+    }
+
+    /**
+     * Load app wide settings into cache
+     *
+     * @since 1.0.3
+     */
+    protected function loadSettings() {
+        $aSettings = [];
+        $oSettingsFromDB = CoreController::$aCoreTables['settings']->select();
+        if(count($oSettingsFromDB) > 0) {
+            foreach($oSettingsFromDB as $oSet) {
+                $aSettings[$oSet->settings_key] = $oSet->settings_value;
+            }
+        }
+        CoreController::$aGlobalSettings = $aSettings;
+    }
+
+    /**
+     * Get specific setting from app settings cache
+     *
+     * @param $sKey
+     * @return bool|mixed value or false if not found
+     * @since 1.0.3
+     */
+    public function getSetting($sKey) {
+        if(array_key_exists($sKey,CoreController::$aGlobalSettings)) {
+            return CoreController::$aGlobalSettings[$sKey];
+        } else {
+            return false;
+        }
     }
 }

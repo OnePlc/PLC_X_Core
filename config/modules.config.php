@@ -28,6 +28,7 @@ return [
     'Laminas\Mvc\Plugin\FlashMessenger',
     'Laminas\Mvc\Plugin\Identity',
     'Laminas\Mvc\Plugin\Prg',
+    'Laminas\Mail',
     'Laminas\Session',
     'Laminas\Mvc\I18n',
     'Laminas\I18n',

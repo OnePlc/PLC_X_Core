@@ -4,11 +4,8 @@ nav:
   - Home: index.md
   - Introduction: intro.md
   - 'Quick Start': quick-start.md
-  - 'User Management':
-      - Permissions: user-permissions.md
-      - 'Form Tabs': user-formtabs.md
-      - 'Form Fields': user-formfields.md
-      - 'Index Columns': user-indexcols.md
+  - 'Advanced Configuration':
+      - 'Themes': themes.md
 site_name: oneplace-core
 site_description: "onePlace Application Framework Core Module"
 repo_url: 'https://github.com/OnePlc/PLC_X_Core'

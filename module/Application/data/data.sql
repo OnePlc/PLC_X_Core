@@ -3,6 +3,7 @@
 --
 INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES
 ('app-title', 'OnePlace ##VERSION##'),
+('app-url', 'https://oneplace.example.com'),
 ('noreply-email', 'no-reply@example.com'),
 ('noreply-footer-template', 'powered by onePlace'),
 ('noreply-from', 'YOURNAME'),
