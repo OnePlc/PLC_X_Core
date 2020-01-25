@@ -14,7 +14,7 @@ matrix:
   include:
     - php: 7.2
       env:
-        - DEPS=lowest
+        - DEPS=latest
     - php: 7.2
       env:
         - DEPS=latest
