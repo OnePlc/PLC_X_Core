@@ -14,7 +14,7 @@
 
 return [
     'db' => [
-        'username' => 'mysqluser',
-        'password' => 'mysqlpassword'
+        'username' => 'travis',
+        'password' => ''
     ]
 ];
