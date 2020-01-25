@@ -300,10 +300,14 @@ class IndexController extends CoreController {
         } else {
             $this->layout('layout/json');
 
+            /**
+             * Upload ZIP File
+             */
             $filename = $_FILES["zip_file"]["name"];
             $source = $_FILES["zip_file"]["tmp_name"];
             $type = $_FILES["zip_file"]["type"];
 
+            # Check file extension
             $name = explode(".", $filename);
             $accepted_types = array('application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed');
             foreach($accepted_types as $mime_type) {
@@ -313,16 +317,21 @@ class IndexController extends CoreController {
                 }
             }
 
+            # allow only zip
             $continue = strtolower($name[1]) == 'zip' ? true : false;
             if(!$continue) {
                 $message = "The file you are trying to upload is not a .zip file. Please try again.";
             }
 
+            # create theme dir if its the first theme
             if(!is_dir($_SERVER['DOCUMENT_ROOT'].'/../data/themes')) {
                 mkdir($_SERVER['DOCUMENT_ROOT'].'/../data/themes');
             }
+
+            # upload theme
             $target_path = $_SERVER['DOCUMENT_ROOT'].'/themes/'.$filename;  // change this to the correct site path
             if(move_uploaded_file($source, $target_path)) {
+                # unzip theme
                 $zip = new \ZipArchive();
                 $x = $zip->open($target_path);
                 if ($x === true) {
@@ -338,14 +347,17 @@ class IndexController extends CoreController {
 
             echo $message;
 
+            # todo: theme name MUST be dynamic - define how to determine correct name, maybe add a json to theme
+            # because currently we only have zip name as indicator which is like nothing
             $sThemeName = 'vuze';
+
             # Install Layouts
             foreach(glob($_SERVER['DOCUMENT_ROOT'].'/themes/'.$sThemeName.'/view/layout/*',GLOB_NOSORT) as $sThemeFile) {
                 rename($sThemeFile,$_SERVER['DOCUMENT_ROOT'].'/../module/Application/view/layout/'.basename($sThemeFile));
             }
             # Install Partials
-            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/themes/'.$sThemeName.'/view/partials/*',GLOB_NOSORT) as $sThemeFile) {
-                rename($sThemeFile,$_SERVER['DOCUMENT_ROOT'].'/../module/Application/view/partials/'.basename($sThemeFile));
+            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/themes/'.$sThemeName.'/view/partial/*',GLOB_NOSORT) as $sThemeFile) {
+                rename($sThemeFile,$_SERVER['DOCUMENT_ROOT'].'/../module/Application/view/partial/'.basename($sThemeFile));
             }
 
             echo 'theme files installed';

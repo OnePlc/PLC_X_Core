@@ -8,23 +8,20 @@ if(is_object(CoreController::$oSession->oUser)) {
     $aIndexPermissions = CoreController::$oSession->oUser->getMyPermissions('index', true);
 }
 ?>
-<li class="sidebar-header">
-    Main
-</li>
-<li class="sidebar-item active">
-    <a href="#dashboards" data-toggle="collapse" class="font-weight-bold sidebar-link">
-        <i class="align-middle" data-feather="home"></i> <span class="align-middle">Dashboard</span>
-        <span class="sidebar-badge badge badge-primary">14</span>
-    </a>
-    <ul id="dashboards" class="sidebar-dropdown list-unstyled collapse show">
-        <?php foreach(array_keys($aIndexPermissions) as $sModule) {
-            $aInfo = $aIndexPermissions[$sModule];
-            # Home is empty because there is no home permission
-            if(count($aInfo) == 0) {
-                $aInfo = ['index'=>(object)['nav_label'=>'Home','nav_href'=>'/']];
-            }
-            ?>
-        <li class="sidebar-item"><a class="sidebar-link" href="<?=$aInfo['index']->nav_href?>"><?=$aInfo['index']->nav_label?></a></li>
-        <?php } ?>
-    </ul>
-</li>
+<?php foreach(array_keys($aIndexPermissions) as $sModule) {
+    $aInfo = $aIndexPermissions[$sModule];
+    # Home is empty because there is no home permission
+    if(count($aInfo) == 0) {
+        $aInfo = ['index'=>(object)['nav_label'=>'Home','nav_href'=>'/']];
+    }
+    # check if we are on active node
+    $sActive = ('/'.strtolower($this->sRouteName) == strtolower($aInfo['index']->nav_href)) ? ' active' : '';
+    # home is special case ..
+    $sActive = ($this->sRouteName == 'home' && $aInfo['index']->nav_href == '/') ? ' active' : $sActive;
+    ?>
+    <li class="nav-item<?=$sActive?>">
+        <a class="nav-link" href="<?=$aInfo['index']->nav_href?>">
+            <?=$aInfo['index']->nav_label?>
+        </a>
+    </li>
+<?php } ?>

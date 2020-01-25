@@ -109,6 +109,9 @@ class CoreController extends AbstractActionController {
         CoreController::$aCoreTables['table-index'] = new TableGateway('core_index_table',$this->oDbAdapter);
         CoreController::$aCoreTables['permission'] = new TableGateway('permission',$this->oDbAdapter);
         CoreController::$aCoreTables['settings'] = new TableGateway('settings',$this->oDbAdapter);
+        CoreController::$aCoreTables['user-xp-level'] = new TableGateway('user_xp_level', $this->oDbAdapter);
+        CoreController::$aCoreTables['user'] = new TableGateway('user', $this->oDbAdapter);
+        CoreController::$aCoreTables['user-xp-activity'] = new TableGateway('user_xp_activity', $this->oDbAdapter);
 
         $this->loadSettings();
     }

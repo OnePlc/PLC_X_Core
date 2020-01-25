@@ -17,16 +17,19 @@ use Application\Controller\CoreController;
         <!-- Le styles -->
         <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
             ->prependStylesheet($this->basePath('css/style.css'))
-            ->prependStylesheet($this->basePath('vendor/fontawesome/css/all.min.css'))
+            ->prependStylesheet($this->basePath('vendor/jquery-ui/jquery-ui.min.css'))
             ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
         ?>
 
         <!-- Scripts -->
         <?= $this->inlineScript()
             ->prependFile($this->basePath('js/listener.js'))
+            ->prependFile($this->basePath('vendor/jquery-ui/jquery-ui.min.js'))
+            ->prependFile($this->basePath('vendor/select2/js/select2.full.min.js'))
             ->prependFile($this->basePath('js/bootstrap.min.js'))
             ->prependFile($this->basePath('js/jquery-3.4.1.min.js'))
         ?>
+        <script src="https://kit.fontawesome.com/11e0d8bba0.js" crossorigin="anonymous"></script>
     </head>
     <body>
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark" role="navigation">
@@ -36,7 +39,7 @@ use Application\Controller\CoreController;
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <a class="navbar-brand" href="<?= $this->url('home') ?>">
-                        <img src="<?= $this->basePath('img/laminas-logo.svg') ?>" height="28" alt="Laminas MVC Skeleton"/>&nbsp;onePlace X
+                        <img src="<?= $this->basePath('img/logo_small_inv.png') ?>" height="28" alt="oneplace"/>&nbsp;onePlace X
                     </a>
                 </div>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -60,9 +63,39 @@ use Application\Controller\CoreController;
                         ?>
                     </ul>
                 </div>
+                <div class="text-white px-2">
+                    <?php
+                    $aUserXPInfo = CoreController::$oSession->oUser->getExperience();
+                    ?>
+                    <?=CoreController::$oSession->oUser->getLabel()?>
+                    - <small><?=$this->translate('Level')?> <?=$aUserXPInfo['level']?></small>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: <?=$aUserXPInfo['percent']?>%" aria-valuenow="<?=$aUserXPInfo['percent']?>" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+                <span class="navbar-text px-2">
+                    <a href="<?=$this->url('logout')?>" title="<?=$this->translate('Logout')?>">
+                        <i class="fas fa-sign-out-alt text-white"></i>
+                    </a>
+                </span>
             </div>
         </nav>
         <div class="container">
+            <?php
+            /**
+             * Print Flashmessenger messages (alerts)
+             */
+            $flash = $this->flashMessenger();
+            $flash->setMessageOpenFormat('<div%s style="">
+                                 <ul><li>')
+                ->setMessageSeparatorString('</li><li>')
+                ->setMessageCloseString('</li></ul></div>');
+            echo $flash->render('error',   ['alert', 'alert-dismissible', 'alert-danger', 'alert-plc']);
+            echo $flash->render('info',    ['alert', 'alert-dismissible', 'alert-info', 'alert-plc']);
+            echo $flash->render('default', ['alert', 'alert-dismissible', 'alert-info', 'alert-plc']);
+            echo $flash->render('warning', ['alert', 'alert-dismissible', 'alert-warning', 'alert-plc']);
+            echo $flash->render('success', ['alert', 'alert-dismissible', 'alert-success', 'alert-plc']);?>
+
             <?= $this->partial('partial/breadcrumb', ['aButtons'=>isset($this->aButtons) ? $this->aButtons : [], 'pages'=>[]]); ?>
             <div class="row py-4">
                 <div class="col-md-12 py-4">
