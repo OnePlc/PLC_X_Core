@@ -36,6 +36,7 @@ install:
   - mysql -u travis --password="" "travis" < module/Application/data/structure.sql
   - mysql -u travis --password="" "travis" < vendor/oneplace/oneplace-user/data/structure.sql
   - mysql -u travis --password="" "travis" < vendor/oneplace/oneplace-user/data/data.sql
+  - mysql -u travis --password="" "travis" < vendor/oneplace/oneplace-user/data/bootstrap.sql
   - mysql -u travis --password="" "travis" < module/Application/data/data.sql
 
 script:

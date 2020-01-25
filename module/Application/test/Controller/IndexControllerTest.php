@@ -42,15 +42,15 @@ class IndexControllerTest extends AbstractHttpControllerTestCase {
     }
 
     public function initTestSession() {
+        $this->dispatch('/login', 'POST', ['plc_login_user'=>'travis@1plc.ch','plc_login_pass'=>'1234']);
         /**
-         * Init Test Session to Fake Login
-         */
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
         $oSession = new Container('plcauth');
         $oTestUser = new TestUser($oDbAdapter);
-        $oTestUser->exchangeArray(['full_name'=>'Test','email'=>'admin@1plc.ch','User_ID'=>1]);
+        $oTestUser->exchangeArray(['full_name'=>'Test','email'=>'travis@1plc.ch','pass','User_ID'=>1]);
         $oSession->oUser = $oTestUser;
+         **/
     }
 
     public function testIndexActionCanBeAccessed() {

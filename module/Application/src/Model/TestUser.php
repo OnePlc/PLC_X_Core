@@ -94,4 +94,16 @@ class TestUser extends CoreEntityModel {
     public function getTheme() {
         return 'default';
     }
+
+    /**
+     * Virtual XP Function
+     */
+    public function getExperience() {
+        return [
+            'total'=>0,
+            'current'=>0,
+            'level'=>1,
+            'percent'=>0,
+        ];
+    }
 }
