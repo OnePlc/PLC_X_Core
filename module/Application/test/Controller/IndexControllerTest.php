@@ -42,9 +42,8 @@ class IndexControllerTest extends AbstractHttpControllerTestCase {
     }
 
     public function initTestSession() {
-        $this->dispatch('/login', 'POST', ['plc_login_user'=>'travis@1plc.ch','plc_login_pass'=>'1234']);
-        $this->assertResponseStatusCode(302);
-        $this->assertRedirectTo('home');
+
+        //$this->assertQuery('login');
         /**
         $oSm = $this->getApplicationServiceLocator();
         $oDbAdapter = $oSm->get(AdapterInterface::class);
@@ -66,7 +65,10 @@ class IndexControllerTest extends AbstractHttpControllerTestCase {
 
     public function testIndexActionCanBeAccessedWithSession() {
 
-        $this->initTestSession();
+       // $this->initTestSession();
+        $this->dispatch('/login', 'POST', ['plc_login_user'=>'travis@1plc.ch','plc_login_pass'=>'1234']);
+        $this->assertResponseStatusCode(302);
+        $this->assertRedirectTo('home');
 
         $this->dispatch('/', 'GET');
         $this->assertResponseStatusCode(200);
