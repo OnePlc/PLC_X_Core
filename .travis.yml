@@ -39,9 +39,12 @@ install:
   - mysql -u travis --password="" "travis" < module/Application/data/bootstrap.sql
   - mysql -u travis --password="" "travis" < module/Application/data/data.sql
 
-script: "sbt clean coverage test"
+script:
+  - mkdir -p build/logs
+  - vendor/bin/phpunit tests --coverage-clover build/logs/clover.xml
 
-after_success: "sbt coveralls"
+after_success:
+  - travis_retry php vendor/bin/php-coveralls
 
 after_script:
 
