@@ -13,4 +13,8 @@
  */
 
 return [
+    'db' => [
+        'username' => 'mysqluser',
+        'password' => 'mysqlpassword'
+    ]
 ];

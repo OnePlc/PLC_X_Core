@@ -1,0 +1,7 @@
+<?php
+return [
+    'db' => [
+        'driver' => 'Pdo',
+        'dsn' => 'mysql:dbname=mysqldatabase;host=localhost;charset=utf8',
+    ]
+];

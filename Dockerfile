@@ -11,4 +11,7 @@ RUN apt-get update \
  && curl -sS https://getcomposer.org/installer \
   | php -- --install-dir=/usr/local/bin --filename=composer
 
+COPY /var/www/config/autoload/global.php.dist /var/www/config/autoload/global.php
+COPY /var/www/config/autoload/local.php.dist /var/www/config/autoload/local.php
+
 WORKDIR /var/www
