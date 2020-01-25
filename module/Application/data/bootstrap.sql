@@ -1,0 +1,2 @@
+INSERT INTO `user` (`User_ID`, `username`, `full_name`, `email`, `password`, `authkey`, `xp_level`, `xp_total`, `xp_current`, `is_backend_user`, `mobile`, `password_reset_token`, `password_reset_date`, `items_per_page`, `button_icon_position`, `form_label_spacing`, `theme`) VALUES
+(NULL, 'travis', 'Travis Test User', 'travis@1plc.ch', '$2y$10$vcHtipwvo16PsMVQlFyJIu/rhGe5LYsCRdqqQ/X5De7nHbpwQaJcS', '', '1', '0', '0', '1', '', NULL, NULL, '25', 'left', '8', 'default');
