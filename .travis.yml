@@ -34,11 +34,11 @@ install:
   - cp config/autoload/local.php.dist config/autoload/local.php
 
 script:
-  - if [[ $TEST_COVERAGE == 'true' ]]; then composer test-coverage ; else composer test ; fi
-  - if [[ $CS_CHECK == 'true' ]]; then composer cs-check ; fi
 
 after_script:
-  - if [[ $TEST_COVERAGE == 'true' ]]; then vendor/bin/php-coveralls -v ; fi
+
+services:
+  - mysql
 
 notifications:
   email: false
