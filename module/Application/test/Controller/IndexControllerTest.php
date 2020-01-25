@@ -68,7 +68,6 @@ class IndexControllerTest extends AbstractHttpControllerTestCase {
        // $this->initTestSession();
         $this->dispatch('/login', 'POST', ['plc_login_user'=>'travis@1plc.ch','plc_login_pass'=>'1234']);
         $this->assertResponseStatusCode(302);
-        $this->assertRedirectTo('home');
 
         $this->dispatch('/', 'GET');
         $this->assertResponseStatusCode(200);
