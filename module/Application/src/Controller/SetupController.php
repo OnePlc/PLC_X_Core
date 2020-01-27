@@ -58,8 +58,24 @@ class SetupController extends AbstractActionController {
         $oRequest = $this->getRequest();
 
         if(!$oRequest->isPost()) {
-            return new ViewModel([]);
+            $aWarnings = [];
+            $f=fopen($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/global.php','w');
+            if(!$f) {
+                $aWarnings['file-perm'] = 'Need write permissions on docroot for setup';
+            }
+            return new ViewModel([
+                'aWarnings'=>$aWarnings,
+            ]);
         } else {
+            $aWarnings = [];
+            # check file permissions first
+            $f=fopen($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/global.php','w');
+            if(!$f) {
+                $aWarnings['file-perm'] = 'Need write permissions on docroot for setup';
+                return new ViewModel([
+                    'aWarnings'=>$aWarnings,
+                ]);
+            }
             # get db user data
             $aDBUserInfo = [
                 'username' => $oRequest->getPost('setup_dbuser'),
@@ -80,6 +96,9 @@ class SetupController extends AbstractActionController {
                 'password_check' => $oRequest->getPost('setup_adminpassrep'),
             ];
 
+            var_dump($aDBUserInfo);
+
+
             /**
              * Create local.php config
              */
@@ -88,13 +107,14 @@ class SetupController extends AbstractActionController {
             $writer = new \Laminas\Config\Writer\PhpArray();
             file_put_contents($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php',$writer->toString($config));
 
+            var_dump($aDBHostInfo);
+
             /**
              * Create global.php config
              */
             $config = new \Laminas\Config\Config([], true);
             $config->db = $aDBHostInfo;
             $writer = new \Laminas\Config\Writer\PhpArray();
-            $f=fopen($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/global.php','w');
             fwrite($f,$writer->toString($config));
             fclose($f);
 

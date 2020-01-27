@@ -5,6 +5,14 @@
                 <div class="card-header">
                     <h1 class="card-title">Welcome to onePlace</h1>
                     <p>Lets setup the software first</p>
+                    <?php if(count($aWarnings) > 0) {
+                        foreach($aWarnings as $sWarn) { ?>
+                            <div class="alert alert-warning">
+                                <?=$sWarn?>
+                            </div>
+                        <?php
+                        }
+                    } ?>
                 </div>
                 <div class="card-body">
                     <form action="" method="POST">
@@ -81,8 +89,13 @@
                         <hr/>
 
                         <div class="form-row">
+                        <?php if (count($aWarnings) > 0) { ?>
+                            <!-- Submit -->
+                            <button type="submit" class="btn btn-primary" readonly="readonly" disabled>Correct warnings first</button>
+                        <?php } else { ?>
                             <!-- Submit -->
                             <button type="submit" class="btn btn-primary">Submit</button>
+                        <?php } ?>
                         </div>
                     </form>
                 </div>
