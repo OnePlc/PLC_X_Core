@@ -46,6 +46,65 @@ class IndexController extends CoreController {
         return new ViewModel([]);
     }
 
+    public function updateAction() {
+        $oRequest = $this->getRequest();
+
+        if(!$oRequest->isPost()) {
+            $this->setThemeBasedLayout('application');
+
+            $aInfo = [
+                'install' => [],
+                'update' => [],
+            ];
+
+            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/*', GLOB_ONLYDIR) as $sModulePath) {
+                $sModule = basename($sModulePath);
+                $sModuleName = explode('-',$sModule)[1];
+
+                try {
+                    $oBaseTbl = new TableGateway($sModuleName,$this->oDbAdapter);
+                    $oBaseTbl->select();
+                } catch(\RuntimeException $e) {
+                    $aInfo['install'][] = $sModuleName;
+                }
+            }
+
+            return new ViewModel([
+                'aInfo'=>$aInfo,
+            ]);
+        } else {
+            $aInfo = [
+                'install' => [],
+                'update' => [],
+            ];
+
+            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/*', GLOB_ONLYDIR) as $sModulePath) {
+                $sModule = basename($sModulePath);
+                $sModuleName = explode('-',$sModule)[1];
+
+                try {
+                    $oBaseTbl = new TableGateway($sModuleName,$this->oDbAdapter);
+                    $oBaseTbl->select();
+                } catch(\RuntimeException $e) {
+                    $aInfo['install'][] = $sModule;
+                }
+            }
+
+            $this->layout('layout/json');
+            foreach($aInfo['install'] as $sInstallMod) {
+                # Core DB Structure
+                $filename = $_SERVER['DOCUMENT_ROOT'] . '/../vendor/oneplace/'.$sInstallMod.'/data/install.sql';
+                echo 'update '.$sInstallMod;
+                if (file_exists($filename)) {
+                    echo 'go';
+                    $this->parseSQLInstallFile($filename, $this->oDbAdapter);
+                }
+            }
+
+            return $this->redirect()->toRoute('home');
+        }
+    }
+
     public function addthemeAction() {
         $this->setThemeBasedLayout('application');
 
@@ -119,6 +178,31 @@ class IndexController extends CoreController {
             echo 'theme files installed';
 
             return $this->redirect()->toRoute('application',['action'=>'themes']);
+        }
+    }
+
+    /**
+     * Parse SQL File from Installer and save to database
+     *
+     * @param string $sFile location of sql file
+     * @param AdapterInterface $oAdapter database connection
+     * @since 1.0.2.1
+     */
+    private function parseSQLInstallFile($sFile,$oAdapter) {
+        $templine = '';
+        $lines = file($sFile);
+        // Loop through each line
+        foreach ($lines as $line)  {
+            if (substr($line, 0, 2) == '--' || $line == '')
+                continue;
+            // Add this line to the current segment
+            $templine .= $line;
+            // If it has a semicolon at the end, it's the end of the query
+            if (substr(trim($line), -1, 1) == ';')
+            {
+                $results = $oAdapter->query($templine, $oAdapter::QUERY_MODE_EXECUTE);
+                $templine = '';
+            }
         }
     }
 }

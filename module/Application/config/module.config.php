@@ -49,7 +49,7 @@ return [
                 'options' => [
                     'route'    => '/update',
                     'defaults' => [
-                        'controller' => Controller\SetupController::class,
+                        'controller' => Controller\IndexController::class,
                         'action'     => 'update',
                     ],
                 ],
