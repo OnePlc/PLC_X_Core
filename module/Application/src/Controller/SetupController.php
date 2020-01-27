@@ -59,8 +59,7 @@ class SetupController extends AbstractActionController {
 
         if(!$oRequest->isPost()) {
             $aWarnings = [];
-            $f=fopen($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/global.php','w');
-            if(!$f) {
+            if(!is_writable($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/global.php')) {
                 $aWarnings['file-perm'] = 'Need write permissions on docroot for setup';
             }
             return new ViewModel([
@@ -68,14 +67,15 @@ class SetupController extends AbstractActionController {
             ]);
         } else {
             $aWarnings = [];
-            # check file permissions first
-            $f=fopen($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/global.php','w');
-            if(!$f) {
+            if(!is_writable($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/global.php')) {
                 $aWarnings['file-perm'] = 'Need write permissions on docroot for setup';
+            }
+            if(count($aWarnings) > 0) {
                 return new ViewModel([
                     'aWarnings'=>$aWarnings,
                 ]);
             }
+
             # get db user data
             $aDBUserInfo = [
                 'username' => $oRequest->getPost('setup_dbuser'),
@@ -96,9 +96,6 @@ class SetupController extends AbstractActionController {
                 'password_check' => $oRequest->getPost('setup_adminpassrep'),
             ];
 
-            var_dump($aDBUserInfo);
-
-
             /**
              * Create local.php config
              */
@@ -107,16 +104,13 @@ class SetupController extends AbstractActionController {
             $writer = new \Laminas\Config\Writer\PhpArray();
             file_put_contents($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php',$writer->toString($config));
 
-            var_dump($aDBHostInfo);
-
             /**
              * Create global.php config
              */
             $config = new \Laminas\Config\Config([], true);
             $config->db = $aDBHostInfo;
             $writer = new \Laminas\Config\Writer\PhpArray();
-            fwrite($f,$writer->toString($config));
-            fclose($f);
+            file_put_contents($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/global.php',$writer->toString($config));
 
             //$adapter = CoreController::$oServiceManager->get(AdapterInterface::class);
             $adapter = new Adapter([
