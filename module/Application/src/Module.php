@@ -39,6 +39,11 @@ class Module {
     {
         return [
             'factories' => [
+                Controller\SetupController::class => function($container) {
+                    return new Controller\SetupController(
+                        $container
+                    );
+                },
                 Controller\IndexController::class => function($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\IndexController(

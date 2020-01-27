@@ -79,6 +79,12 @@ class CoreController extends AbstractActionController {
      */
     public static $aGlobalSettings = [];
 
+    /**
+     * Laminas Service Manager
+     *
+     * @var $oServiceManager
+     * @since 1.0.2
+     */
     public static $oServiceManager;
 
     /**

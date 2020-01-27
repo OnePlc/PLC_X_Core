@@ -39,8 +39,8 @@ return [
                 'options' => [
                     'route'    => '/setup',
                     'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action'     => 'setup',
+                        'controller' => Controller\SetupController::class,
+                        'action'     => 'index',
                     ],
                 ],
             ],
@@ -49,7 +49,7 @@ return [
                 'options' => [
                     'route'    => '/update',
                     'defaults' => [
-                        'controller' => Controller\IndexController::class,
+                        'controller' => Controller\SetupController::class,
                         'action'     => 'update',
                     ],
                 ],
