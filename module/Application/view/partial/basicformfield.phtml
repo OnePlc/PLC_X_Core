@@ -134,6 +134,13 @@ switch($oField->type) {
                     url: '<?=str_replace(['##ID##'],[$iItemID],$oField->url_ist)?>',
                     dataType: 'json'
                 },
+                <?php
+                if($oField->tbl_permission != '') {
+                $aPermissionInfo = explode('-', $oField->tbl_permission);
+                if(CoreController::$oSession->oUser->hasPermission($aPermissionInfo[0], $aPermissionInfo[1])) { ?>
+                tags: true,
+                <?php }
+                }?>
                 // tags: true, - allow creation of new entries
                 <?php if($oField->allow_clear == 1) { ?>
                 allowClear: true,

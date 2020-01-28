@@ -53,7 +53,7 @@ class CoreController extends AbstractActionController {
      * @var AdapterInterface Active Database connection
      * @since 1.0.0
      */
-    protected $oDbAdapter;
+    public static $oDbAdapter;
 
     /**
      * Single Form
@@ -97,27 +97,27 @@ class CoreController extends AbstractActionController {
         # Get onePlace User Session
         CoreController::$oSession = new Container('plcauth');
         CoreController::$oServiceManager = $oServiceManager;
-        $this->oDbAdapter = $oDbAdapter;
+        CoreController::$oDbAdapter = $oDbAdapter;
         CoreController::$aCoreTables = [];
 
         # Init Core Tables
-        CoreController::$aCoreTables['core-log-performance'] = new TableGateway('core_perfomance_log',$this->oDbAdapter);
-        CoreController::$aCoreTables['form-button'] = new TableGateway('core_form_button',$this->oDbAdapter);
-        CoreController::$aCoreTables['core-tag'] = new TableGateway('core_tag',$this->oDbAdapter);
-        CoreController::$aCoreTables['core-form'] = new TableGateway('core_form',$this->oDbAdapter);
-        CoreController::$aCoreTables['core-form-tab'] = new TableGateway('core_form_tab',$this->oDbAdapter);
-        CoreController::$aCoreTables['form-tab'] = new TableGateway('user_form_tab',$this->oDbAdapter);
-        CoreController::$aCoreTables['form-field'] = new TableGateway('user_form_field',$this->oDbAdapter);
-        CoreController::$aCoreTables['core-form-field'] = new TableGateway('core_form_field',$this->oDbAdapter);
-        CoreController::$aCoreTables['table-col'] = new TableGateway('user_table_column',$this->oDbAdapter);
-        CoreController::$aCoreTables['core-entity-tag'] = new TableGateway('core_entity_tag',$this->oDbAdapter);
-        CoreController::$aCoreTables['core-entity-tag-entity'] = new TableGateway('core_entity_tag_entity',$this->oDbAdapter);
-        CoreController::$aCoreTables['table-index'] = new TableGateway('core_index_table',$this->oDbAdapter);
-        CoreController::$aCoreTables['permission'] = new TableGateway('permission',$this->oDbAdapter);
-        CoreController::$aCoreTables['settings'] = new TableGateway('settings',$this->oDbAdapter);
-        CoreController::$aCoreTables['user-xp-level'] = new TableGateway('user_xp_level', $this->oDbAdapter);
-        CoreController::$aCoreTables['user'] = new TableGateway('user', $this->oDbAdapter);
-        CoreController::$aCoreTables['user-xp-activity'] = new TableGateway('user_xp_activity', $this->oDbAdapter);
+        CoreController::$aCoreTables['core-log-performance'] = new TableGateway('core_perfomance_log',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['form-button'] = new TableGateway('core_form_button',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['core-tag'] = new TableGateway('core_tag',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['core-form'] = new TableGateway('core_form',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['core-form-tab'] = new TableGateway('core_form_tab',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['form-tab'] = new TableGateway('user_form_tab',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['form-field'] = new TableGateway('user_form_field',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['core-form-field'] = new TableGateway('core_form_field',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['table-col'] = new TableGateway('user_table_column',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['core-entity-tag'] = new TableGateway('core_entity_tag',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['core-entity-tag-entity'] = new TableGateway('core_entity_tag_entity',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['table-index'] = new TableGateway('core_index_table',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['permission'] = new TableGateway('permission',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['settings'] = new TableGateway('settings',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['user-xp-level'] = new TableGateway('user_xp_level', CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['user'] = new TableGateway('user', CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['user-xp-activity'] = new TableGateway('user_xp_activity', CoreController::$oDbAdapter);
 
         $this->loadSettings();
     }
@@ -455,6 +455,49 @@ class CoreController extends AbstractActionController {
                     case 'datetime':
                         $aFormData[$sFieldName] = $_REQUEST[$sKey].' '.$_REQUEST[$sKey.'-time'];
                         break;
+                    case 'multiselect':
+                        if(count($aRawData[$sKey]) > 0) {
+                            $aNewData = [];
+                            foreach($aRawData[$sKey] as $iData) {
+                                # If not numberic - its a new dataset
+                                if(!is_numeric($iData)) {
+                                    # check if table connection already exists
+                                    if(!array_key_exists($oField->tbl_cached_name,CoreController::$aCoreTables)) {
+                                        CoreController::$aCoreTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
+                                    }
+                                    # check if addMinimal exists on TableModel
+                                    if(method_exists(CoreController::$aCoreTables[$oField->tbl_cached_name],'addMinimal')) {
+                                        $iNewEntryID = CoreController::$aCoreTables[$oField->tbl_cached_name]->addMinimal($iData,$this->sSingleForm,$oField->fieldkey);
+                                        # Save New Entry
+                                        $aNewData[] = $iNewEntryID;
+                                    }
+                                    # if we are here - field is ignored
+                                } else {
+                                    $aNewData[] = $iData;
+                                }
+                            }
+                            $aFormData[$sFieldName] = $aNewData;
+                        }
+                        break;
+                    case 'select':
+                        # If not numberic - its a new dataset
+                        if(!is_numeric($aRawData[$sKey])) {
+                            # check if table connection already exists
+                            if(!array_key_exists($oField->tbl_cached_name,CoreController::$aCoreTables)) {
+                                CoreController::$aCoreTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
+                            }
+                            # check if addMinimal exists on TableModel
+                            if(method_exists(CoreController::$aCoreTables[$oField->tbl_cached_name],'addMinimal')) {
+                                $iNewEntryID = CoreController::$aCoreTables[$oField->tbl_cached_name]->addMinimal($aRawData[$sKey],$this->sSingleForm,$oField->fieldkey);
+                                # Save New Entry
+                                $aFormData[$sFieldName] = $iNewEntryID;
+                            }
+
+                            # if we are here - field is ignored
+                        } else {
+                            $aFormData[$sFieldName] = $aRawData[$sKey];
+                        }
+                        break;
                     default:
                         $aFormData[$sFieldName] = $_REQUEST[$sKey];
                         break;
@@ -486,6 +529,30 @@ class CoreController extends AbstractActionController {
                     case 'datetime':
                         if(!$oEntity->setTextField($sFieldName,$aRawData[$sKey].' '.$aRawData[$sKey.'-time'])) {
                             echo 'could not save field '.$sFieldName;
+                        }
+                        break;
+                    case 'multiselect':
+                        if(count($aRawData[$sKey]) > 0) {
+                            $aNewData = [];
+                            foreach($aRawData[$sKey] as $iData) {
+                                # If not numberic - its a new dataset
+                                if(!is_numeric($iData)) {
+                                    # check if table connection already exists
+                                    if(!array_key_exists($oField->tbl_cached_name,CoreController::$aCoreTables)) {
+                                        CoreController::$aCoreTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
+                                    }
+                                    # check if addMinimal exists on TableModel
+                                    if(method_exists(CoreController::$aCoreTables[$oField->tbl_cached_name],'addMinimal')) {
+                                        $iNewEntryID = CoreController::$aCoreTables[$oField->tbl_cached_name]->addMinimal($iData,$this->sSingleForm,$oField->fieldkey);
+                                        # Save New Entry
+                                        $aNewData[] = $iNewEntryID;
+                                    }
+                                    # if we are here - field is ignored
+                                } else {
+                                    $aNewData[] = $aRawData[$sKey];
+                                }
+                            }
+                            $aFormData[$sFieldName] = $aNewData;
                         }
                         break;
                     case 'select':
@@ -568,15 +635,15 @@ class CoreController extends AbstractActionController {
             # lets loop over all multiselect fields of this form
             foreach($aFields as $oField) {
                 # lets see if we find data for this field
-                if(array_key_exists($sForm.'_'.$oField->fieldkey,$aRawFormData)) {
+                if(array_key_exists($oField->fieldkey,$aRawFormData)) {
                     # Reset all tags for this entity
                     CoreController::$aCoreTables['core-entity-tag-entity']->delete([
                         'entity_idfs'=>$oItem->getID(),
                         'entity_type'=>$sEntityType,
                     ]);
                     # save new tags for entity
-                    if(count($aRawFormData[$sForm.'_'.$oField->fieldkey]) > 0) {
-                        foreach($aRawFormData[$sForm.'_'.$oField->fieldkey] as $iVal) {
+                    if(count($aRawFormData[$oField->fieldkey]) > 0) {
+                        foreach($aRawFormData[$oField->fieldkey] as $iVal) {
                             CoreController::$aCoreTables['core-entity-tag-entity']->insert([
                                 'entity_idfs'=>$oItem->getID(),
                                 'entity_tag_idfs'=>$iVal,

@@ -209,10 +209,11 @@ class CoreEntityModel {
      * Get array with linked objects of multiselect field
      *
      * @param $sField name of field (fieldkey)
+     * @param bool $bReturnModels return array (for select2) or entity models
      * @return bool|array false if not found, otherwise array with Entity Models
      * @since 1.0.2
      */
-    public function getMultiSelectField($sField) {
+    public function getMultiSelectField($sField,$bReturnModels = false) {
         $aEntityTagIDs = $this->getMultiSelectFieldIDs($sField);
         $aEntityModels = [];
         if(count($aEntityTagIDs) > 0) {
@@ -220,7 +221,17 @@ class CoreEntityModel {
                 $oEntityTag = CoreController::$aCoreTables['core-entity-tag']->select(['Entitytag_ID'=>$iEntityTagID]);
                 if(count($oEntityTag) > 0) {
                     $oEntityTag = $oEntityTag->current();
-                    $aEntityModels[] = (object)['id'=>$iEntityTagID,'text'=>$oEntityTag->tag_value];
+                    if($bReturnModels) {
+                        try {
+                            $oEntityTable = CoreController::$oServiceManager->get($oEntityTag->entity_table_class);
+                            $aEntityModels[] = $oEntityTable->getSingle($iEntityTagID);
+                        } catch (\RuntimeException $e) {
+
+                        }
+                    } else {
+                        // skeleton-single = \OnePlace\Skeleton\Model\SkeletonTable -> getSingle()
+                        $aEntityModels[] = (object)['id'=>$iEntityTagID,'text'=>$oEntityTag->tag_value];
+                    }
                 }
             }
         }

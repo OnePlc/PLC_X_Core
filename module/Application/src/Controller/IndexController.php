@@ -61,8 +61,12 @@ class IndexController extends CoreController {
                 $sModule = basename($sModulePath);
                 $sModuleName = explode('-',$sModule)[1];
 
+                if($sModuleName == 'tag') {
+                    $sModuleName = 'core_tag';
+                }
+
                 try {
-                    $oBaseTbl = new TableGateway($sModuleName,$this->oDbAdapter);
+                    $oBaseTbl = new TableGateway($sModuleName,CoreController::$oDbAdapter);
                     $oBaseTbl->select();
                 } catch(\RuntimeException $e) {
                     $aInfo['install'][] = $sModuleName;
@@ -82,8 +86,12 @@ class IndexController extends CoreController {
                 $sModule = basename($sModulePath);
                 $sModuleName = explode('-',$sModule)[1];
 
+                if($sModuleName == 'tag') {
+                    $sModuleName = 'core_tag';
+                }
+
                 try {
-                    $oBaseTbl = new TableGateway($sModuleName,$this->oDbAdapter);
+                    $oBaseTbl = new TableGateway($sModuleName,CoreController::$oDbAdapter);
                     $oBaseTbl->select();
                 } catch(\RuntimeException $e) {
                     $aInfo['install'][] = $sModule;
@@ -97,7 +105,7 @@ class IndexController extends CoreController {
                 echo 'update '.$sInstallMod;
                 if (file_exists($filename)) {
                     echo 'go';
-                    $this->parseSQLInstallFile($filename, $this->oDbAdapter);
+                    $this->parseSQLInstallFile($filename, CoreController::$oDbAdapter);
                 }
             }
 

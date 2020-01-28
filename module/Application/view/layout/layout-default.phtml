@@ -17,6 +17,8 @@ use Application\Controller\CoreController;
         <!-- Le styles -->
         <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
             ->prependStylesheet($this->basePath('css/style.css'))
+            ->prependStylesheet($this->basePath('vendor/filepond/filepond.css'))
+            ->prependStylesheet($this->basePath('vendor/select2/css/select2.min.css'))
             ->prependStylesheet($this->basePath('vendor/jquery-ui/jquery-ui.min.css'))
             ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
         ?>
