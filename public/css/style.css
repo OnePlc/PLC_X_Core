@@ -33,5 +33,16 @@ div.container a.navbar-brand > img {
 }
 
 .alert-plc {
-    width:400px; float:none; position:fixed; top:60px; right:0; z-index:9999; margin:auto;
+     width:400px; float:none; position:fixed; top:60px; right:0; z-index:9999; margin:auto;
+ }
+
+.plc-uppy-remove-image {
+    position: absolute;
+    z-index:3;
+    top:0;
+    right:0;
+}
+.swal2-image, .swal2-popup {
+    padding:2px;
+    margin:0;
 }

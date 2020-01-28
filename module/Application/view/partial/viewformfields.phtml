@@ -6,7 +6,7 @@ if(array_key_exists($this->sTab,$this->layout()->aFormFieldsByTab)) {
     foreach($this->layout()->aFormFieldsByTab[$this->sTab] as $oField) { ?>
         <!-- Field <?=$oField->fieldkey?> START -->
         <div class="form-group <?=$oField->class?>">
-            <?php if($oField->type != 'partial') { ?>
+            <?php if($oField->type != 'partial' && $oField->type != 'gallery') { ?>
             <label class="plcViewFormLabel" for="<?=$this->sFormName?>_<?=$oField->fieldkey?>">
                 <?=$oField->label?>
             </label><br/>

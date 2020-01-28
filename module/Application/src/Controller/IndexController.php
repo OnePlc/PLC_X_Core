@@ -213,4 +213,94 @@ class IndexController extends CoreController {
             }
         }
     }
+
+    public function filepondAction() {
+        $this->layout('layout/json');
+
+        $oRequest = $this->getRequest();
+
+        if($oRequest->isPost()) {
+            $iEntityID = (int)$_REQUEST['entity_id'];
+            $sEntityType = $_REQUEST['type'];
+
+            $sPath = '';
+            $oEntityTbl = false;
+            switch($sEntityType) {
+                case 'skeleton':
+                    $oEntityTbl = CoreController::$oServiceManager->get(\OnePlace\Skeleton\Model\SkeletonTable::class);
+                    $oEntity = $oEntityTbl->getSingle($iEntityID);
+                    if($oEntity) {
+                        $sPath = $_SERVER['DOCUMENT_ROOT'].'/data/'.$sEntityType.'/'.$oEntity->getID().'/';
+                    }
+                    break;
+                case 'user':
+                    $oEntityTbl = CoreController::$oServiceManager->get(\OnePlace\User\Model\UserTable::class);
+                    $oEntity = $oEntityTbl->getSingle($iEntityID);
+                    if($oEntity) {
+                        $sPath = $_SERVER['DOCUMENT_ROOT'].'/data/'.$sEntityType.'/'.$oEntity->getID().'/';
+                    }
+                    break;
+                default:
+
+                    break;
+            }
+
+            if($sPath != '') {
+                if(!is_dir($sPath)) {
+                    mkdir($sPath);
+                }
+
+                if(array_key_exists('filepond',$_FILES)) {
+                    $aFile = $_FILES['filepond'];
+                    if(move_uploaded_file($aFile['tmp_name'],$sPath.'/'.$aFile['name'])) {
+                        switch($sEntityType) {
+                            case 'skeleton':
+                                $oEntityTbl->updateAttribute('featured_image', $aFile['name'], 'Skeleton_ID', $iEntityID);
+                                break;
+                            case 'user':
+                                $oEntityTbl->updateAttribute('featured_image', $aFile['name'], 'User_ID', $iEntityID);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+            return false;
+        } else {
+            var_dump($_REQUEST);
+
+            return false;
+        }
+    }
+
+    public function uppyAction() {
+        $this->layout('layout/json');
+
+        $iEntityID = (int)$_REQUEST['entity_id'];
+        $sEntityType = $_REQUEST['entity_type'];
+        $sPath = '';
+        $oEntityTbl = false;
+
+        var_dump($sEntityType);
+
+        switch($sEntityType) {
+            case 'skeleton':
+                $oEntityTbl = CoreController::$oServiceManager->get(\OnePlace\Skeleton\Model\SkeletonTable::class);
+                $oEntity = $oEntityTbl->getSingle($iEntityID);
+                if($oEntity) {
+                    $sPath = $_SERVER['DOCUMENT_ROOT'].'/data/'.$sEntityType.'/'.$oEntity->getID().'/';
+                }
+                break;
+            default:
+
+                break;
+        }
+        $aFile = $_FILES['files'];
+        if(move_uploaded_file($aFile['tmp_name'][0],$sPath.'/'.trim($aFile['name'][0]))) {
+            echo 'done';
+        }
+
+        return false;
+    }
 }

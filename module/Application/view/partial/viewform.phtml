@@ -5,8 +5,8 @@
                 <div class="card-body text-center">
                     <?php if($oItem->hasFeaturedImage()) { ?>
                     <div style="max-width:250px; margin:auto;">
-                        <!-- We'll transform this input into a pond -->
-                        <input type="file" class="filepond" id="filepondtest">
+                        <!-- our filepond input -->
+                        <input type="file" name="filepond" id="filepond">
                     </div>
                     <?php } ?>
                     <h2><?=$oItem->getLabel()?></h2>
@@ -32,6 +32,7 @@
         </div>
     </div>
 </div>
+<?php if($oItem->hasFeaturedImage()) { ?>
 <!-- Load FilePond library -->
 <script src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js"></script>
 <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
@@ -44,6 +45,8 @@
 <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 <!-- Turn all file input elements into ponds -->
 <script>
+    const fieldsetElement = document.getElementById('filepond');
+
     FilePond.registerPlugin(
         FilePondPluginFileValidateType,
         FilePondPluginImageExifOrientation,
@@ -53,7 +56,7 @@
         FilePondPluginImageTransform
     );
     FilePond.create(
-        document.querySelector('input'),
+        fieldsetElement,
         {
             labelIdle: `Drag & Drop your picture or <span class="filepond--label-action">Browse</span>`,
             imagePreviewHeight: 170,
@@ -64,13 +67,49 @@
             styleLoadIndicatorPosition: 'center bottom',
             styleProgressIndicatorPosition: 'right bottom',
             styleButtonRemoveItemPosition: 'left bottom',
-            styleButtonProcessItemPosition: 'right bottom'
+            styleButtonProcessItemPosition: 'right bottom',
         }
     );
 
-    const pond = document.getElementById('filepondtest');
-    pond.addEventListener('FilePond:error', e => {
-        $('#filepondtest').printMessage('Fehler',e.detail.error.main,'error');
+    FilePond.setOptions({
+        server: {
+            process: {
+                url: '/filepond',
+                method: 'POST',
+                withCredentials: false,
+                headers: {},
+                timeout: 7000,
+                onload: (response) => {
+                    console.log(response);
+                },
+                onerror: (e) => {
+                    $('#plc-featured-image').printMessage('Fehler',e.detail.error.main,'error');
+                },
+                ondata: (formData) => {
+                    formData.append('type', '<?=explode('-',$this->sFormName)[0]?>');
+                    formData.append('entity_id', '<?=$oItem->getID()?>');
+                    return formData;
+                }
+            },
+            load: '/'
+        },
+        <?php if($oItem->getTextField('featured_image')) { ?>
+        files: [
+            {
+                // the server file reference
+                source: '/data/<?=explode('-',$this->sFormName)[0]?>/<?=$oItem->getID()?>/<?=$oItem->getTextField('featured_image')?>',
+
+                // set type to limbo to tell FilePond this is a temp file
+                options: {
+                    type: 'local'
+                }
+            }
+        ]
+        <?php } ?>
     });
 
-</script>
+    fieldsetElement.addEventListener('FilePond:error', e => {
+        $('#plc-featured-image').printMessage('Fehler',e.detail.error.main,'error');
+    });
+    </script>
+<?php } ?>

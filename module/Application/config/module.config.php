@@ -34,6 +34,26 @@ return [
                     ],
                 ],
             ],
+            'filepond' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/filepond',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'filepond',
+                    ],
+                ],
+            ],
+            'uppy' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/uppy',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'uppy',
+                    ],
+                ],
+            ],
             'setup' => [
                 'type'    => Literal::class,
                 'options' => [
