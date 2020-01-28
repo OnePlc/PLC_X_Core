@@ -92,4 +92,8 @@ class CoreEntityTable {
 
         return $aData;
     }
+
+    public function updateAttribute($sAttribute,$sVal,$sIDKey,$iEntityID) {
+        $this->oTableGateway->update([$sAttribute=>$sVal],[$sIDKey=>$iEntityID]);
+    }
 }

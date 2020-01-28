@@ -53,6 +53,14 @@ class CoreEntityModel {
      */
     protected $sSingleForm;
 
+    public $created_by;
+
+    public $created_date;
+
+    public $modified_by;
+
+    public $modified_date;
+
     /**
      * CoreEntityModel constructor.
      * @param AdapterInterface $oDbAdapter
@@ -256,6 +264,7 @@ class CoreEntityModel {
                         case 'text':
                         case 'textarea':
                         case 'email':
+                        case 'featuredimage':
                         case 'tel':
                             $this->$sFieldName = '';
                             break;
@@ -287,6 +296,20 @@ class CoreEntityModel {
                 # todo: type based switch - but we dont have type here - we need to get field database entity here
                 $this->$sField = $aData[$sField];
             }
+        }
+    }
+
+    /**
+     * Checks if Entity has featured image
+     *
+     * @return bool true if has, false otherwise
+     * @since 1.0.5
+     */
+    public function hasFeaturedImage() {
+        if(property_exists($this,'featured_image')) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

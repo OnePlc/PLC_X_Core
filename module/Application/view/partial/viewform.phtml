@@ -3,11 +3,22 @@
         <div class="col-md-3">
             <div class="card">
                 <div class="card-body text-center">
+                    <?php if($oItem->hasFeaturedImage()) { ?>
                     <div style="max-width:250px; margin:auto;">
                         <!-- We'll transform this input into a pond -->
                         <input type="file" class="filepond" id="filepondtest">
                     </div>
+                    <?php } ?>
                     <h2><?=$oItem->getLabel()?></h2>
+                    <hr/>
+                    <?php
+                    $sCreatedDate = $oItem->getTextField('created_date');
+                    if($sCreatedDate != '0000-00-00 00:00:00' && !empty($sCreatedDate)) { ?>
+                    <div style="text-align: left;">
+                        <small><?=$this->translate('Created')?>: <?=date('d.m.Y H:i',strtotime($sCreatedDate))?></small><br/>
+                        <small><?=$this->translate('Last Edited')?>: <?=date('d.m.Y H:i',strtotime($oItem->getTextField('modified_date')))?></small>
+                    </div>
+                    <?php } ?>
                 </div>
             </div>
         </div>
