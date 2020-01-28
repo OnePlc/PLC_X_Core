@@ -16,6 +16,7 @@
 declare(strict_types=1);
 
 namespace Application\Controller;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\View\Model\ViewModel;
 
 class ApiController extends CoreController {
@@ -68,5 +69,26 @@ class ApiController extends CoreController {
         $sModule = $this->params()->fromRoute('module','core');
         $iID = $this->params()->fromRoute('id',0);
         return $this->redirect()->toRoute($sModule.'-api',['action'=>'get','id'=>$iID],['query'=>['authkey'=>$_REQUEST['authkey']]]);
+    }
+
+    public function gendailystatsAction() {
+        $this->layout('layout/json');
+
+        # Load all forms from database
+        $oFormsDB = CoreController::$aCoreTables['core-form']->select();
+        if(count($oFormsDB) > 0) {
+            foreach($oFormsDB as $oForm) {
+                try {
+                    $oLogTbl = CoreController::$oServiceManager->get($oForm->entity_tbl_class);
+                    if(method_exists($oLogTbl,'generateDailyStats')) {
+                        $oLogTbl->generateDailyStats();
+                    }
+                } catch (ServiceNotFoundException $e) {
+
+                }
+            }
+        }
+
+        return false;
     }
 }

@@ -16,3 +16,12 @@ INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav
 ('update', 'Application\\Controller\\IndexController', 'Updates', '', '', 0),
 ('addtheme', 'Application\\Controller\\IndexController', 'Upload Theme', '', '/application/addtheme', 0),
 ('themes', 'Application\\Controller\\IndexController', 'Theme Selection', '', '/application/themes', 0);
+
+--
+-- Default Widgets
+--
+INSERT INTO `core_widget` (`Widget_ID`, `widget_name`, `label`, `permission`) VALUES
+(NULL, 'manage_themes', 'Manage Themes', 'themes-Application\\Controller\\IndexController'),
+(NULL, 'discover_modules', 'Discover Modules', 'update-Application\\Controller\\IndexController'),
+(NULL, 'help_support', 'Help & Support', 'index-Application\\Controller\\IndexController'),
+(NULL, 'welcome_default', 'Welcome Default', 'index-Application\\Controller\\IndexController');

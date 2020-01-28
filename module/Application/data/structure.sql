@@ -3,7 +3,9 @@
 --
 CREATE TABLE `core_form` (
   `form_key` varchar(50) NOT NULL,
-  `label` varchar(100) NOT NULL
+  `label` varchar(100) NOT NULL,
+  `entity_class` varchar(255) NOT NULL,
+  `entity_tbl_class` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE `core_form`
@@ -49,6 +51,23 @@ CREATE TABLE `core_form_tab` (
 
 ALTER TABLE `core_form_tab`
   ADD PRIMARY KEY (`Tab_ID`);
+
+--
+-- Core Widget
+--
+CREATE TABLE `core_widget` (
+  `Widget_ID` int(11) NOT NULL,
+  `widget_name` varchar(100) NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `permission` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `core_widget`
+  ADD PRIMARY KEY (`Widget_ID`),
+  ADD UNIQUE KEY `widget_name` (`widget_name`);
+
+ALTER TABLE `core_widget`
+  MODIFY `Widget_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Core Index Table
@@ -130,6 +149,22 @@ CREATE TABLE `settings` (
 
 ALTER TABLE `settings`
   ADD PRIMARY KEY (`settings_key`);
+
+--
+-- Statistics
+--
+CREATE TABLE `core_statistic` (
+  `Statistic_ID` int(11) NOT NULL,
+  `stats_key` varchar(100) NOT NULL,
+  `data` text NOT NULL,
+  `date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `core_statistic`
+  ADD PRIMARY KEY (`Statistic_ID`);
+
+ALTER TABLE `core_statistic`
+  MODIFY `Statistic_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Save

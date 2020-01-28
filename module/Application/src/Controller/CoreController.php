@@ -120,6 +120,7 @@ class CoreController extends AbstractActionController {
         CoreController::$aCoreTables['user-xp-activity'] = new TableGateway('user_xp_activity', CoreController::$oDbAdapter);
         CoreController::$aCoreTables['core-widget'] = new TableGateway('core_widget',CoreController::$oDbAdapter);
         CoreController::$aCoreTables['user-widget'] = new TableGateway('core_widget_user',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['core-statistic'] = new TableGateway('core_statistic',CoreController::$oDbAdapter);
 
         $this->loadSettings();
     }
