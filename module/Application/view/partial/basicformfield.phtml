@@ -23,7 +23,7 @@ switch($oField->type) {
      * Textarea
      */
     case 'textarea': ?>
-        <textarea class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"<?=$sExtraAttributes?> ><?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?></textarea>
+        <textarea class="form-control plcnote" rows="10" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"<?=$sExtraAttributes?> ><?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?></textarea>
         <?php
         break;
     /**
@@ -106,7 +106,7 @@ switch($oField->type) {
                 <?php if($oField->allow_clear == 1) { ?>
                 allowClear: true,
                 <?php }?>
-                placeholder: '<?=$oField->label?>'
+                placeholder: '<?=$this->translate($oField->label)?>'
             });
         </script>
         <?php
@@ -145,7 +145,7 @@ switch($oField->type) {
                 <?php if($oField->allow_clear == 1) { ?>
                 allowClear: true,
                 <?php }?>
-                placeholder: '<?=$oField->label?>'
+                placeholder: '<?=$this->translate($oField->label)?>'
             });
             <?php
             # Add selected items to multiselect

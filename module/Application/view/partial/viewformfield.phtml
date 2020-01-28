@@ -32,7 +32,7 @@ switch($oField->type) {
         break;
     case 'select':
         if($this->oItem->getSelectFieldID($oField->fieldkey) != 0) {
-            echo $this->oItem->getSelectField($oField->fieldkey)->getLabel();
+            echo $this->translate($this->oItem->getSelectField($oField->fieldkey)->getLabel());
         } else {
             echo '-';
         }
@@ -40,7 +40,7 @@ switch($oField->type) {
     case 'multiselect':
         if(count($this->oItem->getMultiSelectFieldIDs($oField->fieldkey)) != 0) {
             foreach($this->oItem->getMultiSelectField($oField->fieldkey) as $oItem) {
-                echo $oItem->text.', ';
+                echo $this->translate($oItem->text).', ';
             }
         } else {
             echo '-';

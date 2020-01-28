@@ -72,6 +72,17 @@ Add them to ./public/vendor
 |   +-- filepond-plugin-image-preview.js
 ```
 
+* [Summernote 0.8.15](https://github.com/summernote/summernote/releases)
+> Texteditor
+```
+.
++-- summernote
+|   +-- summernote-bs4.min.js
+|   +-- summernote-bs4.min.css
+|   +-- lang
+|   +-- font
+```
+
 * [Select2 4.0.x](https://github.com/select2/select2/releases)
 > For all Select und Multiselect Fields
 ```

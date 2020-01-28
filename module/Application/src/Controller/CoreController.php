@@ -483,13 +483,12 @@ class CoreController extends AbstractActionController {
                             foreach($aRawData[$sKey] as $iData) {
                                 # If not numberic - its a new dataset
                                 if(!is_numeric($iData)) {
-                                    # check if table connection already exists
-                                    if(!array_key_exists($oField->tbl_cached_name,CoreController::$aCoreTables)) {
-                                        CoreController::$aCoreTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
-                                    }
+                                    $oTblEntity = CoreController::$oServiceManager->get($oField->tbl_class);
                                     # check if addMinimal exists on TableModel
-                                    if(method_exists(CoreController::$aCoreTables[$oField->tbl_cached_name],'addMinimal')) {
-                                        $iNewEntryID = CoreController::$aCoreTables[$oField->tbl_cached_name]->addMinimal($iData,$this->sSingleForm,$oField->fieldkey);
+                                    if(method_exists($oTblEntity,'addMinimal')) {
+                                        echo 'tbl:'.$oField->tbl_cached_name;
+                                        $iNewEntryID = $oTblEntity->addMinimal($iData,$this->sSingleForm,$oField->fieldkey);
+                                        echo 'id:'.$iNewEntryID.'#';
                                         # Save New Entry
                                         $aNewData[] = $iNewEntryID;
                                     }

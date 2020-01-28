@@ -7,7 +7,7 @@
          */
         foreach($this->layout()->aIndexColumns as $oCol) { ?>
             <th id="<?=$this->sTableName?>_<?=$oCol->fieldkey?>" style="width:<?=$oCol->width?>;">
-                <?=$oCol->label?> <i class="fas fa-arrows-alt-h plc-index-table-column-sort" style="color:grey;"></i>
+                <?=$this->translate($oCol->label)?> <i class="fas fa-arrows-alt-h plc-index-table-column-sort" style="color:grey;"></i>
             </th>
         <?php } ?>
         </tr>

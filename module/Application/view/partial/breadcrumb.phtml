@@ -8,7 +8,7 @@ if(count($this->aButtons) > 0) {
         $sFinalHref = str_replace(['##ID##'],[$iItemID],$oBtn->href); ?>
 
         <a href="<?=$sFinalHref?>" title="<?=$oBtn->title?>" class="btn btn-<?=$oBtn->class?>">
-            <?=$oBtn->label?>
+            <?=$this->translate($oBtn->label)?>
         </a>
     <?php
     }
