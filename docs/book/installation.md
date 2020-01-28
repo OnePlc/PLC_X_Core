@@ -42,12 +42,34 @@ Add them to ./public/vendor
 ```
 
 * [Filepond 4.9.4](https://github.com/pqina/filepond/releases)
+    * [file-validate-size](https://github.com/pqina/filepond-plugin-file-validate-size/releases)
+    * [file-validate-type](https://github.com/pqina/filepond-plugin-file-validate-type/releases)
+    * [image-validate-size](https://github.com/pqina/filepond-plugin-image-validate-size/releases)
+    * [image-crop](https://github.com/pqina/filepond-plugin-image-crop/releases)
+    * [image-preview](https://github.com/pqina/filepond-plugin-image-preview/releases)
+    * [image-resize](https://github.com/pqina/filepond-plugin-image-resize/releases)
+    * [image-exif-orientation](https://github.com/pqina/filepond-plugin-image-exif-orientation/releases)
+    * [image-transform](https://github.com/pqina/filepond-plugin-image-transform/releases)
 > For Featured Image Upload
 ```
 .
 +-- filepond
 |   +-- filepond.css
+|   +-- filepond-plugin-image-preview.css
 |   +-- filepond.min.js
+|   +-- filepond-plugin-image-preview.js
+```
+
+* [Uppy 1.8.0](https://github.com/transloadit/uppy/releases)
+    * + @uppy/xhr-upload@1.4.2 
+> For Image Gallery Upload
+```
+.
++-- uppy
+|   +-- filepond.css
+|   +-- filepond-plugin-image-preview.css
+|   +-- filepond.min.js
+|   +-- filepond-plugin-image-preview.js
 ```
 
 * [Select2 4.0.x](https://github.com/select2/select2/releases)
