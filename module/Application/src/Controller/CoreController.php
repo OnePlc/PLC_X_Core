@@ -118,6 +118,8 @@ class CoreController extends AbstractActionController {
         CoreController::$aCoreTables['user-xp-level'] = new TableGateway('user_xp_level', CoreController::$oDbAdapter);
         CoreController::$aCoreTables['user'] = new TableGateway('user', CoreController::$oDbAdapter);
         CoreController::$aCoreTables['user-xp-activity'] = new TableGateway('user_xp_activity', CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['core-widget'] = new TableGateway('core_widget',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['user-widget'] = new TableGateway('core_widget_user',CoreController::$oDbAdapter);
 
         $this->loadSettings();
     }
@@ -217,6 +219,25 @@ class CoreController extends AbstractActionController {
         } else {
             return [];
         }
+    }
+
+    /**
+     * Get All Dashboard Widgets
+     *
+     * @return array Widgets
+     * @since 1.0.5
+     */
+    public function getWidgets() {
+        $aHomeWidgets = [];
+
+        #  Get all widgets from database
+        $oWidgetsDB = CoreController::$aCoreTables['core-widget']->select();
+        if(count($oWidgetsDB) > 0) {
+            foreach($oWidgetsDB as $oWid) {
+                $aHomeWidgets[] = $oWid;
+            }
+        }
+        return $aHomeWidgets;
     }
 
     /**
