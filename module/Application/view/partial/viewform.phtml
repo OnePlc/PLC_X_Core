@@ -44,47 +44,27 @@
 <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 <!-- Turn all file input elements into ponds -->
 <script>
-    FilePond.registerPlugin(FilePondPluginImageExifOrientation);
-    FilePond.registerPlugin(FilePondPluginFileValidateSize);
-    FilePond.registerPlugin(FilePondPluginFileValidateType);
-    FilePond.registerPlugin(FilePondPluginImageValidateSize);
-    FilePond.registerPlugin(FilePondPluginImagePreview);
-    FilePond.registerPlugin(FilePondPluginImageTransform);
-    FilePond.registerPlugin(FilePondPluginImageCrop);
-    FilePond.registerPlugin(FilePondPluginImageResize);
-    // We register the plugins required to do
-    // image previews, cropping, resizing, etc.
-    /**
-     FilePond.registerPlugin(
-     FilePondPluginFileValidateType,
-     FilePondPluginImageExifOrientation,
-     FilePondPluginImagePreview,
-     FilePondPluginImageCrop,
-     FilePondPluginImageResize,
-     FilePondPluginImageTransform,
-     FilePondPluginImageEdit
-     );
-     **/
-
-    // Select the file input and use
-    // create() to turn it into a pond
+    FilePond.registerPlugin(
+        FilePondPluginFileValidateType,
+        FilePondPluginImageExifOrientation,
+        FilePondPluginImagePreview,
+        FilePondPluginImageCrop,
+        FilePondPluginImageResize,
+        FilePondPluginImageTransform
+    );
     FilePond.create(
-        document.getElementById('filepondtest'),
+        document.querySelector('input'),
         {
             labelIdle: `Drag & Drop your picture or <span class="filepond--label-action">Browse</span>`,
-            stylePanelLayout: 'compact circle',
-            styleLoadIndicatorPosition: 'center bottom',
-            styleProgressIndicatorPosition: 'right bottom',
-            styleButtonRemoveItemPosition: 'left bottom',
-            styleButtonProcessItemPosition: 'right bottom',
             imagePreviewHeight: 170,
             imageCropAspectRatio: '1:1',
             imageResizeTargetWidth: 200,
             imageResizeTargetHeight: 200,
-            maxFileSize:'1MB',
-            acceptedFileTypes:['image/png', 'image/jpeg'],
-            imageValidateSizeMinWidth:500,
-            imageValidateSizeMinHeight:500
+            stylePanelLayout: 'compact circle',
+            styleLoadIndicatorPosition: 'center bottom',
+            styleProgressIndicatorPosition: 'right bottom',
+            styleButtonRemoveItemPosition: 'left bottom',
+            styleButtonProcessItemPosition: 'right bottom'
         }
     );
 

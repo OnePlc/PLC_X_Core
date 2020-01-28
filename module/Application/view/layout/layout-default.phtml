@@ -17,7 +17,9 @@ use Application\Controller\CoreController;
         <!-- Le styles -->
         <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
             ->prependStylesheet($this->basePath('css/style.css'))
+            ->prependStylesheet($this->basePath('vendor/fontawesome/css/all.min.css'))
             ->prependStylesheet($this->basePath('vendor/filepond/filepond.css'))
+            ->prependStylesheet($this->basePath('vendor/apexcharts/css/apexcharts.css'))
             ->prependStylesheet($this->basePath('vendor/select2/css/select2.min.css'))
             ->prependStylesheet($this->basePath('vendor/jquery-ui/jquery-ui.min.css'))
             ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
@@ -25,13 +27,16 @@ use Application\Controller\CoreController;
 
         <!-- Scripts -->
         <?= $this->inlineScript()
+            ->prependFile($this->basePath('js/plc-message.js'))
             ->prependFile($this->basePath('js/listener.js'))
+            ->prependFile($this->basePath('vendor/apexcharts/apexcharts.min.js'))
             ->prependFile($this->basePath('vendor/jquery-ui/jquery-ui.min.js'))
             ->prependFile($this->basePath('vendor/select2/js/select2.full.min.js'))
             ->prependFile($this->basePath('js/bootstrap.min.js'))
             ->prependFile($this->basePath('js/jquery-3.4.1.min.js'))
         ?>
-        <script src="https://kit.fontawesome.com/11e0d8bba0.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
     </head>
     <body>
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark" role="navigation">

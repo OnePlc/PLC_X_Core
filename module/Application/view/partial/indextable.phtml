@@ -7,7 +7,7 @@
          */
         foreach($this->layout()->aIndexColumns as $oCol) { ?>
             <th id="<?=$this->sTableName?>_<?=$oCol->fieldkey?>" style="width:<?=$oCol->width?>;">
-                <?=$oCol->label?>
+                <?=$oCol->label?> <i class="fas fa-arrows-alt-h plc-index-table-column-sort" style="color:grey;"></i>
             </th>
         <?php } ?>
         </tr>
@@ -46,6 +46,7 @@ echo $this->paginationControl(
 <script>
     $(function() {
         $( ".plc-core-basic-table thead tr" ).sortable({
+            handle: '.plc-index-table-column-sort',
             update: function( event, ui ) {
                 var sortedIDs = $( ".plc-core-basic-table thead tr" ).sortable( "toArray" );
                 $.post('/user/updateindexcolumnsort',{table:'<?=$this->sTableName?>',columns:sortedIDs},function(retVal) {

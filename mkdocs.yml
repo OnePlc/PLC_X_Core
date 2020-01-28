@@ -4,7 +4,8 @@ nav:
   - Home: index.md
   - Introduction: intro.md
   - 'Quick Start': quick-start.md
-  - 'Advanced Configuration':
+  - 'Advanced':
+      - 'Installation': installation.md
       - 'Themes': themes.md
 site_name: oneplace-core
 site_description: "onePlace Application Framework Core Module"

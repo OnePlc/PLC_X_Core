@@ -160,6 +160,10 @@ class SetupController extends AbstractActionController {
                 'button_icon_position'=>'left',
                 'form_label_spacing'=>2,
                 'theme'=>'default',
+                'created_by'=>1,
+                'created_date'=>date('Y-m-d H:i:s',time()),
+                'modified_by'=>1,
+                'modified_date'=>date('Y-m-d H:i:s',time()),
             ]);
 
             $iAdminUserID = $oUserTbl->lastInsertValue;
