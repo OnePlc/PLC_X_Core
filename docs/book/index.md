@@ -11,7 +11,7 @@ $ composer create-project oneplace/oneplace-core my-app
 ```
 
 You also need to add some 3rd party assets to make onePlace
-fully work. See [Installation](/installation) 
+fully work. See [Installation](https://docs.1plc.ch/oneplace-core/installation/) 
 
 ## Support
  * Issues: [github.com/oneplc/plc_x_core/issues](https://github.com/oneplc/plc_x_core/issues)

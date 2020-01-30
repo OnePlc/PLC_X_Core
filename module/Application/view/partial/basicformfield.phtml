@@ -14,6 +14,7 @@ switch($oField->type) {
     /**
      * Text Field
      */
+    case 'url':
     case 'text': ?>
         <input type="text" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
                value="<?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?>"<?=$sExtraAttributes?> />

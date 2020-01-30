@@ -264,6 +264,7 @@ class CoreEntityModel {
                         case 'text':
                         case 'textarea':
                         case 'email':
+                        case 'url':
                         case 'featuredimage':
                         case 'tel':
                             $this->$sFieldName = '';

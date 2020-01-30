@@ -67,6 +67,7 @@ class CoreEntityTable {
                         case 'textarea':
                         case 'email':
                         case 'tel':
+                        case 'url':
                             $aData[$sFieldName] = $oObject->$sFieldName;
                             break;
                         case 'currency':

@@ -762,4 +762,24 @@ class CoreController extends AbstractActionController {
             return false;
         }
     }
+
+    protected function checkLicense($sModule) {
+        if(isset(CoreController::$aGlobalSettings['license-server-url'])) {
+            //$sApiURL = CoreController::$aGlobalSettings['license-server-url'].'/license/api/list/0?authkey='.CoreController::$aGlobalSettings['license-server-apikey'];
+            $sApiURL = CoreController::$aGlobalSettings['license-server-url'].'/license/api/list/0?authkey=DEVRANDOMKEY&listmode=entity&systemkey='.CoreController::$aGlobalSettings['license-server-apikey'].'&modulename='.$sModule;
+            $sAnswer = file_get_contents($sApiURL);
+
+            $oResponse = json_decode($sAnswer);
+
+            if(is_object($oResponse)) {
+                if($oResponse->state == 'success') {
+                    return true;
+                }
+            }
+
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

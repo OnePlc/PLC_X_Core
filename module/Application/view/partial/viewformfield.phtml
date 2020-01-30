@@ -12,6 +12,11 @@ switch($oField->type) {
     case 'email':
         echo $this->oItem->getTextField($oField->fieldkey);
         break;
+    case 'url':
+        echo '<a href="'.$this->oItem->getTextField($oField->fieldkey).'" target="_blank">';
+            echo $this->oItem->getTextField($oField->fieldkey);
+        echo '</a>';
+        break;
     case 'date':
         if($this->oItem->getTextField($oField->fieldkey) != '0000-00-00 00:00:00' && $this->oItem->getTextField($oField->fieldkey) != '0000-00-00') {
             echo date('d.m.Y',strtotime($this->oItem->getTextField($oField->fieldkey)));
