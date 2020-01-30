@@ -4,6 +4,11 @@
      * Get Column Data based on type
      */
     switch($this->oCol->type) {
+        case 'select':
+            if($this->oItem->getSelectFieldID($this->oCol->fieldkey) != 0) {
+                echo $this->oItem->getSelectField($this->oCol->fieldkey)->getLabel();
+            }
+            break;
         case 'text':
         case 'email':
             if($this->oCol->url_view != '') {
