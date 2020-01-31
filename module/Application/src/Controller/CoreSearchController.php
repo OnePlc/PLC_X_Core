@@ -91,9 +91,43 @@ class CoreSearchController extends CoreEntityController
             # Load Fields for View Form
             $this->setFormFields($this->sSingleForm);
 
+            # Parse Raw Form Data
+            $aData = $this->parseFormData($_REQUEST);
+
+            $aAllFields = $this->getFormFields($sKey.'-single');
+            $aFieldsByKey = [];
+            foreach($aAllFields as $oField) {
+                $aFieldsByKey[$oField->fieldkey] = $oField;
+            }
+
+            # Start building where query
+            $aWhere = [];
+
+            # loop data
+            foreach(array_keys($aData) as $sFieldKey) {
+                if($aData[$sFieldKey] != '') {
+                    # add field to query based on type
+                    switch($aFieldsByKey[$sFieldKey]->type) {
+                        case 'select':
+                            $aWhere[$sFieldKey] = $aData[$sFieldKey];
+                            break;
+                        case 'text':
+                        case 'currency':
+                        case 'textarea':
+                        case 'date':
+                            $aWhere[$sFieldKey.'-like'] = $aData[$sFieldKey];
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            $aItems = $this->oTableGateway->fetchAll(true,$aWhere);
+
             return new ViewModel([
                 'sFormName'=>$sKey.'-single',
-                'aResults' => [],
+                'aResults' => $aItems,
             ]);
         }
     }
