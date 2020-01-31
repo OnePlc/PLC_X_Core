@@ -1,0 +1,169 @@
+<?php
+/**
+ * Print Form Field based on Type
+ */
+
+use Application\Controller\CoreController;
+
+$iItemID = (isset($this->oItem)) ? $this->oItem->getID() : 0;
+$sExtraAttributes = '';
+if($oField->readonly == 1) {
+    $sExtraAttributes .= ' readonly';
+}
+switch($oField->type) {
+    /**
+     * Text Field
+     */
+    case 'url':
+    case 'text':
+    case 'textarea': ?>
+        <input type="text" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
+               value="<?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?>"<?=$sExtraAttributes?> />
+        <?php
+        break;
+    /**
+     * E-Mail field
+     */
+    case 'email': ?>
+        <input type="email" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
+               value="<?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?>"<?=$sExtraAttributes?> />
+        <?php
+        break;
+    /**
+     * Tel (phone) field
+     */
+    case 'tel': ?>
+        <input type="tel" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"<?=$sExtraAttributes?> />
+        <?php
+        break;
+    /**
+     * Date field
+     */
+    case 'date': ?>
+        <input type="date" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
+               value="<?=(isset($this->oItem)) ? date('Y-m-d',strtotime($this->oItem->getTextField($oField->fieldkey))) : ''?>"<?=$sExtraAttributes?> />
+        <?php
+        break;
+    /**
+     * Datetime (Date + Time) field
+     */
+    case 'datetime': ?>
+        <input type="date" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
+               value="<?=(isset($this->oItem)) ? date('Y-m-d',strtotime($this->oItem->getTextField($oField->fieldkey))) : ''?>"<?=$sExtraAttributes?> />
+        <input type="time" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>-time"
+               value="<?=(isset($this->oItem)) ? date('H:i',strtotime($this->oItem->getTextField($oField->fieldkey))) : ''?>"<?=$sExtraAttributes?> />
+        <?php
+        break;
+    /**
+     * Time field
+     */
+    case 'time': ?>
+        <input type="time" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" />
+        <?php
+        break;
+    /**
+     * Select field
+     */
+    case 'select':?>
+        <select class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" id="plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>"<?=$sExtraAttributes?> >
+            <?php if(isset($this->oItem)) { ?>
+                <?php if($this->oItem->getSelectFieldID($oField->fieldkey) != 0) { ?>
+                    <option value="<?= $this->oItem->getSelectFieldID($oField->fieldkey) ?>">
+                        <?= $this->oItem->getSelectField($oField->fieldkey)->getLabel() ?>
+                    </option>
+                    <?php
+                }
+            }
+            ?>
+        </select>
+        <script>
+            $('#plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>').select2({
+                ajax: {
+                    url: '<?=str_replace(['##ID##'],[$iItemID],$oField->url_ist)?>',
+                    dataType: 'json'
+                },
+                <?php
+                if($oField->tbl_permission != '') {
+                    $aPermissionInfo = explode('-', $oField->tbl_permission);
+                    if(CoreController::$oSession->oUser->hasPermission($aPermissionInfo[0], $aPermissionInfo[1])) { ?>
+                tags: true,
+                    <?php }
+                }?>
+                // tags: true, - allow creation of new entries
+                <?php if($oField->allow_clear == 1) { ?>
+                allowClear: true,
+                <?php }?>
+                placeholder: '<?=$this->translate($oField->label)?>'
+            });
+        </script>
+        <?php
+        break;
+    /**
+     * Multiselect field
+     */
+    case 'multiselect':?>
+        <select class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>[]" id="plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>" multiple>
+            <?php if(isset($this->oItem)) { ?>
+                <?php if(count($this->oItem->getMultiSelectFieldIDs($oField->fieldkey)) != 0) {
+                    foreach($this->oItem->getMultiSelectField($oField->fieldkey) as $oItem) { ?>
+                        <option value="<?= $oItem->id ?>">
+                            <?= $oItem->text ?>
+                        </option>
+                        <?php
+                    }
+                }
+            }
+            ?>
+        </select>
+        <script>
+            $('#plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>').select2({
+                ajax: {
+                    url: '<?=str_replace(['##ID##'],[$iItemID],$oField->url_ist)?>',
+                    dataType: 'json'
+                },
+                <?php
+                if($oField->tbl_permission != '') {
+                $aPermissionInfo = explode('-', $oField->tbl_permission);
+                if(CoreController::$oSession->oUser->hasPermission($aPermissionInfo[0], $aPermissionInfo[1])) { ?>
+                tags: true,
+                <?php }
+                }?>
+                // tags: true, - allow creation of new entries
+                <?php if($oField->allow_clear == 1) { ?>
+                allowClear: true,
+                <?php }?>
+                placeholder: '<?=$this->translate($oField->label)?>'
+            });
+            <?php
+            # Add selected items to multiselect
+            if(isset($this->oItem)) {
+                if(count($this->oItem->getMultiSelectFieldIDs($oField->fieldkey)) != 0) {
+                    foreach($this->oItem->getMultiSelectField($oField->fieldkey) as $oItem) { ?>
+                    var option = new Option('<?=$oItem->text?>', <?=$oItem->id?>, true, true);
+                    $('#plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>').append(option).trigger('change');
+                    <?php
+                    }
+                }
+            } ?>
+        </script>
+        <?php
+        break;
+    /**
+     * Currency Field
+     */
+    case 'currency': ?>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">€</span>
+            </div>
+            <input type="text" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
+                   value="<?=(isset($this->oItem)) ? number_format($this->oItem->getTextField($oField->fieldkey),2) : ''?>"<?=$sExtraAttributes?> />
+        </div>
+        <?php
+        break;
+    /**
+     * Partial Field
+     */
+    default:
+        break;
+}

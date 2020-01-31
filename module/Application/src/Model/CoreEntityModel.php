@@ -19,6 +19,7 @@ use Application\Controller\CoreController;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Sql\Select;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 class CoreEntityModel {
     /**
@@ -233,7 +234,7 @@ class CoreEntityModel {
                         try {
                             $oEntityTable = CoreController::$oServiceManager->get($oEntityTag->entity_table_class);
                             $aEntityModels[] = $oEntityTable->getSingle($iEntityTagID);
-                        } catch (\RuntimeException $e) {
+                        } catch (ServiceNotFoundException $e) {
 
                         }
                     } else {

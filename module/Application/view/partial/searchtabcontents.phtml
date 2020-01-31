@@ -1,0 +1,16 @@
+<div class="tab-content col-md-12" id="<?=$this->sFormName?>FormContent">
+<?php
+if(count($this->layout()->aTabs) > 0) {
+    $iTabCount = 1;
+    foreach($this->layout()->aTabs as $oTab) { ?>
+        <div class="tab-pane fade<?=($iTabCount == 1) ? ' show active' : ''?>" id="<?=$oTab->Tab_ID?>" role="tabpanel" aria-labelledby="<?=$oTab->Tab_ID?>-tab">
+            <div class="row py-2 px-2">
+                <?= $this->partial('partial/searchformfields', ['sFormName'=>$this->sFormName,'sTab'=>$oTab->Tab_ID,'oItem'=>$this->oItem]); ?>
+            </div>
+        </div>
+    <?php
+        $iTabCount++;
+    }
+}
+?>
+</div>

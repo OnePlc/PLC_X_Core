@@ -764,19 +764,30 @@ class CoreController extends AbstractActionController {
     }
 
     protected function checkLicense($sModule) {
+        # Licensing is only for hosted and subscription based solutions
         if(isset(CoreController::$aGlobalSettings['license-server-url'])) {
-            //$sApiURL = CoreController::$aGlobalSettings['license-server-url'].'/license/api/list/0?authkey='.CoreController::$aGlobalSettings['license-server-apikey'];
-            $sApiURL = CoreController::$aGlobalSettings['license-server-url'].'/license/api/list/0?authkey=DEVRANDOMKEY&listmode=entity&systemkey='.CoreController::$aGlobalSettings['license-server-apikey'].'&modulename='.$sModule;
-            $sAnswer = file_get_contents($sApiURL);
-
-            $oResponse = json_decode($sAnswer);
-
-            if(is_object($oResponse)) {
-                if($oResponse->state == 'success') {
-                    return true;
-                }
+            # build licence cache
+            if(!isset(CoreController::$oSession->aLicences)) {
+                CoreController::$oSession->aLicences = [];
             }
+            # only query each license once per session
+            if(!array_key_exists($sModule,CoreController::$oSession->aLicences)) {
+                //$sApiURL = CoreController::$aGlobalSettings['license-server-url'].'/license/api/list/0?authkey='.CoreController::$aGlobalSettings['license-server-apikey'];
+                $sApiURL = CoreController::$aGlobalSettings['license-server-url'].'/license/api/list/0?authkey=DEVRANDOMKEY&listmode=entity&systemkey='.CoreController::$aGlobalSettings['license-server-apikey'].'&modulename='.$sModule;
+                $sAnswer = file_get_contents($sApiURL);
 
+                $oResponse = json_decode($sAnswer);
+
+                if(is_object($oResponse)) {
+                    # add license to cache
+                    if($oResponse->state == 'success') {
+                        CoreController::$oSession->aLicences[$sModule] = true;
+                        return true;
+                    }
+                }
+            } else {
+                return true;
+            }
             return false;
         } else {
             return true;
