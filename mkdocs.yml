@@ -7,6 +7,7 @@ nav:
   - 'Advanced':
       - 'Installation': installation.md
       - 'Themes': themes.md
+      - 'Hooks': hooks.md
 site_name: oneplace-core
 site_description: "onePlace Application Framework Core Module"
 repo_url: 'https://github.com/OnePlc/PLC_X_Core'
