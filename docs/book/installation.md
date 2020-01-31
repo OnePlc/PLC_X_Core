@@ -95,3 +95,25 @@ Add them to ./public/vendor
 |   |   |   +-- *.js (all languages you want/need)
 |   |   +-- select2.full.min.js
 ```
+
+## support for environment variables in setup
+
+if you are testing and often have to deploy the same oneplace system.
+you can set the fields needed for setup in your servers environments
+variable - so its automatically pre-filled.
+
+For nginx (in your virtual host file)
+```bash
+location ~ \.php$ {
+    # here some code maybe
+    fastcgi_param PLCSETUPDBHOST "localhost";
+    fastcgi_param PLCSETUPDBUSER "root";
+    fastcgi_param PLCSETUPDBNAME "plcdemo";
+    fastcgi_param PLCSETUPDBPASS "";
+    fastcgi_param PLCSETUPADMINUSER "plcroot";
+    fastcgi_param PLCSETUPADMINMAIL "admin@example.com";
+    fastcgi_param PLCSETUPADMINPASS "1234";
+    # insert params just above fastcgi_pass
+    fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
+}
+```

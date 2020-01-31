@@ -93,7 +93,7 @@ CREATE TABLE `core_form_field` (
   `form` varchar(100) NOT NULL,
   `class` varchar(100) NOT NULL,
   `url_view` varchar(255) NOT NULL,
-  `url_ist` varchar(255) NOT NULL,
+  `url_list` varchar(255) NOT NULL,
   `show_widget_left` tinyint(1) NOT NULL,
   `allow_clear` tinyint(1) NOT NULL DEFAULT 1,
   `readonly` tinyint(1) NOT NULL DEFAULT 0,
