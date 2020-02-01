@@ -115,6 +115,10 @@ class CoreSearchController extends CoreEntityController
                         case 'currency':
                         case 'textarea':
                         case 'date':
+                        case 'time':
+                        case 'datetime':
+                        case 'email':
+                        case 'number':
                             $aWhere[$sFieldKey.'-like'] = $aData[$sFieldKey];
                             break;
                         default:

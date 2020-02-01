@@ -471,12 +471,15 @@ class CoreController extends AbstractActionController {
             if(count($oField) > 0) {
                 $oField = $oField->current();
                 switch($oField->type) {
+                    # Password Field
                     case 'password':
                         $aFormData[$sFieldName] = password_hash($_REQUEST[$sKey],PASSWORD_DEFAULT);
                         break;
+                    # Datetime Field
                     case 'datetime':
                         $aFormData[$sFieldName] = $_REQUEST[$sKey].' '.$_REQUEST[$sKey.'-time'];
                         break;
+                    # Multiselect Field
                     case 'multiselect':
                         if(count($aRawData[$sKey]) > 0) {
                             $aNewData = [];
@@ -500,6 +503,7 @@ class CoreController extends AbstractActionController {
                             $aFormData[$sFieldName] = $aNewData;
                         }
                         break;
+                    # Select Field
                     case 'select':
                         # If not numberic - its a new dataset
                         if(!is_numeric($aRawData[$sKey])) {
@@ -519,6 +523,7 @@ class CoreController extends AbstractActionController {
                             $aFormData[$sFieldName] = $aRawData[$sKey];
                         }
                         break;
+                    # All other fields
                     default:
                         $aFormData[$sFieldName] = $_REQUEST[$sKey];
                         break;
