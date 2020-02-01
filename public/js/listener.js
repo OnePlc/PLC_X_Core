@@ -17,7 +17,9 @@ $(function () {
             showConfirmButton: false
         });
 
-        $.post('/skeleton/export/dump',{},function(retVal) {
+        var modBase = $(this).attr('href');
+
+        $.post(modBase+'/export/dump',{},function(retVal) {
             Swal.close();
             Swal.fire({
                 icon: 'success',

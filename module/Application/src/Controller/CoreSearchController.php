@@ -66,6 +66,8 @@ class CoreSearchController extends CoreEntityController
      * @since 1.0.5
      */
     public function generateSearchView($sKey) {
+        $this->sSingleForm = $sKey.'-single';
+
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
 

@@ -14,6 +14,9 @@ if(is_object(CoreController::$oSession->oUser)) {
     if(count($aInfo) == 0) {
         $aInfo = ['index'=>(object)['nav_label'=>'Home','nav_href'=>'/']];
     }
+    if($aInfo['index']->show_in_menu != 1) {
+        continue;
+    }
     # check if we are on active node
     $sActive = ('/'.strtolower($this->sRouteName) == strtolower($aInfo['index']->nav_href)) ? ' active' : '';
     # home is special case ..

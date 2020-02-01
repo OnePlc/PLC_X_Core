@@ -19,6 +19,7 @@ use Application\Controller\CoreController;
             ->prependStylesheet($this->basePath('css/style.css'))
             ->prependStylesheet($this->basePath('vendor/summernote/summernote-bs4.min.css'))
             ->prependStylesheet($this->basePath('vendor/fontawesome/css/all.min.css'))
+            ->prependStylesheet($this->basePath('vendor/filepond/filepond-plugin-image-preview.min.css'))
             ->prependStylesheet($this->basePath('vendor/filepond/filepond.css'))
             ->prependStylesheet($this->basePath('vendor/apexcharts/css/apexcharts.css'))
             ->prependStylesheet($this->basePath('vendor/select2/css/select2.min.css'))
@@ -26,7 +27,6 @@ use Application\Controller\CoreController;
             ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
         ?>
         <link href="https://transloadit.edgly.net/releases/uppy/v1.8.0/uppy.min.css" rel="stylesheet">
-        <link href="/vendor/filepond/filepond-plugin-image-preview.min.css" rel="stylesheet">
 
         <!-- Scripts -->
         <?= $this->inlineScript()

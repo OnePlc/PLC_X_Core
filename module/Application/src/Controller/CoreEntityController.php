@@ -135,6 +135,9 @@ class CoreEntityController extends CoreController {
         # Save Multiselect
         $this->updateMultiSelectFields($_REQUEST,$oSkeletonBasedObject,$sKey.'-single');
 
+        # Add XP for creating a new entity
+        CoreController::$oSession->oUser->addXP($sKey.'-add');
+
         # Log Performance in DB
         $aMeasureEnd = getrusage();
         $this->logPerfomance($sKey.'-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
@@ -256,6 +259,9 @@ class CoreEntityController extends CoreController {
 
         # Save Multiselect
         $this->updateMultiSelectFields($aFormData,$oSkeleton,$sKey.'-single');
+
+        # Add XP for creating a new entity
+        CoreController::$oSession->oUser->addXP($sKey.'-edit');
 
         # Log Performance in DB
         $aMeasureEnd = getrusage();

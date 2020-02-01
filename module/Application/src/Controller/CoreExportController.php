@@ -60,7 +60,7 @@ class CoreExportController extends CoreController
      * @return array
      * @since 1.0.5
      */
-    public function exportSkeletonBasedData($sTitle,$sKey) {
+    public function exportData($sTitle,$sKey) {
         $this->sSingleForm = $sKey.'-single';
 
         # set dump export mode
@@ -69,13 +69,13 @@ class CoreExportController extends CoreController
 
         # Set document properties
         $spreadsheet->getProperties()
-            ->setCreator('Maarten Balliauw')
-            ->setLastModifiedBy('Maarten Balliauw')
+            ->setCreator(CoreController::$oSession->oUser->getLabel())
+            ->setLastModifiedBy(CoreController::$oSession->oUser->getLabel())
             ->setTitle($sTitle)
-            ->setSubject('Export of all Skeleton Data')
-            ->setDescription('This file contains all data of module article and its entities')
-            ->setKeywords('skeleton export')
-            ->setCategory('Skeleton Export');
+            ->setSubject('Export of all '.$sTitle.' Data')
+            ->setDescription('This file contains all data of module '.$sTitle)
+            ->setKeywords($sKey.' export')
+            ->setCategory($sTitle.' Export');
 
         # Add some data
         $spreadsheet->setActiveSheetIndex(0);
@@ -200,10 +200,13 @@ class CoreExportController extends CoreController
         $writer = new Xlsx($spreadsheet);
         $writer->save($sPath);
 
+        # Add XP for creating an export
+        CoreController::$oSession->oUser->addXP($sKey.'-export');
+
         sleep(1);
 
         return [
-            'href'=>'/data/skeleton/export/test.xlsx',
+            'href'=>'/data/'.$sKey.'/export/test-core.xlsx',
             'label'=>'Download Excel File',
             'icon'=>'fas fa-download',
             'class'=>'btn-primary',
