@@ -38,6 +38,8 @@
             } else {
                 echo '-';
             }
+        case 'currency':
+            echo '€ '.number_format($this->oItem->getTextField($this->oCol->fieldkey),2,',','.');
             break;
         default:
             break;

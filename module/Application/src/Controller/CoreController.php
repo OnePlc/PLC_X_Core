@@ -783,6 +783,7 @@ class CoreController extends AbstractActionController {
 
                 $oResponse = json_decode($sAnswer);
 
+                # check response
                 if(is_object($oResponse)) {
                     # add license to cache
                     if($oResponse->state == 'success') {
