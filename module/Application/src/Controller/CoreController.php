@@ -787,6 +787,7 @@ class CoreController extends AbstractActionController {
                     # add license to cache
                     if($oResponse->state == 'success') {
                         CoreController::$oSession->aLicences[$sModule] = true;
+                        CoreController::$oSession->aLicences['info-instance-id'] = $oResponse->instance_id;
                         return true;
                     }
                 }

@@ -93,7 +93,7 @@ switch($oField->type) {
         <script>
             $('#plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>').select2({
                 ajax: {
-                    url: '<?=str_replace(['##ID##'],[$iItemID],$oField->url_ist)?>',
+                    url: '<?=str_replace(['##ID##'],[$iItemID],$oField->url_list)?>',
                     dataType: 'json'
                 },
                 <?php
@@ -132,7 +132,7 @@ switch($oField->type) {
         <script>
             $('#plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>').select2({
                 ajax: {
-                    url: '<?=str_replace(['##ID##'],[$iItemID],$oField->url_ist)?>',
+                    url: '<?=str_replace(['##ID##'],[$iItemID],$oField->url_list)?>',
                     dataType: 'json'
                 },
                 <?php

@@ -11,7 +11,7 @@ INSERT INTO `core_form_tab` (`Tab_ID`, `form`, `title`, `subtitle`, `icon`, `cou
 --
 -- Skeleton Base Form Fields
 --
-INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `form`, `class`, `url_view`, `url_ist`, `show_widget_left`, `allow_clear`, `readonly`, `tbl_cached_name`, `tbl_class`, `tbl_permission`) VALUES
+INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `form`, `class`, `url_view`, `url_list`, `show_widget_left`, `allow_clear`, `readonly`, `tbl_cached_name`, `tbl_class`, `tbl_permission`) VALUES
 (NULL, 'select', 'Model', 'model_idfs', 'skeleton-base', 'skeleton-single', 'col-md-2', '', '/tag/api/list/skeleton-single_3', '0', '1', '0', 'tag-single', 'OnePlace\\Tag\\Model\\TagTable','add-OnePlace\\Tag\\Controller\\ModelController'),
 (NULL, 'select', 'System', 'system_idfs', 'skeleton-base', 'skeleton-single', 'col-md-2', '', '/tag/api/list/skeleton-single_4', '0', '1', '0', 'tag-single', 'OnePlace\\Tag\\Model\\TagTable','add-OnePlace\\Tag\\Controller\\SystemController'),
 (NULL, 'select', 'Coolant', 'coolant_idfs', 'skeleton-base', 'skeleton-single', 'col-md-2', '', '/tag/api/list/skeleton-single_5', '0', '1', '0', 'tag-single', 'OnePlace\\Tag\\Model\\TagTable','add-OnePlace\\Tag\\Controller\\CoolantController'),
@@ -34,7 +34,7 @@ INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `
 --
 -- Skeleton Dates Form Fields
 --
-INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `form`, `class`, `url_view`, `url_ist`, `show_widget_left`, `allow_clear`, `readonly`, `tbl_cached_name`, `tbl_class`, `tbl_permission`) VALUES
+INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `form`, `class`, `url_view`, `url_list`, `show_widget_left`, `allow_clear`, `readonly`, `tbl_cached_name`, `tbl_class`, `tbl_permission`) VALUES
 (NULL, 'text', 'Ready to sell', 'sell_ready_date', 'skeleton-dates', 'skeleton-single', 'col-md-2', '', '', '0', '1', '0', '', '', ''),
 (NULL, 'date', 'Info received', 'info_received_date', 'skeleton-dates', 'skeleton-single', 'col-md-2', '', '', '0', '1', '0', '', '', ''),
 (NULL, 'date', 'Deadline received', 'deadline_received_date', 'skeleton-dates', 'skeleton-single', 'col-md-2', '', '', '0', '1', '0', '', '', ''),
@@ -47,7 +47,7 @@ INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `
 -- Skeleton Finance Form Fields
 --
 
-INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `form`, `class`, `url_view`, `url_ist`, `show_widget_left`, `allow_clear`, `readonly`, `tbl_cached_name`, `tbl_class`, `tbl_permission`) VALUES
+INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `form`, `class`, `url_view`, `url_list`, `show_widget_left`, `allow_clear`, `readonly`, `tbl_cached_name`, `tbl_class`, `tbl_permission`) VALUES
 (NULL, 'currency', 'Our Price', 'price_us', 'skeleton-finance', 'skeleton-single', 'col-md-2', '', '', 0, 1, '0', '', '', ''),
 (NULL, 'currency', 'Sell Price', 'price_sell', 'skeleton-finance', 'skeleton-single', 'col-md-2', '', '', 0, 1, '0', '', '', ''),
 (NULL, 'currency', 'Retailer Price', 'price_retailer', 'skeleton-finance', 'skeleton-single', 'col-md-2', '', '', 0, 1, '0', '', '', ''),
@@ -61,7 +61,7 @@ INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `
 --
 -- Skeleton Internal Form Fields
 --
-INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `form`, `class`, `url_view`, `url_ist`, `show_widget_left`, `allow_clear`, `readonly`, `tbl_cached_name`, `tbl_class`, `tbl_permission`) VALUES
+INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `form`, `class`, `url_view`, `url_list`, `show_widget_left`, `allow_clear`, `readonly`, `tbl_cached_name`, `tbl_class`, `tbl_permission`) VALUES
 (NULL, 'textarea', 'Internal Description', 'description_internal', 'skeleton-internal', 'skeleton-single', 'col-md-12', '', '', '0', '1', '0', '', '', '');
 
 --
