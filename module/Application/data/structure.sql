@@ -167,6 +167,20 @@ ALTER TABLE `core_statistic`
   MODIFY `Statistic_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- Api Key Table
+--
+CREATE TABLE `core_api_key` (
+  `Apikey_ID` int(11) NOT NULL,
+  `token` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `core_api_key`
+  ADD PRIMARY KEY (`Apikey_ID`);
+
+ALTER TABLE `core_api_key`
+  MODIFY `Apikey_ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Save
 --
 COMMIT;

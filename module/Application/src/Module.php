@@ -24,9 +24,9 @@ class Module {
     /**
      * Module Version
      *
-     * @since 1.0.9
+     * @since 1.0.10
      */
-    const VERSION = '1.0.9';
+    const VERSION = '1.0.10';
 
     public function getConfig() : array {
         return include __DIR__ . '/../config/module.config.php';

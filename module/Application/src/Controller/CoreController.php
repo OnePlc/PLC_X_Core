@@ -654,6 +654,15 @@ class CoreController extends AbstractActionController {
         }
     }
 
+    /**
+     * Update Multiselect Fields
+     *
+     * @param $aRawFormData
+     * @param $oItem
+     * @param $sForm
+     * @param string $sEntityTypeOverWrite
+     * @since 1.0.4
+     */
     protected function updateMultiSelectFields($aRawFormData,$oItem,$sForm,$sEntityTypeOverWrite = '') {
         $aFields = $this->getFormFields($sForm,[],'multiselect');
         $sEntityType = ($sEntityTypeOverWrite != '') ? $sEntityTypeOverWrite : explode('-',$sForm)[0];
@@ -682,6 +691,14 @@ class CoreController extends AbstractActionController {
         }
     }
 
+    /**
+     * Save Performance Log based in rutime
+     *
+     * @param $sAction
+     * @param $fUtime
+     * @param $fStime
+     * @since 1.0.2
+     */
     protected function logPerfomance($sAction,$fUtime,$fStime) {
         CoreController::$aCoreTables['core-log-performance']->insert([
             'action'=>$sAction,
@@ -693,11 +710,30 @@ class CoreController extends AbstractActionController {
         $this->layout()->recentPerfS = (float)$fStime;
     }
 
+    /**
+     * Format rutime
+     *
+     * @param $ru
+     * @param $rus
+     * @param $index
+     * @return float|int
+     * @since 1.0.2
+     */
     protected function rutime($ru, $rus, $index) {
         return ($ru["ru_$index.tv_sec"]*1000 + intval($ru["ru_$index.tv_usec"]/1000))
             -  ($rus["ru_$index.tv_sec"]*1000 + intval($rus["ru_$index.tv_usec"]/1000));
     }
 
+    /**
+     * Send E-Mail based on partial template
+     *
+     * @param $sTemplate name of partial
+     * @param $aTemplateData template data
+     * @param $sToMail E-Mail address of receiver
+     * @param $sToName Name of receiver
+     * @param $sSubject e-mail subject
+     * @since 1.0.4
+     */
     protected function sendEmail($sTemplate,$aTemplateData,$sToMail,$sToName,$sSubject) {
         $viewRenderer = CoreController::$oServiceManager->get('ViewRenderer');
 
@@ -768,6 +804,14 @@ class CoreController extends AbstractActionController {
         }
     }
 
+    /**
+     * For hosted solutions - check if there
+     * is a valid licence for the requested module
+     *
+     * @param $sModule
+     * @return bool
+     * @since 1.0.6
+     */
     protected function checkLicense($sModule) {
         # Licensing is only for hosted and subscription based solutions
         if(isset(CoreController::$aGlobalSettings['license-server-url'])) {
@@ -778,9 +822,8 @@ class CoreController extends AbstractActionController {
             # only query each license once per session
             if(!array_key_exists($sModule,CoreController::$oSession->aLicences)) {
                 //$sApiURL = CoreController::$aGlobalSettings['license-server-url'].'/license/api/list/0?authkey='.CoreController::$aGlobalSettings['license-server-apikey'];
-                $sApiURL = CoreController::$aGlobalSettings['license-server-url'].'/license/api/list/0?authkey=DEVRANDOMKEY&listmode=entity&systemkey='.CoreController::$aGlobalSettings['license-server-apikey'].'&modulename='.$sModule;
+                $sApiURL = CoreController::$aGlobalSettings['license-server-url'].'/license/api/list/0?authkey='.CoreController::$aGlobalSettings['license-server-apikey'].'&authtoken='.CoreController::$aGlobalSettings['license-server-apitoken'].'&listmode=entity&systemkey='.CoreController::$aGlobalSettings['license-server-apikey'].'&modulename='.$sModule;
                 $sAnswer = file_get_contents($sApiURL);
-
                 $oResponse = json_decode($sAnswer);
 
                 # check response
