@@ -135,7 +135,7 @@ if(isset(CoreController::$aGlobalSettings['app-title'])) {
             echo $flash->render('warning', ['alert', 'alert-dismissible', 'alert-warning', 'alert-plc']);
             echo $flash->render('success', ['alert', 'alert-dismissible', 'alert-success', 'alert-plc']);?>
 
-            <?= $this->partial('partial/breadcrumb', ['aButtons'=>isset($this->aButtons) ? $this->aButtons : [], 'pages'=>[]]); ?>
+            <?= $this->partial('partial/breadcrumb', ['aButtons'=>isset($this->aButtons) ? $this->aButtons : [], 'aLinks'=>$this->aNavLinks]); ?>
             <div class="row py-4">
                 <div class="col-md-12 py-4">
                     <?= $this->content ?>

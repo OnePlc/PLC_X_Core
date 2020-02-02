@@ -39,6 +39,10 @@ class CoreEntityController extends CoreController {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
 
+        $this->layout()->aNavLinks = [
+            (object)['label'=>ucfirst($sKey.'s')],
+        ];
+
         # Check license
         if(!$this->checkLicense($sKey)) {
             $this->flashMessenger()->addErrorMessage('You have no active license for '.$sKey);
@@ -71,6 +75,12 @@ class CoreEntityController extends CoreController {
     protected function generateAddView($sKey,$sSingleForm = '') {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
+
+        # Add Links for Breadcrumb
+        $this->layout()->aNavLinks = [
+            (object)['label'=>ucfirst($sKey.'s'),'href'=>'/'.$sKey],
+            (object)['label'=>'Add '.ucfirst($sKey)],
+        ];
 
         # Check license
         if(!$this->checkLicense($sKey)) {
@@ -168,6 +178,12 @@ class CoreEntityController extends CoreController {
             return false;
         }
 
+        # Add Links for Breadcrumb
+        $this->layout()->aNavLinks = [
+            (object)['label'=>ucfirst($sKey.'s'),'href'=>'/'.$sKey],
+            (object)['label'=>$oSkeleton->getLabel()],
+        ];
+
         # Attach Skeleton Entity to Layout
         $this->setViewEntity($oSkeleton);
 
@@ -201,6 +217,12 @@ class CoreEntityController extends CoreController {
             $this->flashMessenger()->addErrorMessage('You have no active license for '.$sKey);
             $this->redirect()->toRoute('home');
         }
+
+        # Add Links for Breadcrumb
+        $this->layout()->aNavLinks = [
+            (object)['label'=>ucfirst($sKey.'s'),'href'=>'/'.$sKey],
+            (object)['label'=>'Edit '.ucfirst($sKey)],
+        ];
 
         # Get Request to decide wether to save or display form
         $oRequest = $this->getRequest();

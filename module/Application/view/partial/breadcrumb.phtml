@@ -1,5 +1,5 @@
 <div class="row mb-2">
-    <div class="col-md-6">
+    <div class="col-md-9">
         <div class="plc-button-panel">
             <?php
             if(count($this->aButtons) > 0) {
@@ -19,7 +19,35 @@
             ?>
         </div>
     </div>
-    <div class="col-md-6">
-        Test
+    <div class="col-md-3 text-right">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="<?=$this->url('home')?>">
+                        <i class="fas fa-home"></i> <?=$this->translate('Home')?>
+                    </a>
+                </li>
+                <?php
+                if(isset($aLinks)) {
+                    if (count($aLinks) > 0) {
+                        foreach ($aLinks as $oLink) { ?>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <?php if(isset($oLink->href)) { ?>
+                                    <a href="<?=$oLink->href ?>">
+                                        <?= $this->translate($oLink->label) ?>
+                                        <?= (isset($oLink->label_append)) ? $oLink->label_append : ''?>
+                                    </a>
+                                <?php } else { ?>
+                                    <?= $this->translate($oLink->label) ?>
+                                    <?= (isset($oLink->label_append)) ? $oLink->label_append : ''?>
+                                <?php } ?>
+                            </li>
+                            <?php
+                        }
+                    }
+                }
+                ?>
+            </ol>
+        </nav>
     </div>
 </div>
