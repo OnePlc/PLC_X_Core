@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * Print Pagination Control
+ */
+echo $this->paginationControl(
+// The paginator object:
+    $this->aItems,
+    // The scrolling style:
+    'sliding',
+    // The partial to use to render the control:
+    'partial/paginator',
+    // The route to link to when a user clicks a control link:
+    ['route' => $this->sRoute]
+);
