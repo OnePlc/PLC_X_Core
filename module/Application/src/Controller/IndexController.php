@@ -241,7 +241,15 @@ class IndexController extends CoreController {
                     }
                     break;
                 default:
-
+                    $oForm = CoreController::$aCoreTables['core-form']->select(['form_key'=>$sEntityType.'-single']);
+                    if(count($oForm) > 0) {
+                        $oForm = $oForm->current();
+                        $oEntityTbl = CoreController::$oServiceManager->get($oForm->entity_tbl_class);
+                        $oEntity = $oEntityTbl->getSingle($iEntityID);
+                        if($oEntity) {
+                            $sPath = $_SERVER['DOCUMENT_ROOT'].'/data/'.$sEntityType.'/'.$oEntity->getID().'/';
+                        }
+                    }
                     break;
             }
 
@@ -254,13 +262,13 @@ class IndexController extends CoreController {
                     $aFile = $_FILES['filepond'];
                     if(move_uploaded_file($aFile['tmp_name'],$sPath.'/'.$aFile['name'])) {
                         switch($sEntityType) {
-                            case 'skeleton':
-                                $oEntityTbl->updateAttribute('featured_image', $aFile['name'], 'Skeleton_ID', $iEntityID);
-                                break;
                             case 'user':
                                 $oEntityTbl->updateAttribute('featured_image', $aFile['name'], 'User_ID', $iEntityID);
                                 break;
                             default:
+                                if(is_object($oEntityTbl)) {
+                                    $oEntityTbl->updateAttribute('featured_image', $aFile['name'], ucfirst($sEntityType).'_ID', $iEntityID);
+                                }
                                 break;
                         }
                     }
@@ -293,7 +301,15 @@ class IndexController extends CoreController {
                 }
                 break;
             default:
-
+                $oForm = CoreController::$aCoreTables['core-form']->select(['form_key'=>$sEntityType.'-single']);
+                if(count($oForm) > 0) {
+                    $oForm = $oForm->current();
+                    $oEntityTbl = CoreController::$oServiceManager->get($oForm->entity_tbl_class);
+                    $oEntity = $oEntityTbl->getSingle($iEntityID);
+                    if($oEntity) {
+                        $sPath = $_SERVER['DOCUMENT_ROOT'].'/data/'.$sEntityType.'/'.$oEntity->getID().'/';
+                    }
+                }
                 break;
         }
         $aFile = $_FILES['files'];

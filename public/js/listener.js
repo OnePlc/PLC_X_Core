@@ -5,6 +5,8 @@ $(function () {
         return false;
     });
 
+    $('.plc-user-menu').dropdown();
+
     $('a.initExcelDump').on('click',function(e) {
         e.stopPropagation();
         e.preventDefault();

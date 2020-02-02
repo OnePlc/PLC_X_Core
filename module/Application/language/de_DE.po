@@ -1,0 +1,69 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de_DE\n"
+"X-Generator: Poedit 2.2.4\n"
+
+msgid "Categories"
+msgstr "Kategorien"
+
+msgid "Category"
+msgstr "Kategorien"
+
+msgid "Created"
+msgstr "Erstellt"
+
+msgid "Last Edited"
+msgstr "Zuletzt bearbeitet"
+
+msgid "Base"
+msgstr "Basisdaten"
+
+msgid "Dates"
+msgstr "Daten"
+
+msgid "Gallery"
+msgstr "Galerie"
+
+msgid "Images"
+msgstr "Bilder"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Sign out"
+msgstr "Abmelden"
+
+msgid "Sign in"
+msgstr "Anmelden"
+
+msgid "Welcome"
+msgstr "Willkommen"
+
+msgid "Save Settings"
+msgstr "Einstellungen speichern"
+
+msgid "App Title"
+msgstr "App Titel"
+
+msgid "Help"
+msgstr "Hilfe"
+
+msgid "About us"
+msgstr "Über uns"
+
+msgid "Contact"
+msgstr "Kontakt"
+
+msgid "Terms & Conditions"
+msgstr "AGB"

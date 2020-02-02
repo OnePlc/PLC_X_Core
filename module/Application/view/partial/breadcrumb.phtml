@@ -1,18 +1,25 @@
-<div class="plc-button-panel">
-    <?php
-    if(count($this->aButtons) > 0) {
-        foreach($this->aButtons as $oBtn) {
-            # Get current entity ID from layout
-            $iItemID = (isset($this->layout()->oItem)) ? $this->layout()->oItem->getID() : 0;
-
-            # Build final link for button
-            $sFinalHref = str_replace(['##ID##'],[$iItemID],$oBtn->href); ?>
-
-            <a href="<?=$sFinalHref?>" title="<?=$oBtn->title?>" class="btn btn-<?=$oBtn->class?>">
-                <?=$this->translate($oBtn->label)?>
-            </a>
+<div class="row mb-2">
+    <div class="col-md-6">
+        <div class="plc-button-panel">
             <?php
-        }
-    }
-    ?>
+            if(count($this->aButtons) > 0) {
+                foreach($this->aButtons as $oBtn) {
+                    # Get current entity ID from layout
+                    $iItemID = (isset($this->layout()->oItem)) ? $this->layout()->oItem->getID() : 0;
+
+                    # Build final link for button
+                    $sFinalHref = str_replace(['##ID##'],[$iItemID],$oBtn->href); ?>
+
+                    <a href="<?=$sFinalHref?>" title="<?=$oBtn->title?>" class="btn btn-<?=$oBtn->class?>">
+                        <?=$this->translate($oBtn->label)?>
+                    </a>
+                    <?php
+                }
+            }
+            ?>
+        </div>
+    </div>
+    <div class="col-md-6">
+        Test
+    </div>
 </div>
