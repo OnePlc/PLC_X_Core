@@ -1,0 +1,30 @@
+{
+  "name": "oneplace-core",
+  "version": "1.0.11",
+  "description": "oneplace core application",
+  "main": "index.js",
+  "repository": "https://github.com/Oneplc/PLC_X_Core",
+  "author": "Verein onePlace",
+  "license": "BSD-3",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.12.0",
+    "apexcharts": "^3.15.3",
+    "bootstrap": "^4.4.1",
+    "filepond": "^4.9.5",
+    "filepond-plugin-file-validate-size": "^2.2.0",
+    "filepond-plugin-file-validate-type": "^1.2.4",
+    "filepond-plugin-image-crop": "^2.0.3",
+    "filepond-plugin-image-exif-orientation": "^1.0.6",
+    "filepond-plugin-image-preview": "^4.6.0",
+    "filepond-plugin-image-resize": "^2.0.4",
+    "filepond-plugin-image-transform": "^3.7.1",
+    "filepond-plugin-image-validate-size": "^1.2.3",
+    "jquery": "^3.4.1",
+    "jquery-ui": "^1.12.1",
+    "jquery-ui-sortable": "^1.0.0",
+    "select2": "^4.0.13",
+    "summernote": "^0.8.15",
+    "sweetalert": "^2.1.2",
+    "uppy": "^1.8.0"
+  }
+}

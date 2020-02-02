@@ -1,13 +1,19 @@
 <?php
 
 use Application\Controller\CoreController;
+use Application\Module;
 
+# Set App Title from Database if found
+$sPlcTitle = 'onePlace';
+if(isset(CoreController::$aGlobalSettings['app-title'])) {
+    $sPlcTitle = str_replace(['##VERSION##'], [Module::VERSION], CoreController::$aGlobalSettings['app-title']);
+}
 ?>
 <?= $this->doctype() ?>
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <?= $this->headTitle('onePlace X - RC 1')->setSeparator(' - ')->setAutoEscape(false) ?>
+        <?= $this->headTitle($sPlcTitle)->setSeparator(' - ')->setAutoEscape(false) ?>
 
         <?= $this->headMeta()
             ->appendName('viewport', 'width=device-width, initial-scale=1.0')
@@ -16,30 +22,30 @@ use Application\Controller\CoreController;
 
         <!-- Le styles -->
         <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
-            ->prependStylesheet($this->basePath('css/style.css'))
-            ->prependStylesheet($this->basePath('vendor/summernote/summernote-bs4.min.css'))
-            ->prependStylesheet($this->basePath('vendor/fontawesome/css/all.min.css'))
-            ->prependStylesheet($this->basePath('vendor/filepond/filepond-plugin-image-preview.min.css'))
-            ->prependStylesheet($this->basePath('vendor/filepond/filepond.css'))
-            ->prependStylesheet($this->basePath('vendor/apexcharts/css/apexcharts.css'))
-            ->prependStylesheet($this->basePath('vendor/select2/css/select2.min.css'))
-            ->prependStylesheet($this->basePath('vendor/jquery-ui/jquery-ui.min.css'))
-            ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
+            ->prependStylesheet($this->basePath('/css/style.css'))
+            ->prependStylesheet($this->basePath('/vendor/@fortawesome/fontawesome-free/css/all.min.css'))
+            ->prependStylesheet($this->basePath('/vendor/summernote/dist/summernote-bs4.min.css'))
+            ->prependStylesheet($this->basePath('/vendor/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css'))
+            ->prependStylesheet($this->basePath('/vendor/filepond/dist/filepond.min.css'))
+            ->prependStylesheet($this->basePath('/vendor/uppy/dist/uppy.min.css'))
+            ->prependStylesheet($this->basePath('/vendor/apexcharts/dist/apexcharts.min.css'))
+            ->prependStylesheet($this->basePath('/vendor/select2/dist/css/select2.min.css'))
+            ->prependStylesheet($this->basePath('/vendor/bootstrap/dist/css/bootstrap.min.css'))
         ?>
-        <link href="https://transloadit.edgly.net/releases/uppy/v1.8.0/uppy.min.css" rel="stylesheet">
 
         <!-- Scripts -->
         <?= $this->inlineScript()
-            ->prependFile($this->basePath('js/plc-message.js'))
-            ->prependFile($this->basePath('js/listener.js'))
-            ->prependFile($this->basePath('vendor/summernote/summernote-bs4.min.js'))
-            ->prependFile($this->basePath('vendor/apexcharts/apexcharts.min.js'))
-            ->prependFile($this->basePath('vendor/jquery-ui/jquery-ui.min.js'))
-            ->prependFile($this->basePath('vendor/select2/js/select2.full.min.js'))
-            ->prependFile($this->basePath('js/bootstrap.min.js'))
-            ->prependFile($this->basePath('js/jquery-3.4.1.min.js'))
+            ->prependFile($this->basePath('/js/plc-message.js'))
+            ->prependFile($this->basePath('/js/listener.js'))
+            ->prependFile($this->basePath('/vendor/@fortawesome/fontawesome-free/js/all.min.js'))
+            ->prependFile($this->basePath('/vendor/sweetalert/dist/sweetalert.min.js'))
+            ->prependFile($this->basePath('/vendor/summernote/dist/summernote-bs4.min.js'))
+            ->prependFile($this->basePath('/vendor/apexcharts/dist/apexcharts.min.js'))
+            ->prependFile($this->basePath('/vendor/jquery-ui-sortable/jquery-ui.min.js'))
+            ->prependFile($this->basePath('/vendor/select2/dist/js/select2.full.min.js'))
+            ->prependFile($this->basePath('/vendor/bootstrap/dist/js/bootstrap.min.js'))
+            ->prependFile($this->basePath('/vendor/jquery/dist/jquery.min.js'))
         ?>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
     </head>
     <body>
@@ -50,7 +56,7 @@ use Application\Controller\CoreController;
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <a class="navbar-brand" href="<?= $this->url('home') ?>">
-                        <img src="<?= $this->basePath('img/logo_small_inv.png') ?>" height="28" alt="oneplace"/>&nbsp;onePlace X
+                        <img src="<?= $this->basePath('/img/logo_small_inv.png') ?>" height="28" alt="oneplace"/>&nbsp;onePlace
                     </a>
                 </div>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -77,7 +83,7 @@ use Application\Controller\CoreController;
                 <div class="text-white px-2">
                     <?php
                     if(is_object(CoreController::$oSession->oUser)) {
-                    $aUserXPInfo = CoreController::$oSession->oUser->getExperience();
+                        $aUserXPInfo = CoreController::$oSession->oUser->getExperience();
                     ?>
                     <?=CoreController::$oSession->oUser->getLabel()?>
                     - <small><?=$this->translate('Level')?> <?=$aUserXPInfo['level']?></small>
@@ -117,7 +123,7 @@ use Application\Controller\CoreController;
             </div>
             <hr>
             <footer>
-                <p>&copy; 2010-<?= date('Y') ?> by Verein onePlace. Alle Rechte vorbehalten.</p>
+                <p>&copy; 2010-<?= date('Y') ?> by Verein onePlace. All rights reserved.</p>
             </footer>
         </div>
         <?= $this->inlineScript() ?>
