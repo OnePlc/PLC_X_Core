@@ -181,6 +181,28 @@ ALTER TABLE `core_api_key`
   MODIFY `Apikey_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- Gallery Media
+--
+CREATE TABLE `core_gallery_media` (
+  `Media_ID` int(11) NOT NULL,
+  `filename` varchar(255) NOT NULL,
+  `entity_idfs` int(11) NOT NULL,
+  `entity_type` varchar(50) NOT NULL,
+  `is_public` tinyint(1) NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_date` datetime NOT NULL,
+  `modified_by` int(11) NOT NULL,
+  `modified_date` datetime NOT NULL,
+  `sort_id` int(4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `core_gallery_media`
+  ADD PRIMARY KEY (`Media_ID`);
+
+ALTER TABLE `core_gallery_media`
+  MODIFY `Media_ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Save
 --
 COMMIT;

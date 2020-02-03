@@ -67,3 +67,15 @@ msgstr "Kontakt"
 
 msgid "Terms & Conditions"
 msgstr "AGB"
+
+msgid "Is showed"
+msgstr "Wird angezeigt"
+
+msgid "Show"
+msgstr "Anzeigen"
+
+msgid "Hide"
+msgstr "Verstecken"
+
+msgid "Not showed"
+msgstr "Wird nicht angezeigt"

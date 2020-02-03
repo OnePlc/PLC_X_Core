@@ -113,8 +113,19 @@ class IndexController extends CoreController {
         }
     }
 
+    /**
+     * Add new theme to oneplace
+     *
+     * @return \Laminas\Http\Response|ViewModel
+     */
     public function addthemeAction() {
         $this->setThemeBasedLayout('application');
+
+        # Check if zip extension is loaded
+        if(!extension_loaded('zip')) {
+            $this->flashMessenger()->addErrorMessage('You need php-zip extension enabled on your webserver to add new themes');
+            $this->redirect()->toRoute('application',['action'=>'themes']);
+        }
 
         $oRequest = $this->getRequest();
 
@@ -214,6 +225,12 @@ class IndexController extends CoreController {
         }
     }
 
+    /**
+     * Server-Side for Filepond Upload
+     *
+     * @return bool
+     * @since 1.0.7
+     */
     public function filepondAction() {
         $this->layout('layout/json');
 
@@ -282,6 +299,12 @@ class IndexController extends CoreController {
         }
     }
 
+    /**
+     * Server Side for UPPY Fileupload
+     *
+     * @return bool
+     * @since 1.0.7
+     */
     public function uppyAction() {
         $this->layout('layout/json');
 
@@ -290,16 +313,7 @@ class IndexController extends CoreController {
         $sPath = '';
         $oEntityTbl = false;
 
-        var_dump($sEntityType);
-
         switch($sEntityType) {
-            case 'skeleton':
-                $oEntityTbl = CoreController::$oServiceManager->get(\OnePlace\Skeleton\Model\SkeletonTable::class);
-                $oEntity = $oEntityTbl->getSingle($iEntityID);
-                if($oEntity) {
-                    $sPath = $_SERVER['DOCUMENT_ROOT'].'/data/'.$sEntityType.'/'.$oEntity->getID().'/';
-                }
-                break;
             default:
                 $oForm = CoreController::$aCoreTables['core-form']->select(['form_key'=>$sEntityType.'-single']);
                 if(count($oForm) > 0) {
@@ -309,13 +323,125 @@ class IndexController extends CoreController {
                     if($oEntity) {
                         $sPath = $_SERVER['DOCUMENT_ROOT'].'/data/'.$sEntityType.'/'.$oEntity->getID().'/';
                     }
+                    if(!is_dir($sPath)) {
+                        mkdir($sPath);
+                    }
+                }
+                $aFile = $_FILES['files'];
+                if(move_uploaded_file($aFile['tmp_name'][0],$sPath.'/'.trim($aFile['name'][0]))) {
+                    if(isset($oForm)) {
+                        CoreController::$aCoreTables['core-gallery-media']->insert([
+                            'filename'=>trim($aFile['name'][0]),
+                            'entity_idfs'=>$iEntityID,
+                            'entity_type'=>$sEntityType,
+                            'is_public'=>0,
+                            'created_by'=>CoreController::$oSession->oUser->getID(),
+                            'created_date'=>date('Y-m-d H:i:s',time()),
+                            'modified_by'=>CoreController::$oSession->oUser->getID(),
+                            'modified_date'=>date('Y-m-d H:i:s',time()),
+                            'sort_id'=>0,
+                        ]);
+                    }
                 }
                 break;
         }
-        $aFile = $_FILES['files'];
-        if(move_uploaded_file($aFile['tmp_name'][0],$sPath.'/'.trim($aFile['name'][0]))) {
-            echo 'done';
+
+        return false;
+    }
+
+    /**
+     * Sorting for uppy galleries
+     *
+     * @return bool no viewfile. echo json
+     * @since 1.0.12
+     */
+    public function updateuppysortAction() {
+        $this->layout('layout/json');
+
+
+        $oRequest = $this->getRequest();
+        $aImagesToSort = $oRequest->getPost('images');
+
+        $oGalleryTbl = CoreController::$aCoreTables['core-gallery-media'];
+
+        $iSortID = 0;
+        # Loop over all columns provided
+        foreach($aImagesToSort as $sImgInfo) {
+            $iMediaID = substr($sImgInfo,strlen('gallery-media-'));
+            $oGalleryTbl->update(['sort_id'=>$iSortID],'Media_ID = '.$iMediaID);
+            $iSortID++;
         }
+
+        $aReturn = ['state'=>'success','message'=>'gallery successfully updated'];
+
+        echo json_encode($aReturn);
+
+        return false;
+    }
+
+    /**
+     * Toggle Media Public Status
+     *
+     * @return \Laminas\Http\Response
+     * @since 1.0.12
+     */
+    public function togglemediapubAction() {
+        $this->layout('layout/json');
+
+        $iMediaID = $this->params()->fromRoute('id',0);
+
+        if($iMediaID != 0) {
+            $oGalleryTbl = CoreController::$aCoreTables['core-gallery-media'];
+            $oMedia = $oGalleryTbl->select(['Media_ID'=>$iMediaID]);
+            if(count($oMedia) > 0) {
+                $oMedia = $oMedia->current();
+                $bPublic = ($oMedia->is_public == 1) ? 0 : 1;
+                $oGalleryTbl->update(['is_public'=>$bPublic],'Media_ID = '.$iMediaID);
+
+                return $this->redirect()->toRoute($oMedia->entity_type,['action'=>'view','id'=>$oMedia->entity_idfs]);
+
+            }
+        }
+
+        return $this->redirect()->toRoute('home');
+    }
+
+    /**
+     * Quicksearch across all registered entities
+     *
+     * @return bool
+     * @since 1.0.12
+     */
+    public function quicksearchAction() {
+        $this->layout('layout/json');
+
+        $aResponse = [
+            'results' => [],
+        ];
+
+        /**
+         * Example DATA
+
+        $aResponse = [
+            'results' => [
+                [
+                    'text' => 'Articles',
+                    'children' => [
+                        ['id' => 1,'text' => 'Test Skel','view_link'=>'/article/view/##ID##'],
+                        ['id' => 2,'text' => 'Test Skel 2','view_link'=>'/article/view/##ID##'],
+                    ]
+                ],
+                [
+                    'text' => 'Users',
+                    'children' => [
+                        ['id' => 1,'text' => 'Admin','view_link'=>'/user/view/##ID##'],
+                    ]
+                ]
+            ],
+        ];
+         * */
+
+        echo json_encode($aResponse);
 
         return false;
     }

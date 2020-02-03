@@ -121,6 +121,7 @@ class CoreController extends AbstractActionController {
         CoreController::$aCoreTables['core-widget'] = new TableGateway('core_widget',CoreController::$oDbAdapter);
         CoreController::$aCoreTables['user-widget'] = new TableGateway('core_widget_user',CoreController::$oDbAdapter);
         CoreController::$aCoreTables['core-statistic'] = new TableGateway('core_statistic',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['core-gallery-media'] = new TableGateway('core_gallery_media',CoreController::$oDbAdapter);
 
         $this->loadSettings();
     }

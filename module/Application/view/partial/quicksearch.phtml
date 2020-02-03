@@ -1,0 +1,24 @@
+<?php
+
+use Application\Controller\CoreController;
+
+?>
+<select id="plcQuickSearch" class="form-control" style="min-width:450px;"></select>
+
+<script>
+    $('#plcQuickSearch').select2({
+        ajax: {
+            url: '/quicksearch',
+            dataType: 'json'
+        },
+        placeholder: 'Quicksearch for any data'
+    });
+
+    $('#plcQuickSearch').on('select2:select',function(e) {
+        var sRawLink = e.params.data.view_link;
+        var iResultID = e.params.data.id;
+        var sFinalLink = sRawLink.replace('##ID##',iResultID);
+
+        window.location = sFinalLink;
+    });
+</script>

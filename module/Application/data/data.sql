@@ -17,7 +17,10 @@ INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav
 ('addtheme', 'Application\\Controller\\IndexController', 'Upload Theme', '', '/application/addtheme', 0),
 ('themes', 'Application\\Controller\\IndexController', 'Theme Selection', '', '/application/themes', 0),
 ('filepond', 'Application\\Controller\\IndexController', 'Upload Featured Image', '', '', 0),
-('uppy', 'Application\\Controller\\IndexController', 'Gallery Upload', '', '', 0);
+('uppy', 'Application\\Controller\\IndexController', 'Gallery Upload', '', '', 0),
+('togglemediapub', 'Application\\Controller\\IndexController', 'Gallery Upload', '', '', 0),
+('updateuppysort', 'Application\\Controller\\IndexController', 'Gallery Upload', '', '', 0),
+('quicksearch', 'Application\\Controller\\IndexController', 'Quick Search', '', '', 0);
 
 --
 -- Default Widgets
