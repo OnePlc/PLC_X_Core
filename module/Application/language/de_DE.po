@@ -79,3 +79,21 @@ msgstr "Verstecken"
 
 msgid "Not showed"
 msgstr "Wird nicht angezeigt"
+
+msgid "Translations"
+msgstr "Übersetzungen"
+
+msgid "Translation"
+msgstr "Übersetzung"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "Add Translation"
+msgstr "Neue Übersetzung"
+
+msgid "Edit Translation"
+msgstr "Übersetzung bearbeiten"
+
+msgid "Save Translation"
+msgstr "Übersetzung speichern"

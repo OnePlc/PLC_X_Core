@@ -182,9 +182,17 @@ class SetupController extends AbstractActionController {
             # Updates
             $oUserPermTbl->insert([
                 'user_idfs'=>$iAdminUserID,
-                'permission'=>'updates',
+                'permission'=>'update',
                 'module'=>'Application\Controller\IndexController',
             ]);
+
+            # Update Index Column Sorting
+            $oUserPermTbl->insert([
+                'user_idfs'=>$iAdminUserID,
+                'permission'=>'updateindexcolumnsort',
+                'module'=>'OnePlace\User\Controller\UserController',
+            ]);
+
             # User Index
             $oUserPermTbl->insert([
                 'user_idfs'=>$iAdminUserID,
