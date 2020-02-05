@@ -18,18 +18,30 @@ declare(strict_types=1);
 namespace Application;
 
 use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\ModuleManager\ModuleManager;
+use Laminas\EventManager\EventInterface;
+use Laminas\Mvc\MvcEvent;
 
 class Module {
     /**
      * Module Version
      *
-     * @since 1.0.12
+     * @since 1.0.13
      */
-    const VERSION = '1.0.12';
+    const VERSION = '1.0.13';
 
     public function getConfig() : array {
         return include __DIR__ . '/../config/module.config.php';
+    }
+
+    function onBootstrap(EventInterface $e) {
+        $application = $e->getApplication();
+        $eventManager = $application->getEventManager();
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, array($this,'onDispatchError'), 100);
+    }
+
+    function onDispatchError(MvcEvent $e) {
+        $viewModel = $e->getViewModel();
+        $viewModel->setTemplate('layout/error');
     }
 
     /**

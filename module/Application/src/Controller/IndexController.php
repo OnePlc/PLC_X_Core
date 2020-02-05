@@ -409,40 +409,128 @@ class IndexController extends CoreController {
     /**
      * Quicksearch across all registered entities
      *
-     * @return bool
+     * @return array data for json response
      * @since 1.0.12
      */
     public function quicksearchAction() {
         $this->layout('layout/json');
 
-        $aResponse = [
-            'results' => [],
+        # Get Term from Query (usually Select2 jQuery Plugin)
+        $sQueryTerm = (isset($_REQUEST['term'])) ? $_REQUEST['term'] : '';
+
+        # Get all registered forms
+        $aFormsRegistered = CoreController::$aCoreTables['core-form']->select();
+        $aResults = [];
+
+        # if we have a search term and at least 1 form, lets start searching
+        if(count($aFormsRegistered) > 0 && $sQueryTerm != '') {
+            # loop over all forms (which all entity forms)
+            foreach($aFormsRegistered as $oForm) {
+                # Get Entity Table for Form
+                try {
+                    $oEntityTbl = CoreController::$oServiceManager->get($oForm->entity_tbl_class);
+                } catch(\RuntimeException $e) {
+                    echo 'could not load entity table for form '.$oForm->label;
+                }
+
+                # Only proceed if we have an Entity Table
+                if(isset($oEntityTbl)) {
+                    # Lets try to match by label like first
+                    $aMatchedEntities = $oEntityTbl->fetchAll(false,['label-like'=>$sQueryTerm]);
+                    # add results
+                    if(count($aMatchedEntities) > 0) {
+                        # add category for select2 to group results by entity type
+                        $aEntityResults = ['text'=>$oForm->label,'children'=>[]];
+                        $sEntityType = explode('-',$oForm->form_key)[0];
+
+                        # special handling for matched entity tags (like categories and so on)
+                        if($sEntityType == 'entitytag') {
+                            # loop matched tags
+                            foreach($aMatchedEntities as $oEntity) {
+                                # get form for tag
+                                $oEntityForm =  CoreController::$aCoreTables['core-form']->select(['form_key'=>$oEntity->entity_form_idfs]);
+                                if(count($oEntityForm) > 0) {
+                                    $oEntityForm = $oEntityForm->current();
+                                    # get entity table for tag form (= linked entity e.G Category)
+                                    try {
+                                        $oTagEntityTbl = CoreController::$oServiceManager->get($oEntityForm->entity_tbl_class);
+                                    } catch(\RuntimeException $e ) {
+                                        echo 'cloud not load entity tag table for entity '.$oEntityForm->form_key;
+                                    }
+
+                                    # if all is present, continue
+                                    if(isset($oTagEntityTbl)) {
+                                        # we also need tag itself because we dont know its name
+                                        $oTag = CoreController::$aCoreTables['core-tag']->select(['Tag_ID'=>$oEntity->tag_idfs]);
+                                        if(count($oTag) > 0) {
+                                            $oTag = $oTag->current();
+
+                                            # lets get form field to determine if tag is used as single or multiselect
+                                            $oEntityTagFormField = CoreController::$aCoreTables['core-form-field']->select([
+                                                'form'=>$oEntityForm->form_key,
+                                                'fieldkey'=>$oTag->tag_key
+                                            ]);
+                                            if(count($oEntityTagFormField) == 0) {
+                                                $oEntityTagFormField = CoreController::$aCoreTables['core-form-field']->select([
+                                                    'form'=>$oEntityForm->form_key,
+                                                    'fieldkey'=>substr($oTag->tag_key,0,strlen($oTag->tag_key)-1).'ies',
+                                                ]);
+                                            }
+
+                                            # if we found form field for tag, proceed
+                                            if(count($oEntityTagFormField) > 0) {
+                                                $oEntityTagFormField = $oEntityTagFormField->current();
+
+                                                # lets match linked entities to tag based on field type
+                                                switch($oEntityTagFormField->type) {
+                                                    case 'select':
+                                                        $aEntityTagResults = ['text'=>$oEntityForm->label,'text_append_by'=>$oTag->tag_label,'text_append_2'=>$oEntity->getLabel(),'children'=>[]];
+                                                        $sFieldName = $oTag->tag_key.'_idfs';
+                                                        $sTagEntityType = explode('-',$oEntityForm->form_key)[0];
+                                                        $aMatchedTagEntities = $oTagEntityTbl->fetchAll(false,[$sFieldName=>$oEntity->getID()]);
+                                                        if(count($aMatchedTagEntities) > 0) {
+                                                            foreach($aMatchedTagEntities as $oTagEntity) {
+                                                                $aEntityTagResults['children'][] = ['id'=>$oTagEntity->getID(),'text'=>$oTagEntity->getLabel(),'view_link'=>'/'.$sTagEntityType.'/view/##ID##'];
+                                                            }
+                                                        }
+                                                        $aResults[] = $aEntityTagResults;
+                                                        break;
+                                                    case 'multiselect':
+                                                        $aEntityTagResults = ['text'=>$oEntityForm->label,'text_append_by'=>$oTag->tag_label,'text_append_2'=>$oEntity->getLabel(),'children'=>[]];
+                                                        $sTagEntityType = explode('-',$oEntityForm->form_key)[0];
+                                                        $aMatchedTagEntities = $oTagEntityTbl->fetchAll(false,['multi_tag'=>$oEntity->getID()]);
+                                                        if(count($aMatchedTagEntities) > 0) {
+                                                            foreach($aMatchedTagEntities as $oTagEntity) {
+                                                                $aEntityTagResults['children'][] = ['id'=>$oTagEntity->getID(),'text'=>$oTagEntity->getLabel(),'view_link'=>'/'.$sTagEntityType.'/view/##ID##'];
+                                                            }
+                                                        }
+                                                        $aResults[] = $aEntityTagResults;
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+                                //$aEntityResults['children'][] = ['id'=>$oEntity->getID(),'text'=>$oEntity->getLabel(),'view_link'=>'/'.$sEntityType.'/view/##ID##'];
+                            }
+                        } else {
+                            # add matched entities to results
+                            foreach($aMatchedEntities as $oEntity) {
+                                $aEntityResults['children'][] = ['id'=>$oEntity->getID(),'text'=>$oEntity->getLabel(),'view_link'=>'/'.$sEntityType.'/view/##ID##'];
+                            }
+                            $aResults[] = $aEntityResults;
+                        }
+                    }
+                }
+            }
+        }
+
+        # send results to view for final processing
+        return [
+            'aResults'=>$aResults,
         ];
-
-        /**
-         * Example DATA
-
-        $aResponse = [
-            'results' => [
-                [
-                    'text' => 'Articles',
-                    'children' => [
-                        ['id' => 1,'text' => 'Test Skel','view_link'=>'/article/view/##ID##'],
-                        ['id' => 2,'text' => 'Test Skel 2','view_link'=>'/article/view/##ID##'],
-                    ]
-                ],
-                [
-                    'text' => 'Users',
-                    'children' => [
-                        ['id' => 1,'text' => 'Admin','view_link'=>'/user/view/##ID##'],
-                    ]
-                ]
-            ],
-        ];
-         * */
-
-        echo json_encode($aResponse);
-
-        return false;
     }
 }

@@ -55,12 +55,29 @@ class CoreEntityController extends CoreController {
         # Set Table Rows for Index
         $this->setIndexColumns($sKey.'-index');
 
+        ##USERID##
+        /**
+         * ['state_idfs'] = # Entity Tag IDFS - tag_value = "available"
+         *
+         */
+
         # Get Paginator
-        $oPaginator = $this->oTableGateway->fetchAll(true);
+        $oPaginator = false;
+        if(array_key_exists($sKey.'-index-before-paginator',CoreEntityController::$aEntityHooks)) {
+            foreach(CoreEntityController::$aEntityHooks[$sKey.'-index-before-paginator'] as $oHook) {
+                $sHookFunc = $oHook->sFunction;
+                $oPaginator = $oHook->oItem->$sHookFunc();
+            }
+        } else {
+            $oPaginator = $this->oTableGateway->fetchAll(true);
+        }
+
         $iPage = (int) $this->params()->fromQuery('page', 1);
         $iPage = ($iPage < 1) ? 1 : $iPage;
-        $oPaginator->setCurrentPageNumber($iPage);
-        $oPaginator->setItemCountPerPage(3);
+        if($oPaginator) {
+            $oPaginator->setCurrentPageNumber($iPage);
+            $oPaginator->setItemCountPerPage(3);
+        }
 
         # Log Performance in DB
         $aMeasureEnd = getrusage();

@@ -1,0 +1,18 @@
+<?php
+
+# Translate Results
+$aTranslatedResults = [];
+foreach($aResults as $aResult) {
+    $aResult['text'] = $this->translate($aResult['text']);
+    if(array_key_exists('text_append_by',$aResult)) {
+        $aResult['text'] .= ' '.$this->translate('by').' '.$this->translate($aResult['text_append_by']);
+    }
+    if(array_key_exists('text_append_2',$aResult)) {
+        $aResult['text'] .= ' '.$this->translate($aResult['text_append_2']);
+    }
+    $aTranslatedResults[] = $aResult;
+}
+$aResponse = [
+    'results' => $aTranslatedResults,
+];
+echo json_encode($aResponse);
