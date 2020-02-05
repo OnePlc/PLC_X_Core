@@ -84,6 +84,19 @@ return [
                     ],
                 ],
             ],
+            'form-updatesorting' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/form/updatefieldsort[/:formname]',
+                    'constraints' => [
+                        'formname' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'updatefieldsort',
+                    ],
+                ],
+            ],
             'application' => [
                 'type'    => Segment::class,
                 'options' => [

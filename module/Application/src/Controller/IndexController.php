@@ -20,6 +20,7 @@ use Laminas\View\Model\ViewModel;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Adapter\Adapter;
+use Laminas\View\View;
 
 class IndexController extends CoreController {
     /**
@@ -532,5 +533,85 @@ class IndexController extends CoreController {
         return [
             'aResults'=>$aResults,
         ];
+    }
+
+    public function updatefieldsortAction() {
+        $this->setThemeBasedLayout('application');
+
+        $oRequest = $this->getRequest();
+
+        if(!$oRequest->isPost()) {
+            $sFormKey = $this->params()->fromRoute('formname','none');
+            $oForm = CoreController::$aCoreTables['core-form']->select(['form_key'=>$sFormKey]);
+
+            if(count($oForm) == 0) {
+                echo 'form not found';
+                return false;
+            }
+
+            $oForm = $oForm->current();
+
+            # Add Links for Breadcrumb
+            $this->layout()->aNavLinks = [
+                (object)['label'=>'Form Field Sorting'],
+                (object)['label'=>$oForm->label],
+            ];
+
+            # Add Buttons for breadcrumb
+            $this->setViewButtons('core-updateformsorting');
+
+            $aMyFormFieldsDB = CoreController::$oSession->oUser->getMyFormFields();
+            $oFormFieldsDB = [];
+            if(count($aMyFormFieldsDB[$sFormKey]) > 0) {
+                foreach(array_keys($aMyFormFieldsDB[$sFormKey]) as $iFieldID) {
+                    $oFormFieldsDB[] = CoreController::$aCoreTables['core-form-field']->select(['Field_ID'=>$iFieldID])->current();
+                }
+            }
+            $aFieldsByTabs = [];
+            if(count($oFormFieldsDB) > 0) {
+                foreach($oFormFieldsDB as $oField) {
+                    if(!array_key_exists($oField->tab,$aFieldsByTabs)) {
+                        $oTab = CoreController::$aCoreTables['core-form-tab']->select(['Tab_ID'=>$oField->tab]);
+                        $sTabName = $oField->tab;
+                        if(count($oTab) > 0) {
+                            $oTab = $oTab->current();
+                            $sTabName = $oTab->title.' - '.$oTab->subtitle;
+                        }
+                        $aFieldsByTabs[$oField->tab] = ['oTab'=>$oTab,'aFields'=>[]];
+                    }
+                    $aFieldsByTabs[$oField->tab]['aFields'][] = $oField;
+                }
+            }
+
+            return new ViewModel([
+                'oForm'=>$oForm,
+                'aFieldsByTabs'=>$aFieldsByTabs,
+            ]);
+        } else {
+            $this->layout('layout/json');
+
+            //$sTabName = $oRequest->getPost('tab_name');
+            $aNewFieldIDs = $oRequest->getPost('new_order');
+
+            $iSortID = 0;
+            foreach($aNewFieldIDs as $iFieldID) {
+                $iFieldID = str_replace(['plc-formfield-'],[''],$iFieldID);
+                if(is_numeric($iFieldID) && !empty($iFieldID)) {
+                    CoreController::$aCoreTables['form-field']->update([
+                        'sort_id'=>$iSortID,
+                    ],[
+                        'user_idfs'=>CoreController::$oSession->oUser->getID(),
+                        'field_idfs'=>$iFieldID,
+                    ]);
+                    $iSortID++;
+                }
+            }
+
+            $aReturn = ['state'=>'success','message'=>'order updated'];
+
+            echo json_encode($aReturn);
+
+            return false;
+        }
     }
 }

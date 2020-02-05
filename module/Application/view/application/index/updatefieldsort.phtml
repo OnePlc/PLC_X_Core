@@ -1,0 +1,63 @@
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <?=$this->translate('Change Field Order')?>
+                </h2>
+            </div>
+            <div class="card-body">
+                Form <span class="float-right"><?=$oForm->label?></span>
+                <hr/>
+                <div class="alert alert-info py-2 px-2">
+                    Here you can change your personal order for the
+                    fields of the form <?=$oForm->label?>.
+                    The order will be applied to all <?=$oForm->label?>
+                    Add / Edit and View Forms.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <ul class="list-group">
+            <?php
+            foreach(array_keys($aFieldsByTabs) as $sTab) {
+                $oTab = $aFieldsByTabs[$sTab]['oTab'];
+                ?>
+                <li class="list-group-item">
+                    <h3><?=$this->translate($oTab->title)?> - <?=$this->translate($oTab->subtitle)?></h3>
+                    <ul class="plc-form-order-field-list list-group" id="plc-tab-order-<?=$oTab->Tab_ID?>">
+                        <?php
+                        $aFields = $aFieldsByTabs[$sTab]['aFields'];
+                        foreach($aFields as $oField) { ?>
+                            <li class="list-group-item" id="plc-formfield-<?=$oField->Field_ID?>">
+                                <i class="fas fa-arrows-alt-v"></i> <?=$this->translate($oField->label)?>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                </li>
+                <?php
+            }
+            ?>
+        </ul>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        $( ".plc-form-order-field-list" ).each(function(e) {
+            var listID = $(this).attr('id');
+            $('#'+listID).sortable({
+                handle: '.fa-arrows-alt-v',
+                containment: 'parent',
+                update: function( event, ui ) {
+                    var sortedIDs = $( '#'+listID ).sortable( "toArray" );
+                    var sTabID = event.target.attributes.id;
+                    $.post('/form/updatefieldsort',{new_order:sortedIDs},function(retVal) {
+                        console.log(retVal);
+                    });
+                }
+            });
+        });
+    });
+</script>

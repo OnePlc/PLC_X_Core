@@ -100,5 +100,13 @@
     fieldsetElement.addEventListener('FilePond:error', e => {
         $('#plc-featured-image').printMessage('Fehler',e.detail.error.main,'error');
     });
+
+    $('#<?=$this->sFormName?>Form').sortable({
+        axis:'x',
+        containment:'parent',
+        update: function( event, ui ) {
+            var sortedIDs = $( '#'+listID ).sortable( "toArray" );
+        }
+    });
     </script>
 <?php } ?>

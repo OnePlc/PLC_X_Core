@@ -11,6 +11,7 @@
                     $sFinalHref = str_replace(['##ID##'],[$iItemID],$oBtn->href); ?>
 
                     <a href="<?=$sFinalHref?>" title="<?=$oBtn->title?>" class="btn btn-<?=$oBtn->class?>">
+                        <?=($oBtn->icon != '') ? '<i class="'.$oBtn->icon.'"></i> ' : ''?>
                         <?=$this->translate($oBtn->label)?>
                     </a>
                     <?php
