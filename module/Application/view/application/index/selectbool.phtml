@@ -1,0 +1,14 @@
+<?php
+
+# Translate Results
+$aTranslatedResults = [];
+foreach($aResults as $aResult) {
+    $aResult['text'] = $this->translate($aResult['text']);
+    $aTranslatedResults[] = $aResult;
+}
+
+# JSON output
+$aResponse = [
+    'results' => $aTranslatedResults,
+];
+echo json_encode($aResponse);

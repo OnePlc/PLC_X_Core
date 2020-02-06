@@ -38,7 +38,13 @@ switch($oField->type) {
         break;
     case 'select':
         if($this->oItem->getSelectFieldID($oField->fieldkey) != 0) {
-            echo $this->translate($this->oItem->getSelectField($oField->fieldkey)->getLabel());
+            $sLabel = '-';
+            if(is_object($this->oItem->getSelectField($oField->fieldkey))) {
+                $sLabel = $this->oItem->getSelectField($oField->fieldkey)->getLabel();
+            } else {
+                $sLabel = $this->oItem->getSelectField($oField->fieldkey);
+            }
+            echo $this->translate($sLabel);
         } else {
             echo '-';
         }

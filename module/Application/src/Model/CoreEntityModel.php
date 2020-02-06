@@ -156,14 +156,22 @@ class CoreEntityModel {
         if(property_exists($this,$sField)) {
             $iSelectIDFS = $this->$sField;
             if($iSelectIDFS != 0) {
-                $oField = CoreEntityModel::$aEntityTables['core-form-fields']->select(['fieldkey' => $sField]);
+                $oField = CoreEntityModel::$aEntityTables['core-form-fields']->select(['fieldkey' => $sField,'form'=>$this->sSingleForm]);
                 if (count($oField) > 0) {
                     $oField = $oField->current();
-                    if (!array_key_exists($oField->tbl_cached_name, CoreEntityModel::$aEntityTables)) {
-                        CoreEntityModel::$aEntityTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
-                        //CoreEntityModel::$aEntityTables[$oField->tbl_name] = CoreController::$oServiceManager->get('OnePlace\Contact\Model\ContactTable');
+                    if($oField->tbl_cached_name != '') {
+                        if (!array_key_exists($oField->tbl_cached_name, CoreEntityModel::$aEntityTables)) {
+                            CoreEntityModel::$aEntityTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
+                            //CoreEntityModel::$aEntityTables[$oField->tbl_name] = CoreController::$oServiceManager->get('OnePlace\Contact\Model\ContactTable');
+                        }
+                        return CoreEntityModel::$aEntityTables[$oField->tbl_cached_name]->getSingle($iSelectIDFS);
+                    } else {
+                        if($oField->tbl_class == 'OnePlace\BoolSelect') {
+                            return ($this->$sField == 2) ? 'Yes' : 'No';
+                        } else {
+                            return $this->$sField;
+                        }
                     }
-                    return CoreEntityModel::$aEntityTables[$oField->tbl_cached_name]->getSingle($iSelectIDFS);
                 }
             }
         }

@@ -614,4 +614,16 @@ class IndexController extends CoreController {
             return false;
         }
     }
+
+    public function selectboolAction() {
+        $this->layout('layout/json');
+
+        $aResults = [];
+        $aResults[] = ['id'=>'1','text'=>'No'];
+        $aResults[] = ['id'=>'2','text'=>'Yes'];
+
+        return new ViewModel([
+            'aResults'=>$aResults,
+        ]);
+    }
 }

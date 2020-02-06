@@ -83,7 +83,12 @@ switch($oField->type) {
             <?php if(isset($this->oItem)) { ?>
                 <?php if($this->oItem->getSelectFieldID($oField->fieldkey) != 0) { ?>
                     <option value="<?= $this->oItem->getSelectFieldID($oField->fieldkey) ?>">
-                        <?= $this->oItem->getSelectField($oField->fieldkey)->getLabel() ?>
+                        <?php $sLabel = $this->oItem->getSelectField($oField->fieldkey);
+                        if(is_object($sLabel)) {
+                            echo $this->oItem->getSelectField($oField->fieldkey)->getLabel();
+                        } else {
+                            echo $this->oItem->getSelectField($oField->fieldkey);
+                        } ?>
                     </option>
                     <?php
                 }
