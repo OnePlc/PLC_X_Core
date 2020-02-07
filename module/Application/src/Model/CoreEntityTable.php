@@ -128,6 +128,12 @@ class CoreEntityTable {
                 $oWh->equalTo($sWh,$aWhere[$sWh]);
             }
         }
+        if(array_key_exists('created_by',$aWhere)) {
+            $oWh->equalTo('created_by',$aWhere['created_by']);
+        }
+        if(array_key_exists('modified_by',$aWhere)) {
+            $oWh->equalTo('modified_by',$aWhere['modified_by']);
+        }
         if(array_key_exists('multi_tag',$aWhere)) {
             $oSel->join(['category_tag'=>'core_entity_tag_entity'],'category_tag.entity_idfs = article.Article_ID');
             $oWh->equalTo('category_tag.entity_tag_idfs',$aWhere['multi_tag']);
