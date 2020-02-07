@@ -174,6 +174,16 @@ class CoreEntityController extends CoreController {
         # Add XP for creating a new entity
         CoreController::$oSession->oUser->addXP($sKey.'-add');
 
+        /**
+         * CHeck for hooks - execute them if found
+         */
+        if(array_key_exists($sKey.'-add-after-save',CoreEntityController::$aEntityHooks)) {
+            foreach(CoreEntityController::$aEntityHooks[$sKey.'-add-after-save'] as $oHook) {
+                $sHookFunc = $oHook->sFunction;
+                $oHook->oItem->$sHookFunc($oSkeletonBasedObject,$_REQUEST,true);
+            }
+        }
+
         # Log Performance in DB
         $aMeasureEnd = getrusage();
         $this->logPerfomance($sKey.'-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
@@ -310,6 +320,16 @@ class CoreEntityController extends CoreController {
 
         # Add XP for creating a new entity
         CoreController::$oSession->oUser->addXP($sKey.'-edit');
+
+        /**
+         * CHeck for hooks - execute them if found
+         */
+        if(array_key_exists($sKey.'-edit-after-save',CoreEntityController::$aEntityHooks)) {
+            foreach(CoreEntityController::$aEntityHooks[$sKey.'-edit-after-save'] as $oHook) {
+                $sHookFunc = $oHook->sFunction;
+                $oHook->oItem->$sHookFunc($oSkeleton,$_REQUEST,true);
+            }
+        }
 
         # Log Performance in DB
         $aMeasureEnd = getrusage();

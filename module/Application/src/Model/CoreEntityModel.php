@@ -280,6 +280,7 @@ class CoreEntityModel {
                             break;
                         case 'select':
                         case 'currency':
+                        case 'hidden':
                             $this->$sFieldName = 0;
                             break;
                         case 'date':

@@ -51,6 +51,11 @@ class IndexController extends CoreController {
         $oRequest = $this->getRequest();
 
         if(!$oRequest->isPost()) {
+            $aWarnings = [];
+            if(!is_writable($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace')) {
+                $aWarnings['file-perm'] = 'Need write permissions on docroot for update';
+            }
+
             $this->setThemeBasedLayout('application');
 
             $aInfo = [
@@ -62,6 +67,11 @@ class IndexController extends CoreController {
                 $sModule = basename($sModulePath);
                 $sModuleName = explode('-',$sModule)[1];
 
+                # skip plugins
+                if(isset(explode('-',$sModule)[2])) {
+                    continue;
+                }
+
                 if($sModuleName == 'tag') {
                     $sModuleName = 'core_tag';
                 }
@@ -69,6 +79,12 @@ class IndexController extends CoreController {
                 try {
                     $oBaseTbl = new TableGateway($sModuleName,CoreController::$oDbAdapter);
                     $oBaseTbl->select();
+
+                    foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/oneplace-'.$sModuleName.'-*', GLOB_ONLYDIR) as $sPluginName) {
+                        if(file_exists($sPluginName.'/data/install.sql')) {
+                            $aInfo['install'][] = basename($sPluginName);
+                        }
+                    }
                 } catch(\RuntimeException $e) {
                     $aInfo['install'][] = $sModuleName;
                 }
@@ -76,6 +92,7 @@ class IndexController extends CoreController {
 
             return new ViewModel([
                 'aInfo'=>$aInfo,
+                'aWarnings'=>$aWarnings,
             ]);
         } else {
             $aInfo = [
@@ -87,6 +104,11 @@ class IndexController extends CoreController {
                 $sModule = basename($sModulePath);
                 $sModuleName = explode('-',$sModule)[1];
 
+                # skip plugins
+                if(isset(explode('-',$sModule)[2])) {
+                    continue;
+                }
+
                 if($sModuleName == 'tag') {
                     $sModuleName = 'core_tag';
                 }
@@ -97,15 +119,22 @@ class IndexController extends CoreController {
                 } catch(\RuntimeException $e) {
                     $aInfo['install'][] = $sModule;
                 }
+
+                if(isset($oBaseTbl)) {
+                    foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/oneplace-'.$sModuleName.'-*', GLOB_ONLYDIR) as $sPluginName) {
+                        if(file_exists($sPluginName.'/data/install.sql')) {
+                            $this->parseSQLInstallFile($sPluginName.'/data/install.sql', CoreController::$oDbAdapter);
+                            unlink($sPluginName.'/data/install.sql');
+                        }
+                    }
+                }
             }
 
             $this->layout('layout/json');
             foreach($aInfo['install'] as $sInstallMod) {
                 # Core DB Structure
                 $filename = $_SERVER['DOCUMENT_ROOT'] . '/../vendor/oneplace/'.$sInstallMod.'/data/install.sql';
-                echo 'update '.$sInstallMod;
                 if (file_exists($filename)) {
-                    echo 'go';
                     $this->parseSQLInstallFile($filename, CoreController::$oDbAdapter);
                 }
             }

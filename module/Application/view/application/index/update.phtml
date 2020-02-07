@@ -1,6 +1,11 @@
-<?php
-
-?>
+<?php if(count($aWarnings) > 0) {
+    foreach($aWarnings as $sWarn) { ?>
+        <div class="alert alert-warning">
+            <?=$sWarn?>
+        </div>
+        <?php
+    }
+} ?>
 <h1>Update</h1>
 Modules that need db installation:
 <ul class="list-group">
@@ -28,7 +33,12 @@ Modules that need db upgrade:
 
 <form method="POST" action="">
     <div class="form-row">
+        <?php if (count($aWarnings) > 0) { ?>
+            <!-- Submit -->
+            <button type="submit" class="btn btn-primary" readonly="readonly" disabled>Correct warnings first</button>
+        <?php } else { ?>
         <!-- Submit -->
         <button type="submit" class="btn btn-primary">Update</button>
+        <?php } ?>
     </div>
 </form>

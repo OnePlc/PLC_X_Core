@@ -2,8 +2,12 @@
 /**
  * Print Container and Label for each Field in Form
  */
-if(array_key_exists($this->sTab,$this->layout()->aFormFieldsByTab)) {
-    foreach($this->layout()->aFormFieldsByTab[$this->sTab] as $oField) { ?>
+if(array_key_exists($this->sTab,$this->aFormFieldsByTab)) {
+    foreach($this->aFormFieldsByTab[$this->sTab] as $oField) {
+        # skip hidden fields entirely
+        if($oField->type == 'hidden') {
+            continue;
+        } ?>
         <!-- Field <?=$oField->fieldkey?> START -->
         <div class="form-group <?=$oField->class?>">
             <?php if($oField->type != 'partial' && $oField->type != 'gallery' && $oField->type != 'featuredimage') { ?>

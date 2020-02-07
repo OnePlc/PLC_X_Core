@@ -34,6 +34,14 @@
           <option name="port" value="22" />
         </fileTransfer>
       </webServer>
+      <webServer id="9c525176-85c2-4c57-b046-778849ec6b83" name="PLC-ONE-X" url="http://one.onep.lc">
+        <fileTransfer host="one.onep.lc" port="22" rootFolder="/var/www/plc" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>

@@ -78,6 +78,7 @@ class CoreEntityTable {
                             $aData[$sFieldName] = (float)$oObject->$sFieldName;
                             break;
                         case 'select':
+                        case 'hidden':
                             $aData[$sFieldName] = $oObject->$sFieldName;
                             break;
                         case 'date':
