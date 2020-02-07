@@ -156,6 +156,15 @@ class CoreEntityController extends CoreController {
         # Save Add Form
         $oSkeletonBasedObject = $this->oTableGateway->generateNew();
         $oSkeletonBasedObject->exchangeArray($aFormData);
+        /**
+         * CHeck for hooks - execute them if found
+         */
+        if(array_key_exists($sKey.'-add-before-save',CoreEntityController::$aEntityHooks)) {
+            foreach(CoreEntityController::$aEntityHooks[$sKey.'-add-before-save'] as $oHook) {
+                $sHookFunc = $oHook->sFunction;
+                $oSkeletonBasedObject = $oHook->oItem->$sHookFunc($oSkeletonBasedObject,$_REQUEST);
+            }
+        }
         $iSkeletonID = $this->oTableGateway->saveSingle($oSkeletonBasedObject);
         $oSkeletonBasedObject = $this->oTableGateway->getSingle($iSkeletonID);
 
