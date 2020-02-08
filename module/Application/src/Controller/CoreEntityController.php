@@ -89,9 +89,11 @@ class CoreEntityController extends CoreController {
         ]);
     }
 
-    protected function generateAddView($sKey,$sSingleForm = '') {
+    protected function generateAddView($sKey,$sSingleForm = '',$sRoute = '',$sRouteAction = 'view',$iRouteID = 0,$aExtraViewData = []) {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
+
+        $sRoute = ($sRoute == '') ? $sKey : $sRoute;
 
         # Add Links for Breadcrumb
         $this->layout()->aNavLinks = [
@@ -155,6 +157,7 @@ class CoreEntityController extends CoreController {
             ];
 
             $aViewData = array_merge($aViewData,$aViewExtraData);
+            $aViewData = array_merge($aViewData,$aExtraViewData);
 
             return new ViewModel($aViewData);
         }
@@ -193,13 +196,15 @@ class CoreEntityController extends CoreController {
             }
         }
 
+        $iRouteID = ($iRouteID == 0) ? $iSkeletonID : $iRouteID;
+
         # Log Performance in DB
         $aMeasureEnd = getrusage();
         $this->logPerfomance($sKey.'-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         # Display Success Message and View New Skeleton
         $this->flashMessenger()->addSuccessMessage('Skeleton successfully created');
-        return $this->redirect()->toRoute($sKey,['action'=>'view','id'=>$iSkeletonID]);
+        return $this->redirect()->toRoute($sRoute,['action'=>$sRouteAction,'id'=>$iRouteID]);
     }
 
     public function generateViewView($sKey,$sSingleForm = '') {
