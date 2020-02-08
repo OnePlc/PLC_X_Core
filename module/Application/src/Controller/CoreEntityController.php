@@ -289,16 +289,37 @@ class CoreEntityController extends CoreController {
             # Load Fields for View Form
             $this->setFormFields($this->sSingleForm);
 
+            $aViewExtraData = [];
+
+            /**
+             * CHeck for hooks - execute them if found
+             */
+            if(array_key_exists($sKey.'-edit-before',CoreEntityController::$aEntityHooks)) {
+                foreach(CoreEntityController::$aEntityHooks[$sKey.'-edit-before'] as $oHook) {
+                    $sHookFunc = $oHook->sFunction;
+                    $aHookExtraData = $oHook->oItem->$sHookFunc($oSkeleton);
+                    if(is_array($aHookExtraData)) {
+                        foreach(array_keys($aHookExtraData) as $sHookKey) {
+                            $aViewExtraData[$sHookKey] = $aHookExtraData[$sHookKey];
+                        }
+                    }
+                }
+            }
+
             # Log Performance in DB
             $aMeasureEnd = getrusage();
             $this->logPerfomance($sKey.'-edit',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
             $this->sSingleForm = ($sSingleForm != '') ? $sSingleForm : $sKey.'-single';
 
-            return new ViewModel([
+            $aBasicViewData = [
                 'sFormName' => $this->sSingleForm,
                 'oItem' => $oSkeleton,
-            ]);
+            ];
+
+            $aViewData = array_merge($aBasicViewData,$aViewExtraData);
+
+            return new ViewModel($aViewData);
         }
 
         $iSkeletonID = $oRequest->getPost('Item_ID');

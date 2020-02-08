@@ -191,6 +191,9 @@ switch($oField->type) {
                 $aPartialData = $this->layout()->aPartialData[$oField->fieldkey];
             }
         }
+        if(isset($this->aPartialExtraData)) {
+            $aPartialData = array_merge($aPartialData,$this->aPartialExtraData);
+        }
         ?>
         <?= $this->partial('partial/'.$oField->fieldkey.'-'.$sPartialMode, ['sFormName'=>$this->sFormName,'oField'=>$oField,'oItem'=>$this->oItem,'aPartialData'=>$aPartialData]); ?>
         <?php

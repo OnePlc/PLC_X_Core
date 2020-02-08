@@ -7,6 +7,12 @@
     <?php } ?>
     <div class="row">
         <?= $this->partial('partial/basictabs', ['sFormName'=>$this->sFormName]); ?>
-        <?= $this->partial('partial/basictabcontents', ['sFormName'=>$this->sFormName,'oItem'=>$this->oItem]); ?>
+        <?php
+        $aPartialData = ['sFormName'=>$this->sFormName,'oItem'=>$this->oItem];
+        if(isset($this->aPartialExtraData)) {
+            $aPartialData['aPartialExtraData'] = $this->aPartialExtraData;
+        }
+        ?>
+        <?= $this->partial('partial/basictabcontents',$aPartialData); ?>
     </div>
 </form>
