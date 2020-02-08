@@ -81,8 +81,17 @@ class IndexController extends CoreController {
                     $oBaseTbl->select();
 
                     foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/oneplace-'.$sModuleName.'-*', GLOB_ONLYDIR) as $sPluginName) {
+                        $sPluginTbl = str_replace(['-'],['_'],substr(basename($sPluginName),strlen('oneplace-')));
+                        echo $sPluginTbl;
                         if(file_exists($sPluginName.'/data/install.sql')) {
-                            $aInfo['install'][] = basename($sPluginName);
+                            try {
+                                $oPluginTbl = new TableGateway($sPluginTbl,CoreController::$oDbAdapter);
+                                $oPluginTbl->select();
+                                echo 'got tbl';
+                            } catch(\RuntimeException $e) {
+                                echo 'no tbl';
+                                $aInfo['install'][] = basename($sPluginName);
+                            }
                         }
                     }
                 } catch(\RuntimeException $e) {
