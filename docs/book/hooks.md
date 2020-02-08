@@ -27,26 +27,58 @@ Here you have a list of already existing hooks in onePlace Core
 no parameters
 
 ### skeleton-add-before-save
-
 available parameters: 
-
-> oItem - Skeleton Model with Data
-> aRawData - Raw Form Data
+```
+oItem - Skeleton Model with Data
+aRawData - Raw Form Data
+```
+prototype for function 
+```
+function yourHook($oItem,array $aRawData) {}
+```
 
 ### skeleton-add-after-save
+available parameters: 
+```
+oItem - Skeleton Model with Data
+aRawData - Raw Form Data
+bSave - True if save function succeeded so far
+```
+prototype for function 
+```
+function yourHook($oItem,array $aRawData,$bSave) {}
+```
 
-> oItem - Skeleton Model with Data
-> aRawData - Raw Form Data
-> sState - Information if action succeeded
+### skeleton-edit-before
+available parameters: 
+```
+oItem - Skeleton Model with Data
+```
+prototype for function 
+```
+function yourHook($oItem) {}
+```
 
 ### skeleton-edit-before-save
-
-> oItem - Skeleton Model with current Data
-> oNewItem - Skeleton Model with new Data
-> aRawData - Raw Form Data
+available parameters: 
+```
+oItem - Skeleton Model with current Data
+oNewItem - Skeleton Model with new Data
+aRawData - Raw Form Data
+```
+prototype for function 
+```
+function yourHook($oItem,$oNewItem,array $aRawData) {}
+```
 
 ### skeleton-edit-after-save
-
-> oItem - Skeleton Model with new Data
-> aRawData - Raw Form Data
-> sState - Information if action succeeded
+available parameters: 
+```
+oItem - Skeleton Model with Data
+aRawData - Raw Form Data
+bSave - True if save function succeeded so far
+```
+prototype for function 
+```
+function yourHook($oItem,array $aRawData,$bSave) {}
+```

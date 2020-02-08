@@ -232,16 +232,45 @@ class CoreEntityController extends CoreController {
         # Load Fields for View Form
         $this->setFormFields($this->sSingleForm);
 
+        /**
+         * CHeck for hooks - execute them if found
+         */
+        $aViewExtraData = [];
+        if(array_key_exists($sKey.'-view-before',CoreEntityController::$aEntityHooks)) {
+            foreach(CoreEntityController::$aEntityHooks[$sKey.'-view-before'] as $oHook) {
+                $sHookFunc = $oHook->sFunction;
+                $aHookExtraData = $oHook->oItem->$sHookFunc($oSkeleton);
+                if(is_array($aHookExtraData)) {
+                    foreach(array_keys($aHookExtraData) as $sHookKey) {
+                        # dont overwrite existing array, append data to them
+                        if(array_key_exists($sHookKey,$aViewExtraData)) {
+                            if(is_array($aViewExtraData[$sHookKey])) {
+                                foreach(array_keys($aHookExtraData[$sHookKey]) as $sSubHook) {
+                                    $aViewExtraData[$sHookKey][$sSubHook] = $aHookExtraData[$sHookKey][$sSubHook];
+                                }
+                            }
+                        } else {
+                            $aViewExtraData[$sHookKey] = $aHookExtraData[$sHookKey];
+                        }
+
+                    }
+                }
+            }
+        }
+
         # Log Performance in DB
         $aMeasureEnd = getrusage();
         $this->logPerfomance($sKey.'-view',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         $this->sSingleForm = ($sSingleForm != '') ? $sSingleForm : $sKey.'-single';
 
-        return new ViewModel([
+        $aViewData = [
             'sFormName'=>$this->sSingleForm,
             'oItem'=>$oSkeleton,
-        ]);
+        ];
+        $aViewData = array_merge($aViewData,$aViewExtraData);
+
+        return new ViewModel($aViewData);
     }
 
     public function generateEditView($sKey,$sSingleForm = '') {
@@ -300,7 +329,17 @@ class CoreEntityController extends CoreController {
                     $aHookExtraData = $oHook->oItem->$sHookFunc($oSkeleton);
                     if(is_array($aHookExtraData)) {
                         foreach(array_keys($aHookExtraData) as $sHookKey) {
-                            $aViewExtraData[$sHookKey] = $aHookExtraData[$sHookKey];
+                            # dont overwrite existing array, append data to them
+                            if(array_key_exists($sHookKey,$aViewExtraData)) {
+                                if(is_array($aViewExtraData[$sHookKey])) {
+                                    foreach(array_keys($aHookExtraData[$sHookKey]) as $sSubHook) {
+                                        $aViewExtraData[$sHookKey][$sSubHook] = $aHookExtraData[$sHookKey][$sSubHook];
+                                    }
+                                }
+                            } else {
+                                $aViewExtraData[$sHookKey] = $aHookExtraData[$sHookKey];
+                            }
+
                         }
                     }
                 }

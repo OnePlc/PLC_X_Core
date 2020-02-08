@@ -9,3 +9,4 @@ phpunit.xml
 composer.lock
 .phpunit.result.cache
 docs/html/
+.idea/

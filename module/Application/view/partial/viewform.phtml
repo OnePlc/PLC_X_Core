@@ -26,7 +26,13 @@
             <div class="card px-0">
                 <div class="card-body px-0 py-2">
                     <?= $this->partial('partial/basictabs', ['sFormName'=>$this->sFormName]); ?>
-                    <?= $this->partial('partial/basictabview', ['sFormName'=>$this->sFormName,'oItem'=>$this->oItem]); ?>
+                    <?php
+                    $aPartialData = ['sFormName'=>$this->sFormName,'oItem'=>$this->oItem];
+                    if(isset($this->aPartialExtraData)) {
+                        $aPartialData['aPartialExtraData'] = $this->aPartialExtraData;
+                    }
+                    ?>
+                    <?= $this->partial('partial/basictabview', $aPartialData); ?>
                 </div>
             </div>
         </div>
