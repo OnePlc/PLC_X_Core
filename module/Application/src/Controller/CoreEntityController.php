@@ -129,7 +129,16 @@ class CoreEntityController extends CoreController {
                     $aHookExtraData = $oHook->oItem->$sHookFunc();
                     if(is_array($aHookExtraData)) {
                         foreach(array_keys($aHookExtraData) as $sHookKey) {
-                            $aViewExtraData[$sHookKey] = $aHookExtraData[$sHookKey];
+                            # dont overwrite existing array, append data to them
+                            if(array_key_exists($sHookKey,$aViewExtraData)) {
+                                if(is_array($aViewExtraData[$sHookKey])) {
+                                    foreach(array_keys($aHookExtraData[$sHookKey]) as $sSubHook) {
+                                        $aViewExtraData[$sHookKey][$sSubHook] = $aHookExtraData[$sHookKey][$sSubHook];
+                                    }
+                                }
+                            } else {
+                                $aViewExtraData[$sHookKey] = $aHookExtraData[$sHookKey];
+                            }
                         }
                     }
                 }
@@ -252,7 +261,6 @@ class CoreEntityController extends CoreController {
                         } else {
                             $aViewExtraData[$sHookKey] = $aHookExtraData[$sHookKey];
                         }
-
                     }
                 }
             }
