@@ -51,7 +51,7 @@ class SetupController extends AbstractActionController {
         $this->layout('layout/setup');
 
         # Check if setup is already done
-        if(file_exists($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php')) {
+        if(file_exists(__DIR__.'/../../../../config/autoload/local.php')) {
             return $this->redirect()->toRoute('home');
         }
 
@@ -59,7 +59,7 @@ class SetupController extends AbstractActionController {
 
         if(!$oRequest->isPost()) {
             $aWarnings = [];
-            if(!is_writable($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/global.php')) {
+            if(!is_writable(__DIR__.'/../../../../config/autoload/global.php')) {
                 $aWarnings['file-perm'] = 'Need write permissions on docroot for setup';
             }
             return new ViewModel([
@@ -67,8 +67,10 @@ class SetupController extends AbstractActionController {
             ]);
         } else {
             $aWarnings = [];
-            if(!is_writable($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/global.php')) {
+            if(!is_writable(__DIR__.'/../../../../config/autoload/global.php')) {
                 $aWarnings['file-perm'] = 'Need write permissions on docroot for setup';
+                echo 'Need write permissions on docroot for setup';
+                echo __DIR__.'/../../../../config/autoload/global.php';
             }
             if(count($aWarnings) > 0) {
                 return new ViewModel([
@@ -102,7 +104,7 @@ class SetupController extends AbstractActionController {
             $config = new \Laminas\Config\Config([], true);
             $config->db = $aDBUserInfo;
             $writer = new \Laminas\Config\Writer\PhpArray();
-            file_put_contents($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php',$writer->toString($config));
+            file_put_contents(__DIR__.'/../../../../config/autoload/local.php',$writer->toString($config));
 
             /**
              * Create global.php config
@@ -110,7 +112,7 @@ class SetupController extends AbstractActionController {
             $config = new \Laminas\Config\Config([], true);
             $config->db = $aDBHostInfo;
             $writer = new \Laminas\Config\Writer\PhpArray();
-            file_put_contents($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/global.php',$writer->toString($config));
+            file_put_contents(__DIR__.'/../../../../config/autoload/global.php',$writer->toString($config));
 
             //$adapter = CoreController::$oServiceManager->get(AdapterInterface::class);
             $adapter = new Adapter([
@@ -123,20 +125,20 @@ class SetupController extends AbstractActionController {
             ]);
 
             # Core DB Structure
-            $filename = $_SERVER['DOCUMENT_ROOT'].'/../module/Application/data/structure.sql';
+            $filename = __DIR__.'/../../data/structure.sql';
             $this->parseSQLInstallFile($filename,$adapter);
 
             # User DB Structure
             # todo: move user related stuff to static function in User Module
-            $filename = $_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/oneplace-user/data/structure.sql';
+            $filename = __DIR__.'/../../../../vendor/oneplace/oneplace-user/data/structure.sql';
             $this->parseSQLInstallFile($filename,$adapter);
 
             # Default settings and core data
-            $filename = $_SERVER['DOCUMENT_ROOT'].'/../module/Application/data/data.sql';
+            $filename = __DIR__.'/../../data/data.sql';
             $this->parseSQLInstallFile($filename,$adapter);
 
             # Default settings and data for users
-            $filename = $_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/oneplace-user/data/data.sql';
+            $filename = __DIR__.'/../../../../vendor/oneplace/oneplace-user/data/data.sql';
             $this->parseSQLInstallFile($filename,$adapter);
 
             $oUserTbl = new TableGateway('user',$adapter);
@@ -305,6 +307,7 @@ class SetupController extends AbstractActionController {
             if (substr(trim($line), -1, 1) == ';')
             {
                 $results = $oAdapter->query($templine, $oAdapter::QUERY_MODE_EXECUTE);
+                var_dump($results);
                 $templine = '';
             }
         }
