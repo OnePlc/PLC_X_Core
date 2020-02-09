@@ -5,6 +5,8 @@
 ![Packagist Downloads](https://img.shields.io/packagist/dt/oneplace/oneplace-core)
 ![Open Issues](https://img.shields.io/github/issues-raw/oneplc/plc_x_core)
 ![Stable Version](https://img.shields.io/packagist/v/oneplace/oneplace-core)
+![GitHub Release Date](https://img.shields.io/github/release-date/oneplc/plc_x_core)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/oneplc/plc_x_core)
 
 ## Introduction
 
