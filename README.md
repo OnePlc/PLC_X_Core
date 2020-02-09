@@ -3,10 +3,11 @@
 [![Build Status](https://travis-ci.com/OnePlc/PLC_X_Core.svg?branch=master)](https://travis-ci.com/OnePlc/PLC_X_Core)
 [![Coverage Status](https://coveralls.io/repos/github/OnePlc/PLC_X_Core/badge.svg?branch=master)](https://coveralls.io/github/OnePlc/PLC_X_Core?branch=master)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/oneplace/oneplace-core)
-![Open Issues](https://img.shields.io/github/issues-raw/oneplc/plc_x_core)
 ![Stable Version](https://img.shields.io/packagist/v/oneplace/oneplace-core)
 ![GitHub Release Date](https://img.shields.io/github/release-date/oneplc/plc_x_core)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/oneplc/plc_x_core)
+![Open Issues](https://img.shields.io/github/issues-raw/oneplc/plc_x_core)
+![Discourse status](https://img.shields.io/discourse/status?server=https%3A%2F%2Fdiscourse.1plc.ch)
+
 
 ## Introduction
 
