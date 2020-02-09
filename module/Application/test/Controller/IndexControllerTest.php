@@ -63,23 +63,6 @@ class IndexControllerTest extends AbstractHttpControllerTestCase {
         $this->assertMatchedRouteName('home');
     }
 
-    public function testIndexActionCanBeAccessedWithSession() {
-
-       // $this->initTestSession();
-        $this->dispatch('/login', 'POST', ['plc_login_user'=>'travis@1plc.ch','plc_login_pass'=>'1234']);
-        $this->assertResponseStatusCode(302);
-        /**
-         * another day...
-
-        $this->dispatch('/', 'GET');
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName('application');
-        $this->assertControllerName(IndexController::class); // as specified in router's controller name alias
-        $this->assertControllerClass('IndexController');
-        $this->assertMatchedRouteName('home');
-        $this->assertRedirectTo('login');
-         *  */
-    }
 
     public function testInvalidRouteDoesNotCrash() {
         $this->initTestSession();
