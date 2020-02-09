@@ -2,7 +2,7 @@
     "name": "oneplace/oneplace-core",
     "description": "onePlace Core Application",
     "type": "project",
-    "version": "1.0.15",
+    "version": "1.0.16",
     "license": "BSD-3-Clause",
     "keywords": [
         "laminas",
