@@ -130,8 +130,12 @@ class SetupController extends AbstractActionController {
 
             # User DB Structure
             # todo: move user related stuff to static function in User Module
-            $filename = __DIR__.'/../../../../vendor/oneplace/oneplace-user/data/structure.sql';
-            $this->parseSQLInstallFile($filename,$adapter);
+            if(file_exists( __DIR__.'/../../../../vendor/oneplace/oneplace-user/data/structure.sql')) {
+                $filename = __DIR__.'/../../../../vendor/oneplace/oneplace-user/data/structure.sql';
+                $this->parseSQLInstallFile($filename,$adapter);
+            } elseif(file_exists( '/home/travis/build/OnePlc/PLC_X_User/data/structure.sql')) {
+                $this->parseSQLInstallFile('/home/travis/build/OnePlc/PLC_X_User/data/structure.sql',$adapter);
+            }
 
             # Default settings and core data
             $filename = __DIR__.'/../../data/data.sql';
@@ -139,7 +143,11 @@ class SetupController extends AbstractActionController {
 
             # Default settings and data for users
             $filename = __DIR__.'/../../../../vendor/oneplace/oneplace-user/data/data.sql';
-            $this->parseSQLInstallFile($filename,$adapter);
+            if(file_exists($filename)) {
+                $this->parseSQLInstallFile($filename,$adapter);
+            } elseif(file_exists('/home/travis/build/OnePlc/PLC_X_User/data/data.sql')) {
+                $this->parseSQLInstallFile('/home/travis/build/OnePlc/PLC_X_User/data/data.sql',$adapter);
+            }
 
             $oUserTbl = new TableGateway('user',$adapter);
             /**
