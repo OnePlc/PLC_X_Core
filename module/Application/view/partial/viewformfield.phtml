@@ -137,6 +137,20 @@ switch($oField->type) {
     /**
      * Currency Field - View
      */
+    case 'number':
+        $fNumber = (float)$this->oItem->getTextField($oField->fieldkey);
+        if($fNumber != 0) {
+            $fNumber = number_format($fNumber,2,',','.');
+        }
+        ?>
+        <div class="input-group mb-3">
+            <?=$fNumber?>
+        </div>
+        <?php
+        break;
+    /**
+     * Currency Field - View
+     */
     case 'currency': ?>
         <div class="input-group mb-3">
             € <?=number_format($this->oItem->getTextField($oField->fieldkey),2,',','.')?>

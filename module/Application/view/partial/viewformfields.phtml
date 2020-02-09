@@ -2,6 +2,9 @@
 /**
  * Print Container and Label for each Field in Form
  */
+
+$bHideLabels = (isset($this->bHideLabels)) ? $this->bHideLabels : false;
+$bOnlyLabels = (isset($this->bOnlyLabels)) ? $this->bOnlyLabels : false;
 if(array_key_exists($this->sTab,$this->aFormFieldsByTab)) {
     foreach($this->aFormFieldsByTab[$this->sTab] as $oField) {
         # skip hidden fields entirely
@@ -10,18 +13,20 @@ if(array_key_exists($this->sTab,$this->aFormFieldsByTab)) {
         } ?>
         <!-- Field <?=$oField->fieldkey?> START -->
         <div class="form-group <?=$oField->class?>">
-            <?php if($oField->type != 'partial' && $oField->type != 'gallery' && $oField->type != 'featuredimage') { ?>
+            <?php if($oField->type != 'partial' && $oField->type != 'gallery' && $oField->type != 'featuredimage' && !$bHideLabels) { ?>
             <label class="plcViewFormLabel" for="<?=$this->sFormName?>_<?=$oField->fieldkey?>">
                 <?=$this->translate($oField->label)?>
             </label><br/>
             <?php } ?>
             <?php
-            $aPartialData =['sFormName'=>$this->sFormName,'oField'=>$oField,'oItem'=>$this->oItem] ;
-            if(isset($this->aPartialExtraData)) {
-                $aPartialData['aPartialExtraData'] = $this->aPartialExtraData;
-            }
-            ?>
-            <?= $this->partial('partial/viewformfield', $aPartialData); ?>
+            if(!$bOnlyLabels) {
+                $aPartialData =['sFormName'=>$this->sFormName,'oField'=>$oField,'oItem'=>$this->oItem] ;
+                if(isset($this->aPartialExtraData)) {
+                    $aPartialData['aPartialExtraData'] = $this->aPartialExtraData;
+                }
+                ?>
+                <?= $this->partial('partial/viewformfield', $aPartialData); ?>
+            <?php } ?>
         </div>
         <!-- Field <?=$oField->fieldkey?> END -->
     <?php
