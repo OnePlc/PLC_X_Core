@@ -31,7 +31,7 @@ if(count($aImages) > 0) {
                 </div>
                 <div class="col-md-2">
                     <?=($oImg->is_public == 1) ? '<i class="fas fa-eye"></i> '.$this->translate('Is showed') : '<i class="fas fa-eye-slash"></i> '.$this->translate('Not showed')?>
-                    <br/><?=($oImg->is_public == 1) ? '<a class="btn btn-dark" href="/application/togglemediapub/'.$oImg->Media_ID.'">'.$this->translate('Hide').'</a>' : '<a class="btn btn-dark" href="/application/togglemediapub/'.$oImg->Media_ID.'">'.$this->translate('Show').'</a>'?>
+                    <br/><?=($oImg->is_public == 1) ? '<a class="btn btn-dark" href="/uppy/togglemediapub/'.$oImg->Media_ID.'">'.$this->translate('Hide').'</a>' : '<a class="btn btn-dark" href="/application/togglemediapub/'.$oImg->Media_ID.'">'.$this->translate('Show').'</a>'?>
                 </div>
             </div>
         </li>
@@ -47,7 +47,7 @@ if(count($aImages) > 0) {
             axis: "y",
             update: function( event, ui ) {
                 var sortedIDs = $( "ul.plc-webgallery-list" ).sortable( "toArray" );
-                $.post('/application/updateuppysort',{entity_idfs:'<?=$oItem->getID()?>',entity_type:'<?=$sEntityType?>',images:sortedIDs},function(retVal) {
+                $.post('/uppy/updatesort',{entity_idfs:'<?=$oItem->getID()?>',entity_type:'<?=$sEntityType?>',images:sortedIDs},function(retVal) {
                     console.log(retVal);
                     var oJson = $.parseJSON(retVal);
                     if(oJson.state == 'success') {

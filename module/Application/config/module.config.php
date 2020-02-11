@@ -39,7 +39,7 @@ return [
                 'options' => [
                     'route'    => '/filepond',
                     'defaults' => [
-                        'controller' => Controller\IndexController::class,
+                        'controller' => Controller\UploadController::class,
                         'action'     => 'filepond',
                     ],
                 ],
@@ -49,8 +49,41 @@ return [
                 'options' => [
                     'route'    => '/uppy',
                     'defaults' => [
-                        'controller' => Controller\IndexController::class,
+                        'controller' => Controller\UploadController::class,
                         'action'     => 'uppy',
+                    ],
+                ],
+            ],
+            'uppy-togglepub' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/uppy/togglemediapub[/:id]',
+                    'constraints' => [
+                        'id'     => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\UploadController::class,
+                        'action'     => 'togglemediapub',
+                    ],
+                ],
+            ],
+            'uppy-updatesort' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/uppy/updatesort',
+                    'defaults' => [
+                        'controller' => Controller\UploadController::class,
+                        'action'     => 'updateuppysort',
+                    ],
+                ],
+            ],
+            'add-theme' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/themes/add',
+                    'defaults' => [
+                        'controller' => Controller\UploadController::class,
+                        'action'     => 'addtheme',
                     ],
                 ],
             ],

@@ -14,12 +14,12 @@ INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES
 INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav_href`, `show_in_menu`) VALUES
 ('index', 'Application\\Controller\\IndexController', 'Home', 'Home', '/', 0),
 ('update', 'Application\\Controller\\IndexController', 'Updates', '', '', 0),
-('addtheme', 'Application\\Controller\\IndexController', 'Upload Theme', '', '/application/addtheme', 0),
+('addtheme', 'Application\\Controller\\UploadController', 'Upload Theme', '', '/application/addtheme', 0),
 ('themes', 'Application\\Controller\\IndexController', 'Theme Selection', '', '/application/themes', 0),
-('filepond', 'Application\\Controller\\IndexController', 'Upload Featured Image', '', '', 0),
-('uppy', 'Application\\Controller\\IndexController', 'Gallery Upload', '', '', 0),
-('togglemediapub', 'Application\\Controller\\IndexController', 'Gallery Upload', '', '', 0),
-('updateuppysort', 'Application\\Controller\\IndexController', 'Gallery Upload', '', '', 0),
+('filepond', 'Application\\Controller\\UploadController', 'Upload Featured Image', '', '', 0),
+('uppy', 'Application\\Controller\\UploadController', 'Gallery Upload', '', '', 0),
+('togglemediapub', 'Application\\Controller\\UploadController', 'Gallery Upload', '', '', 0),
+('updateuppysort', 'Application\\Controller\\UploadController', 'Gallery Upload', '', '', 0),
 ('quicksearch', 'Application\\Controller\\IndexController', 'Quick Search', '', '', 0),
 ('updatefieldsort', 'Application\\Controller\\IndexController', 'Update Form Field Sorting', '', '', 0),
 ('selectbool', 'Application\\Controller\\IndexController', 'Select Yes/No', '', '', 0);
