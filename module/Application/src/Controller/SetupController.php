@@ -67,6 +67,7 @@ class SetupController extends AbstractActionController {
             ]);
         } else {
             $aWarnings = [];
+            /**
             if(!is_writable(__DIR__.'/../../../../config/autoload/global.php')) {
                 $aWarnings['file-perm'] = 'Need write permissions on docroot for setup';
                 echo 'Need write permissions on docroot for setup';
@@ -76,7 +77,7 @@ class SetupController extends AbstractActionController {
                 return new ViewModel([
                     'aWarnings'=>$aWarnings,
                 ]);
-            }
+            } **/
 
             # get db user data
             $aDBUserInfo = [
@@ -163,6 +164,7 @@ class SetupController extends AbstractActionController {
                 'xp_total'=>0,
                 'xp_current'=>0,
                 'is_backend_user'=>1,
+                'is_globaladmin'=>1,
                 'mobile'=>'',
                 'password_reset_token'=>'',
                 'password_reset_date'=>'0000-00-00 00:00:00',

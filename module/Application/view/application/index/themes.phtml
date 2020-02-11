@@ -20,7 +20,11 @@ use Application\Controller\CoreController; ?>
                 <?php } ?>
             </ul>
 
-            <a href="/themes/add" class="btn btn-primary">Upload new Theme</a>
+            <?php if(CoreController::$oSession->oUser->hasPermission('addtheme','Application-Controller-UploadController')) { ?>
+            <a href="/themes/add" class="btn btn-primary">
+                <?=$this->translate('Upload new Theme')?>
+            </a>
+            <?php } ?>
         </div>
     </div>
 </div>
