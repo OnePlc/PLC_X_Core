@@ -1,16 +1,27 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h2>Upload new theme</h2>
-
             <form action="" method="POST" enctype="multipart/form-data">
-                <div class="form-row">
-                    <label>Theme .zip File</label>
-                    <input type="file" name="zip_file" class="Form-control" />
-                </div>
-                <div class="form-row">
-                    <!-- Submit -->
-                    <button type="submit" class="btn btn-primary">Install Theme</button>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <?=$this->translate('Upload new theme')?>
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <label>Theme .zip File</label>
+                            <input type="file" name="zip_file" class="Form-control" />
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="form-row">
+                            <!-- Submit -->
+                            <button type="submit" class="btn btn-primary">
+                                <?=$this->translate('Install Theme')?>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

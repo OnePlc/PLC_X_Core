@@ -15,6 +15,7 @@
 
 namespace Application\Model;
 
+use Application\Controller\CoreController;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Sql\Select;

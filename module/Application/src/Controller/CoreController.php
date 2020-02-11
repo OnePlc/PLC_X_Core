@@ -426,8 +426,17 @@ class CoreController extends AbstractActionController {
     protected function getPermissions() {
         $aPermissionsByModules = [];
 
+        $aWhere = [];
+        $bIsGlobalAdmin = false;
+        if(CoreController::$oSession->oUser->hasPermission('globaladmin','OnePlace-Core')) {
+            $bIsGlobalAdmin = true;
+        }
+        if(! $bIsGlobalAdmin) {
+            $aWhere['needs_globaladmin'] = 0;
+        }
+
         # Load Permissions from database
-        $oPermsFromDB = CoreController::$aCoreTables['permission']->select();
+        $oPermsFromDB = CoreController::$aCoreTables['permission']->select($aWhere);
         foreach($oPermsFromDB as $oPerm) {
             $sModule = str_replace(['\\'],['-'],$oPerm->module);
             # Order by module

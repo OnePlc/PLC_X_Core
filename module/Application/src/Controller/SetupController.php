@@ -245,6 +245,12 @@ class SetupController extends AbstractActionController {
                 'permission'=>'settheme',
                 'module'=>'OnePlace\User\Controller\UserController',
             ]);
+            # Globaladmin
+            $oUserPermTbl->insert([
+                'user_idfs'=>$iAdminUserID,
+                'permission'=>'globaladmin',
+                'module'=>'OnePlace\Core',
+            ]);
 
             /**
              * Add Basic Views / Columns / Fields

@@ -76,7 +76,9 @@ class CoreEntityController extends CoreController {
         $iPage = ($iPage < 1) ? 1 : $iPage;
         if($oPaginator) {
             $oPaginator->setCurrentPageNumber($iPage);
-            $oPaginator->setItemCountPerPage(3);
+            $iItemsPerPage = (CoreEntityController::$oSession->oUser->getSetting($sKey.'-index-items-per-page'))
+                ? CoreEntityController::$oSession->oUser->getSetting($sKey.'-index-items-per-page') : 10;
+            $oPaginator->setItemCountPerPage($iItemsPerPage);
         }
 
         # Log Performance in DB

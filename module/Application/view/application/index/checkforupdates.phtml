@@ -43,7 +43,8 @@
 
                     $sUrl = '';
                     try {
-                        $sModRoute = explode('-',$sModName)[1];
+                        $sModRoute = substr($sModName,strlen($sVendor.'-'));
+                        echo 'try:'.$sModRoute.'-setup';
                         $sUrl = $this->url($sModRoute.'-setup');
                     } catch(\RuntimeException $e) {
 

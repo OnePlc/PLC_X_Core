@@ -1,15 +1,47 @@
 <?php
+use Application\Controller\CoreEntityController;
 
-/**
- * Print Pagination Control
- */
-echo $this->paginationControl(
+$iItemsPerPage = (CoreEntityController::$oSession->oUser->getSetting($this->sRoute.'-index-items-per-page'))
+                ? CoreEntityController::$oSession->oUser->getSetting($this->sRoute.'-index-items-per-page') : 10;
+?>
+<div class="row">
+    <div class="col-md-1">
+        <select class="form-control plc-index-list-itemsperpage">
+            <option<?=($iItemsPerPage == 10) ? ' selected="selected"' : ''?>>10</option>
+            <option<?=($iItemsPerPage == 25) ? ' selected="selected"' : ''?>>25</option>
+            <option<?=($iItemsPerPage == 50) ? ' selected="selected"' : ''?>>50</option>
+            <option<?=($iItemsPerPage == 100) ? ' selected="selected"' : ''?>>100</option>
+            <option<?=($iItemsPerPage == 250) ? ' selected="selected"' : ''?>>250</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <?php
+
+        /**
+         * Print Pagination Control
+         */
+        echo $this->paginationControl(
 // The paginator object:
-    $this->aItems,
-    // The scrolling style:
-    'sliding',
-    // The partial to use to render the control:
-    'partial/paginator',
-    // The route to link to when a user clicks a control link:
-    ['route' => $this->sRoute]
-);
+            $this->aItems,
+            // The scrolling style:
+            'sliding',
+            // The partial to use to render the control:
+            'partial/paginator',
+            // The route to link to when a user clicks a control link:
+            ['route' => $this->sRoute]
+        );
+
+        ?>
+    </div>
+</div>
+<script>
+    $(function() {
+        $('.plc-index-list-itemsperpage').on('change',function() {
+            var iNewVal = $(this).val();
+            var oData = {setting_name:'<?=$this->sRoute?>-index-items-per-page',setting_value:iNewVal};
+            $.post('/user/updatesetting',oData,function() {
+                // act in backgrond
+            });
+        });
+    })
+</script>

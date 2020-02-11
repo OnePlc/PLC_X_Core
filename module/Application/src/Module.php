@@ -27,7 +27,7 @@ class Module {
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.19';
+    const VERSION = '1.0.20';
 
     public function getConfig() : array {
         return include __DIR__ . '/../config/module.config.php';
@@ -67,6 +67,14 @@ class Module {
                 Controller\ApiController::class => function($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\ApiController(
+                        $oDbAdapter,
+                        false,
+                        $container
+                    );
+                },
+                Controller\UploadController::class => function($container) {
+                    $oDbAdapter = $container->get(AdapterInterface::class);
+                    return new Controller\UploadController(
                         $oDbAdapter,
                         false,
                         $container
