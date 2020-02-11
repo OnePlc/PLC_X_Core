@@ -291,6 +291,23 @@ class SetupController extends AbstractActionController {
                 $iFieldSortID++;
             }
 
+            # Add core modules
+            $oCoreModules = new TableGateway('core_module',$adapter);
+            $oCoreModules->insert([
+                'module_key'=>'oneplace-core',
+                'version'=> \Application\Module::VERSION,
+                'label'=>'onePlace Core',
+                'type'=>'module',
+                'vendor'=>'oneplace',
+            ]);
+            $oCoreModules->insert([
+                'module_key'=>'oneplace-user',
+                'version'=> \OnePlace\User\Module::VERSION,
+                'label'=>'onePlace User',
+                'type'=>'module',
+                'vendor'=>'oneplace',
+            ]);
+
             return $this->redirect()->toRoute('login');
         }
     }

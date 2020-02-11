@@ -1,0 +1,66 @@
+<?php
+?>
+<h2>Installed Modules</h2>
+<ul class="list-group">
+    <?php
+    foreach($aModulesInstalled as $oMod) {
+        $sPath = 'vendor/'.$oMod->vendor.'/'.$oMod->module_key.'/src/Module.php';
+        if($oMod->module_key == 'oneplace-core') {
+            $sPath = 'module/Application/src/Module.php';
+        }
+        if(file_exists($sPath)) {
+            $sModule = str_replace(['-'],['\\'],$oMod->module_key);
+            $sClass = "$sModule\\Module";
+            $sInstalledVer = '(unknown)';
+            if($oMod->module_key == 'oneplace-core') {
+                $sClass = "Application\\Module";
+            }
+            $sInstalledVer = $sClass::VERSION;
+            ?>
+            <li class="list-group-item">
+                <?=$oMod->label?> - <?=$oMod->version?> - <?=$sClass::VERSION?>
+            </li>
+            <?php
+        }
+        ?>
+    <?php
+    }
+?>
+<h2>New Modules to install</h2>
+<ul class="list-group">
+<?php
+    $aVendors = ['oneplace'];
+    foreach($aVendors as $sVendor) {
+        $aModules = glob('vendor/'.$sVendor.'/*', GLOB_ONLYDIR);
+        foreach($aModules as $sMod) {
+            $sModName = basename($sMod);
+            if(!array_key_exists($sModName,$aModulesInstalled)) {
+                $sPath = 'vendor/'.$sVendor.'/'.$sModName.'/src/Module.php';
+                if(file_exists($sPath)) {
+                    require_once $sPath;
+                    $sClass = ucfirst($sVendor)."\\".ucfirst(explode('-',$sModName)[1])."\\Module";
+                    $sModVer = $sClass::VERSION;
+
+                    $sUrl = '';
+                    try {
+                        $sModRoute = explode('-',$sModName)[1];
+                        $sUrl = $this->url($sModRoute.'-setup');
+                    } catch(\RuntimeException $e) {
+
+                    }
+                    ?>
+                    <li class="list-group-item">
+                        <?=$sModName?> - <?=$sModVer?>
+                        <?php if($sUrl != '') { ?>
+                        - <a href="<?=$sUrl?>" title="Run Setup">
+                            Run setup
+                        </a>
+                        <?php } ?>
+                    </li>
+                    <?php
+                }
+            }
+        }
+    }
+    ?>
+</ul>

@@ -34,7 +34,9 @@ class IndexController extends CoreController {
         $this->layout('layout/layout-'.CoreController::$oSession->oUser->getTheme());
 
         $aMeasureEnd = getrusage();
-        $this->logPerfomance('application-index',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
+        $sRuTime = $this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime");
+        $sRsTime = $this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime");
+        $this->logPerfomance('application-index',$sRuTime,$sRsTime);
 
         return new ViewModel([
             'oUser'=>CoreController::$oSession->oUser,
@@ -63,7 +65,9 @@ class IndexController extends CoreController {
                 'update' => [],
             ];
 
-            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/*', GLOB_ONLYDIR) as $sModulePath) {
+            $sPath = $_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/*';
+
+            foreach(glob($sPath, GLOB_ONLYDIR) as $sModulePath) {
                 $sModule = basename($sModulePath);
                 $sModuleName = explode('-',$sModule)[1];
 
@@ -77,10 +81,12 @@ class IndexController extends CoreController {
                 }
 
                 try {
-                    $oBaseTbl = new TableGateway($sModuleName,CoreController::$oDbAdapter);
+                    $oBaseTbl = new TableGateway($sModuleName, CoreController::$oDbAdapter);
                     $oBaseTbl->select();
 
-                    foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/oneplace-'.$sModuleName.'-*', GLOB_ONLYDIR) as $sPluginName) {
+                    $sTagPath = $_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/oneplace-'.$sModuleName.'-*';
+
+                    foreach(glob($sTagPath, GLOB_ONLYDIR) as $sPluginName) {
                         $sPluginTbl = str_replace(['-'],['_'],substr(basename($sPluginName),strlen('oneplace-')));
                         echo $sPluginTbl;
                         if(file_exists($sPluginName.'/data/install.sql')) {
@@ -466,14 +472,15 @@ class IndexController extends CoreController {
         ];
     }
 
-    public function updatefieldsortAction() {
+    public function updatefieldsortAction()
+    {
         $this->setThemeBasedLayout('application');
 
         $oRequest = $this->getRequest();
 
         if(!$oRequest->isPost()) {
             $sFormKey = $this->params()->fromRoute('formname','none');
-            $oForm = CoreController::$aCoreTables['core-form']->select(['form_key'=>$sFormKey]);
+            $oForm = CoreController::$aCoreTables['core-form']->select(['form_key' => $sFormKey]);
 
             if(count($oForm) == 0) {
                 echo 'form not found';
@@ -484,8 +491,8 @@ class IndexController extends CoreController {
 
             # Add Links for Breadcrumb
             $this->layout()->aNavLinks = [
-                (object)['label'=>'Form Field Sorting'],
-                (object)['label'=>$oForm->label],
+                (object)['label' => 'Form Field Sorting'],
+                (object)['label' => $oForm->label],
             ];
 
             # Add Buttons for breadcrumb
@@ -515,8 +522,8 @@ class IndexController extends CoreController {
             }
 
             return new ViewModel([
-                'oForm'=>$oForm,
-                'aFieldsByTabs'=>$aFieldsByTabs,
+                'oForm' => $oForm,
+                'aFieldsByTabs' => $aFieldsByTabs,
             ]);
         } else {
             $this->layout('layout/json');
@@ -538,7 +545,7 @@ class IndexController extends CoreController {
                 }
             }
 
-            $aReturn = ['state'=>'success','message'=>'order updated'];
+            $aReturn = ['state' => 'success','message' => 'order updated'];
 
             echo json_encode($aReturn);
 
@@ -546,7 +553,8 @@ class IndexController extends CoreController {
         }
     }
 
-    public function selectboolAction() {
+    public function selectboolAction()
+    {
         $this->layout('layout/json');
 
         $aResults = [];
@@ -555,6 +563,25 @@ class IndexController extends CoreController {
 
         return new ViewModel([
             'aResults'=>$aResults,
+        ]);
+    }
+
+    public function checkforupdatesAction()
+    {
+        $this->setThemeBasedLayout('application');
+
+        $oModuleTbl = new TableGateway('core_module',CoreController::$oDbAdapter);
+        $aModulesInstalled = [];
+        $oModulesDB = $oModuleTbl->select();
+        if(count($oModulesDB) > 0) {
+            foreach($oModulesDB as $oMod) {
+                $aModulesInstalled[$oMod->module_key] = $oMod;
+            }
+        }
+
+
+        return new ViewModel([
+            'aModulesInstalled' => $aModulesInstalled
         ]);
     }
 }

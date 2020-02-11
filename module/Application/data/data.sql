@@ -22,7 +22,8 @@ INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav
 ('updateuppysort', 'Application\\Controller\\UploadController', 'Gallery Upload', '', '', 0),
 ('quicksearch', 'Application\\Controller\\IndexController', 'Quick Search', '', '', 0),
 ('updatefieldsort', 'Application\\Controller\\IndexController', 'Update Form Field Sorting', '', '', 0),
-('selectbool', 'Application\\Controller\\IndexController', 'Select Yes/No', '', '', 0);
+('selectbool', 'Application\\Controller\\IndexController', 'Select Yes/No', '', '', 0),
+('checkforupdates', 'Application\\Controller\\IndexController', 'Check for Updates', '', '', 0);
 
 --
 -- Default Widgets

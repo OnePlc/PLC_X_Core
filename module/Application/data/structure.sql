@@ -188,6 +188,17 @@ ALTER TABLE `core_gallery_media`
 ALTER TABLE `core_gallery_media`
   MODIFY `Media_ID` int(11) NOT NULL AUTO_INCREMENT;
 
+CREATE TABLE `core_module` (
+  `module_key` varchar(255) NOT NULL,
+  `version` varchar(10) NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `vendor` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `core_module`
+  ADD PRIMARY KEY (`module_key`);
+
 --
 -- Save
 --
