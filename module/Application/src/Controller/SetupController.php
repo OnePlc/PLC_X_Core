@@ -315,7 +315,6 @@ class SetupController extends AbstractActionController {
             if (substr(trim($line), -1, 1) == ';')
             {
                 $results = $oAdapter->query($templine, $oAdapter::QUERY_MODE_EXECUTE);
-                var_dump($results);
                 $templine = '';
             }
         }

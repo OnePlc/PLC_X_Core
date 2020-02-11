@@ -189,6 +189,58 @@ class CoreEntityTable {
     }
 
     /**
+     * Save Skeleton Entity
+     *
+     * @param $oSkeleton
+     * @return int Skeleton ID
+     * @since 1.0.0
+     */
+    public function saveSingleEntity($oSkeleton,$sIDKey = 'Skeleton_ID',$aDefaultData = []) {
+        $aData = [
+            'label' => $oSkeleton->label,
+        ];
+
+        $aData = $this->attachDynamicFields($aData,$oSkeleton);
+
+        $id = (int) $oSkeleton->id;
+
+        $iUserID = (isset(CoreController::$oSession->oUser)) ? CoreController::$oSession->oUser->getID() : 0;
+
+        if ($id === 0) {
+            # Add Metadata
+            $aData['created_by'] = $iUserID;
+            $aData['created_date'] = date('Y-m-d H:i:s',time());
+            $aData['modified_by'] = $iUserID;
+            $aData['modified_date'] = date('Y-m-d H:i:s',time());
+
+            # Insert Skeleton
+            $this->oTableGateway->insert($aData);
+
+            # Return ID
+            return $this->oTableGateway->lastInsertValue;
+        }
+
+        # Check if Skeleton Entity already exists
+        try {
+            $this->getSingle($id);
+        } catch (\RuntimeException $e) {
+            throw new \RuntimeException(sprintf(
+                'Cannot update skeleton with identifier %d; does not exist',
+                $id
+            ));
+        }
+
+        # Update Metadata
+        $aData['modified_by'] = $iUserID;
+        $aData['modified_date'] = date('Y-m-d H:i:s',time());
+
+        # Update Skeleton
+        $this->oTableGateway->update($aData, [$sIDKey => $id]);
+
+        return $id;
+    }
+
+    /**
      * Generate daily stats for skeleton
      *
      * @since 1.0.5
@@ -197,7 +249,7 @@ class CoreEntityTable {
         # get all skeletons
         $iTotal = count($this->fetchAll(false));
         # get newly created skeletons
-        $iNew = count($this->fetchAll(false,['created_date-like'=>date('Y-m-d',time())]));
+        $iNew = count($this->fetchAll(false,['created_date-like' => date('Y-m-d',time())]));
 
         # add statistics
         CoreController::$aCoreTables['core-statistic']->insert([
@@ -208,6 +260,6 @@ class CoreEntityTable {
     }
 
     public function updateAttribute($sAttribute,$sVal,$sIDKey,$iEntityID) {
-        $this->oTableGateway->update([$sAttribute=>$sVal],[$sIDKey=>$iEntityID]);
+        $this->oTableGateway->update([$sAttribute => $sVal], [$sIDKey => $iEntityID]);
     }
 }
