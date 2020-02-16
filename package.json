@@ -24,7 +24,7 @@
     "jquery-ui-sortable": "^1.0.0",
     "select2": "^4.0.13",
     "summernote": "^0.8.15",
-    "sweetalert": "^2.1.2",
+    "sweetalert2": "^2.1.2",
     "uppy": "^1.8.0"
   }
 }
