@@ -132,6 +132,13 @@ class CoreEntityController extends CoreController {
             }
         }
 
+        $sRoute = (isset($sRoute)) ? $sRoute : explode('-',$sKey)[0];
+
+        $aSavedSearches = CoreController::$aCoreTables['user-search']->select([
+            'user_idfs' => CoreController::$oSession->oUser->getID(),
+            'list_name' => $sKey.'-index',
+        ]);
+
         # Log Performance in DB
         $aMeasureEnd = getrusage();
         $this->logPerfomance($sKey.'-index',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
@@ -140,6 +147,8 @@ class CoreEntityController extends CoreController {
             'sTableName' => $sKey.'-index',
             'aItems' => $oPaginator,
             'aFilters' => $aWhere,
+            'aSavedSearches' => $aSavedSearches,
+            'sRoute' => $sKey,
         ]);
     }
 
