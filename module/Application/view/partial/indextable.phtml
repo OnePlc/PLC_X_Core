@@ -1,3 +1,52 @@
+<?php
+use Application\Controller\CoreEntityController;
+
+$oIndexTbl = CoreEntityController::$aCoreTables['table-index']->select(['table_name'=>$this->sTableName])->current();
+if (isset($aFilters)) {
+    if (count($aFilters) > 0) {
+        ?>
+        <div class="alert alert-info py-2 px-2" style="width:100%;">
+            <div class="row" style="width:100%;">
+                <div class="col-md-8">
+                    <b>Filter aktiv: </b>
+                    <?php foreach(array_keys($aFilters) as $sFilter) {
+                        $sFilterName = str_replace(['-like'],[''],$sFilter);
+                        $oField = CoreEntityController::$aCoreTables['core-form-field']->select([
+                            'form' => $oIndexTbl->form,
+                            'fieldkey' => $sFilterName
+                        ])->current();
+                        $sName = $oField->label;
+                        $sVal = $aFilters[$sFilter];
+                        if($oField->type == 'select') {
+                            if($oField->tbl_class != 'OnePlace\BoolSelect') {
+                                $oEntityTbl = CoreEntityController::$oServiceManager->get($oField->tbl_class);
+                                $oEntity = $oEntityTbl->getSingle($aFilters[$sFilter]);
+                                $sVal = $oEntity->getLabel();
+                            } else {
+                                if($sVal == 0) {
+                                    $sVal = '';
+                                } elseif($sVal == 1) {
+                                    $sVal = 'No';
+                                } elseif($sVal == 2) {
+                                    $sVal = 'Yes';
+                                }
+                            }
+                        } ?>
+                        <?=$this->translate($sName)?> = <?=$this->translate($sVal)?>,
+                    <?php } ?>
+                </div>
+                <div class="col-md-4 text-right text-white">
+                    <a style="color:#fff;" href="<?=$sRoute?>?resetfilter=1" title="Reset">Reset</a>
+                    or
+                    <a style="color:#fff;" href="#" class="saveSearch">Save for later</a>
+                </div>
+            </div>
+        </div>
+
+        <?php
+    }
+}
+?>
 <table class="plc-core-basic-table table">
     <thead>
         <tr>
@@ -42,6 +91,31 @@
                     }
                 });
             }
+        });
+
+        $('.saveSearch').on('click',function () {
+            Swal.fire({
+                title: 'Give your search a name',
+                input: 'text',
+                showCancelButton: true,
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'You need to write something!'
+                    }
+                }
+            }).then((result) => {
+                if (result.value) {
+                    $.post('/article/search/save',{search_name:'<?=$this->sTableName?>',search_label:result.value},function() {
+                        $.fn.printMessage('Search saved','Your search '+result.value+' was saved successfuly','success');
+                    });
+                }
+            })
+        });
+
+        $('.plc-index-load-saved-search').on('change',function () {
+            var iSearchID = $(this).val();
+
+            window.location = '/article/search/load/' + iSearchID;
         });
     });
 </script>

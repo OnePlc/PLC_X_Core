@@ -17,6 +17,7 @@ namespace Application\Controller;
 
 use Application\Controller\CoreEntityController;
 use OnePlace\Skeleton\Model\SkeletonTable;
+use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Sql\Where;
 use Laminas\View\Model\ViewModel;
 use Laminas\Db\Adapter\AdapterInterface;
@@ -84,6 +85,7 @@ class CoreSearchController extends CoreEntityController
                 'sFormName'=>$sKey.'-single',
             ]);
         } else {
+            /**
             # Add Buttons for breadcrumb
             $this->setViewButtons($sKey.'-search');
 
@@ -92,7 +94,7 @@ class CoreSearchController extends CoreEntityController
 
             # Load Fields for View Form
             $this->setFormFields($this->sSingleForm);
-
+**/
             # Parse Raw Form Data
             $aData = $this->parseFormData($_REQUEST);
 
@@ -130,11 +132,85 @@ class CoreSearchController extends CoreEntityController
             }
 
             $aItems = $this->oTableGateway->fetchAll(true,$aWhere);
-
+            /**
             return new ViewModel([
                 'sFormName'=>$sKey.'-single',
                 'aResults' => $aItems,
-            ]);
+            ]); **/
+            return $this->generateIndexView($sKey,[],$aWhere);
+        }
+    }
+
+    /**
+     * Save Search filters for index view for later use
+     *
+     * @return bool
+     * @since 1.0.20
+     */
+    public function saveAction() {
+        $this->layout('layout/json');
+
+        $oRequest = $this->getRequest();
+
+        $sSearchName = $oRequest->getPost('search_name');
+        $sSearchLabel = $oRequest->getPost('search_label');
+        $sRoute = explode('-',$sSearchName)[0];
+
+        # check if there is a matching search set active
+        if(isset(CoreEntityController::$oSession->aCurrentIndexFilter)) {
+            if (array_key_exists($sRoute, CoreEntityController::$oSession->aCurrentIndexFilter)) {
+                # generate auto label if user has not set one
+                if($sSearchLabel == '') {
+                    if(count(CoreEntityController::$oSession->aCurrentIndexFilter) > 0) {
+                        foreach(array_keys(CoreEntityController::$oSession->aCurrentIndexFilter) as $sKey) {
+                            $sSearchLabel .= $sKey.', ';
+                        }
+                    }
+                }
+                # save search for user
+                $oSearchTbl = new TableGateway('user_search', CoreEntityController::$oDbAdapter);
+                $oSearchTbl->insert([
+                    'user_idfs' => CoreEntityController::$oSession->oUser->getID(),
+                    'label' => $sSearchLabel,
+                    'filters' => json_encode(CoreEntityController::$oSession->aCurrentIndexFilter[$sRoute]),
+                    'list_name' => $sSearchName
+                ]);
+                # redirect to route ( index ) and show message
+                $this->flashMessenger()->addSuccessMessage('Search saved successfully');
+                $this->redirect()->toRoute($sRoute);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Load saved search and apply to index view
+     *
+     * @since 1.0.20
+     */
+    public function loadAction() {
+        $iSearchID = $this->params()->fromRoute('id', 0);
+
+        if($iSearchID != 0) {
+            $oSearchTbl = new TableGateway('user_search', CoreEntityController::$oDbAdapter);
+            $oSearch = $oSearchTbl->select(['Search_ID' => $iSearchID]);
+            if(count($oSearch) > 0) {
+                $oSearch = $oSearch->current();
+                $sRoute = explode('-',$oSearch->list_name)[0];
+
+                if(!isset(CoreEntityController::$oSession->aCurrentIndexFilter)) {
+                    CoreEntityController::$oSession->aCurrentIndexFilter = [];
+                }
+                CoreEntityController::$oSession->aCurrentIndexFilter[$sRoute] = (array)json_decode($oSearch->filters);
+                $this->redirect()->toUrl('/'.$sRoute.'?page=1');
+            } else {
+                $this->flashMessenger()->addErrorMessage('Search not found');
+                $this->redirect()->toRoute('home');
+            }
+        } else {
+            $this->flashMessenger()->addErrorMessage('Search not found');
+            $this->redirect()->toRoute('home');
         }
     }
 }

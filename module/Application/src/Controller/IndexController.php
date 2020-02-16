@@ -359,11 +359,15 @@ class IndexController extends CoreController {
         # Get all registered forms
         $aFormsRegistered = CoreController::$aCoreTables['core-form']->select();
         $aResults = [];
+        $aProtectedForms = ['apikey-single'=>true];
 
         # if we have a search term and at least 1 form, lets start searching
         if(count($aFormsRegistered) > 0 && $sQueryTerm != '') {
             # loop over all forms (which all entity forms)
             foreach($aFormsRegistered as $oForm) {
+                if(array_key_exists($oForm->form_key,$aProtectedForms)) {
+                    continue;
+                }
                 # Get Entity Table for Form
                 try {
                     $oEntityTbl = CoreController::$oServiceManager->get($oForm->entity_tbl_class);
@@ -402,7 +406,6 @@ class IndexController extends CoreController {
                                         $oTag = CoreController::$aCoreTables['core-tag']->select(['Tag_ID'=>$oEntity->tag_idfs]);
                                         if(count($oTag) > 0) {
                                             $oTag = $oTag->current();
-
                                             # lets get form field to determine if tag is used as single or multiselect
                                             $oEntityTagFormField = CoreController::$aCoreTables['core-form-field']->select([
                                                 'form'=>$oEntityForm->form_key,
@@ -413,6 +416,12 @@ class IndexController extends CoreController {
                                                     'form'=>$oEntityForm->form_key,
                                                     'fieldkey'=>substr($oTag->tag_key,0,strlen($oTag->tag_key)-1).'ies',
                                                 ]);
+                                                if(count($oEntityTagFormField) == 0) {
+                                                    $oEntityTagFormField = CoreController::$aCoreTables['core-form-field']->select([
+                                                        'form'=>$oEntityForm->form_key,
+                                                        'fieldkey'=>$oTag->tag_key.'_idfs',
+                                                    ]);
+                                                }
                                             }
 
                                             # if we found form field for tag, proceed

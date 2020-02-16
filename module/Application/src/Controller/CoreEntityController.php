@@ -31,20 +31,41 @@ use Laminas\Mime\Part as MimePart;
 
 class CoreEntityController extends CoreController {
     private static $aEntityHooks = [];
-    public function __construct(AdapterInterface $oDbAdapter,$oTableGateway = false,$oServiceManager) {
+
+    /**
+     * CoreEntityController constructor.
+     *
+     * @param AdapterInterface $oDbAdapter database connection
+     * @param bool $oTableGateway
+     * @param $oServiceManager service manager
+     * @since 1.0.0
+     */
+    public function __construct(AdapterInterface $oDbAdapter,$oTableGateway = false,$oServiceManager)
+    {
         parent::__construct($oDbAdapter,$oTableGateway,$oServiceManager);
     }
 
-    public function generateIndexView($sKey) {
+    /**
+     * Generate Index View for Skeleton Based Entities
+     *
+     * @param $sKey
+     * @param array $aItems
+     * @param array $aWhereForce
+     * @return ViewModel
+     * @since 1.0.5
+     */
+    public function generateIndexView($sKey,$aItems = [],$aWhereForce = [])
+    {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
+        $aWhere = [];
 
         $this->layout()->aNavLinks = [
             (object)['label'=>ucfirst($sKey.'s')],
         ];
 
         # Check license
-        if(!$this->checkLicense($sKey)) {
+        if (! $this->checkLicense($sKey)) {
             $this->flashMessenger()->addErrorMessage('You have no active license for '.$sKey);
             $this->redirect()->toRoute('home');
         }
@@ -63,22 +84,52 @@ class CoreEntityController extends CoreController {
 
         # Get Paginator
         $oPaginator = false;
-        if(array_key_exists($sKey.'-index-before-paginator',CoreEntityController::$aEntityHooks)) {
+        $iPage = (int) $this->params()->fromQuery('page', 1);
+        $iPage = ($iPage < 1) ? 1 : $iPage;
+
+        if (array_key_exists($sKey.'-index-before-paginator',CoreEntityController::$aEntityHooks)) {
             foreach(CoreEntityController::$aEntityHooks[$sKey.'-index-before-paginator'] as $oHook) {
                 $sHookFunc = $oHook->sFunction;
                 $oPaginator = $oHook->oItem->$sHookFunc();
             }
         } else {
-            $oPaginator = $this->oTableGateway->fetchAll(true);
+            # Paginator can be overwritten by parameter
+            if(count($aItems) > 0) {
+                $oPaginator = $aItems;
+            } else {
+                # where can be overwritten by parameter
+                if (count($aWhereForce) > 0) {
+                    # if so, save to session for pagination
+                    if(! isset(CoreEntityController::$oSession->aCurrentIndexFilter)) {
+                        CoreEntityController::$oSession->aCurrentIndexFilter = [];
+                    }
+                    CoreEntityController::$oSession->aCurrentIndexFilter[$sKey] = $aWhereForce;
+                    $aWhere = $aWhereForce;
+                } else {
+                    # if we have a saved filter (pagination) load it
+                    if (isset(CoreEntityController::$oSession->aCurrentIndexFilter) && isset($_REQUEST['page'])) {
+                        if (array_key_exists($sKey,CoreEntityController::$oSession->aCurrentIndexFilter)) {
+                            $aWhere = CoreEntityController::$oSession->aCurrentIndexFilter[$sKey];
+                        }
+                    }
+                }
+                # get items as paginator with selected filters applied
+                $oPaginator = $this->oTableGateway->fetchAll(true,$aWhere);
+            }
         }
 
-        $iPage = (int) $this->params()->fromQuery('page', 1);
-        $iPage = ($iPage < 1) ? 1 : $iPage;
-        if($oPaginator) {
+        # some adjustments to paginator
+        if ($oPaginator) {
             $oPaginator->setCurrentPageNumber($iPage);
             $iItemsPerPage = (CoreEntityController::$oSession->oUser->getSetting($sKey.'-index-items-per-page'))
                 ? CoreEntityController::$oSession->oUser->getSetting($sKey.'-index-items-per-page') : 10;
             $oPaginator->setItemCountPerPage($iItemsPerPage);
+        }
+        # clean filters cache if we come from index
+        if (isset(CoreEntityController::$oSession->aCurrentIndexFilter) && !isset($_REQUEST['page']) && count($aWhereForce) == 0) {
+            if (array_key_exists($sKey,CoreEntityController::$oSession->aCurrentIndexFilter)) {
+                unset(CoreEntityController::$oSession->aCurrentIndexFilter[$sKey]);
+            }
         }
 
         # Log Performance in DB
@@ -86,11 +137,24 @@ class CoreEntityController extends CoreController {
         $this->logPerfomance($sKey.'-index',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         return new ViewModel([
-            'sTableName'=>$sKey.'-index',
-            'aItems'=>$oPaginator,
+            'sTableName' => $sKey.'-index',
+            'aItems' => $oPaginator,
+            'aFilters' => $aWhere,
         ]);
     }
 
+    /**
+     * Generate Add View For Skeleton Entities
+     *
+     * @param $sKey
+     * @param string $sSingleForm
+     * @param string $sRoute
+     * @param string $sRouteAction
+     * @param int $iRouteID
+     * @param array $aExtraViewData
+     * @return ViewModel
+     * @since 1.0.5
+     */
     protected function generateAddView($sKey,$sSingleForm = '',$sRoute = '',$sRouteAction = 'view',$iRouteID = 0,$aExtraViewData = []) {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
@@ -209,6 +273,14 @@ class CoreEntityController extends CoreController {
         return $this->redirect()->toRoute($sRoute,['action'=>$sRouteAction,'id'=>$iRouteID]);
     }
 
+    /**
+     * Generate View Form for Skeleton based Entities
+     *
+     * @param $sKey
+     * @param string $sSingleForm
+     * @return bool|ViewModel
+     * @since 1.0.5
+     */
     public function generateViewView($sKey,$sSingleForm = '') {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
@@ -288,6 +360,14 @@ class CoreEntityController extends CoreController {
         return new ViewModel($aViewData);
     }
 
+    /**
+     * Generate Edit Form for Skeleton based Entities
+     *
+     * @param $sKey
+     * @param string $sSingleForm
+     * @return bool|ViewModel
+     * @since 1.0.5
+     */
     public function generateEditView($sKey,$sSingleForm = '') {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
@@ -348,10 +428,12 @@ class CoreEntityController extends CoreController {
                             if(array_key_exists($sHookKey,$aViewExtraData)) {
                                 if(is_array($aViewExtraData[$sHookKey])) {
                                     foreach(array_keys($aHookExtraData[$sHookKey]) as $sSubHook) {
+                                        # attach result of hook to view
                                         $aViewExtraData[$sHookKey][$sSubHook] = $aHookExtraData[$sHookKey][$sSubHook];
                                     }
                                 }
                             } else {
+                                # attach result of hook to view
                                 $aViewExtraData[$sHookKey] = $aHookExtraData[$sHookKey];
                             }
 
@@ -415,6 +497,13 @@ class CoreEntityController extends CoreController {
         return $this->redirect()->toRoute($sKey,['action'=>'view','id'=>$iSkeletonID]);
     }
 
+    /**
+     * Register hook in core
+     *
+     * @param $sHook
+     * @param $oHook
+     * @since 1.0.7
+     */
     public static function addHook($sHook,$oHook) {
         if(!array_key_exists($sHook,CoreEntityController::$aEntityHooks)) {
             CoreEntityController::$aEntityHooks[$sHook] = [];

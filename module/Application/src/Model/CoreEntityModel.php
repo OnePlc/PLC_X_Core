@@ -195,20 +195,26 @@ class CoreEntityModel {
         if(count($oField) > 0) {
             $oField = $oField->current();
             $sEntityType = explode('-',$this->sSingleForm)[0];
-
-            $oMultiSel = new Select(CoreController::$aCoreTables['core-entity-tag-entity']->getTable());
-            $oMultiSel->join(['core_entity_tag'=>'core_entity_tag'],'core_entity_tag.Entitytag_ID = core_entity_tag_entity.entity_tag_idfs');
-            $oMultiSel->where([
-                'core_entity_tag_entity.entity_idfs'=>$this->getID(),
-                'core_entity_tag_entity.entity_type'=>$sEntityType,
-                'core_entity_tag.tag_idfs'=>1,
-            ]);
-
             $aFieldIDs = [];
-            $oIDsFromDB = CoreController::$aCoreTables['core-entity-tag-entity']->selectWith($oMultiSel);
-            if(count($oIDsFromDB) > 0) {
-                foreach($oIDsFromDB as $oEntityTag) {
-                    $aFieldIDs[] = $oEntityTag->entity_tag_idfs;
+
+            $oTag = CoreController::$aCoreTables['core-tag']->select(['tag_key'=>$oField->fieldkey]);
+            if(count($oTag) > 0) {
+                $oTag = $oTag->current();
+
+                $oMultiSel = new Select(CoreController::$aCoreTables['core-entity-tag-entity']->getTable());
+                $oMultiSel->join(['core_entity_tag' => 'core_entity_tag'], 'core_entity_tag.Entitytag_ID = core_entity_tag_entity.entity_tag_idfs');
+                $oMultiSel->where([
+                    'core_entity_tag_entity.entity_idfs' => $this->getID(),
+                    'core_entity_tag_entity.entity_type' => $sEntityType,
+                    'core_entity_tag.tag_idfs' => $oTag->Tag_ID,
+                ]);
+
+
+                $oIDsFromDB = CoreController::$aCoreTables['core-entity-tag-entity']->selectWith($oMultiSel);
+                if (count($oIDsFromDB) > 0) {
+                    foreach ($oIDsFromDB as $oEntityTag) {
+                        $aFieldIDs[] = $oEntityTag->entity_tag_idfs;
+                    }
                 }
             }
 
@@ -239,12 +245,24 @@ class CoreEntityModel {
                 if(count($oEntityTag) > 0) {
                     $oEntityTag = $oEntityTag->current();
                     if($bReturnModels) {
+                        /*
+                        //echo 'get form for '.$oEntityTag->tag_value;
                         try {
-                            $oEntityTable = CoreController::$oServiceManager->get($oEntityTag->entity_table_class);
-                            $aEntityModels[] = $oEntityTable->getSingle($iEntityTagID);
+                           // $oForm = CoreController::$aCoreTables['core-form']->select(['form_key'=>$oEntityTag->entity_form_idfs]);
+                            //if(count($oForm) > 0) {
+                            //    $oForm = $oForm->current();
+                            //}
                         } catch (ServiceNotFoundException $e) {
 
-                        }
+                        } */
+                        //if(isset($oForm)) {
+                            try {
+                                $oEntityTable = CoreController::$oServiceManager->get(\OnePlace\Tag\Model\EntityTagTable::class);
+                                $aEntityModels[] = $oEntityTable->getSingle($iEntityTagID);
+                            } catch (ServiceNotFoundException $e) {
+
+                            }
+                        //}
                     } else {
                         // skeleton-single = \OnePlace\Skeleton\Model\SkeletonTable -> getSingle()
                         $aEntityModels[] = (object)['id'=>$iEntityTagID,'text'=>$oEntityTag->tag_value];

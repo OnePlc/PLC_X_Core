@@ -119,6 +119,7 @@ class CoreController extends AbstractActionController {
         CoreController::$aCoreTables['user'] = new TableGateway('user', CoreController::$oDbAdapter);
         CoreController::$aCoreTables['user-xp-activity'] = new TableGateway('user_xp_activity', CoreController::$oDbAdapter);
         CoreController::$aCoreTables['core-widget'] = new TableGateway('core_widget',CoreController::$oDbAdapter);
+        CoreController::$aCoreTables['user-search'] = new TableGateway('user_search',CoreController::$oDbAdapter);
         CoreController::$aCoreTables['user-widget'] = new TableGateway('core_widget_user',CoreController::$oDbAdapter);
         CoreController::$aCoreTables['core-statistic'] = new TableGateway('core_statistic',CoreController::$oDbAdapter);
         CoreController::$aCoreTables['core-gallery-media'] = new TableGateway('core_gallery_media',CoreController::$oDbAdapter);
@@ -677,15 +678,15 @@ class CoreController extends AbstractActionController {
         $aFields = $this->getFormFields($sForm,[],'multiselect');
         $sEntityType = ($sEntityTypeOverWrite != '') ? $sEntityTypeOverWrite : explode('-',$sForm)[0];
         if(count($aFields) > 0) {
+            # Reset all tags for this entity
+            CoreController::$aCoreTables['core-entity-tag-entity']->delete([
+                'entity_idfs'=>$oItem->getID(),
+                'entity_type'=>$sEntityType,
+            ]);
             # lets loop over all multiselect fields of this form
             foreach($aFields as $oField) {
                 # lets see if we find data for this field
                 if(array_key_exists($oField->fieldkey,$aRawFormData)) {
-                    # Reset all tags for this entity
-                    CoreController::$aCoreTables['core-entity-tag-entity']->delete([
-                        'entity_idfs'=>$oItem->getID(),
-                        'entity_type'=>$sEntityType,
-                    ]);
                     # save new tags for entity
                     if(count($aRawFormData[$oField->fieldkey]) > 0) {
                         foreach($aRawFormData[$oField->fieldkey] as $iVal) {
