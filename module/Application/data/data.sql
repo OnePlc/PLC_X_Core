@@ -33,3 +33,8 @@ INSERT INTO `core_widget` (`Widget_ID`, `widget_name`, `label`, `permission`) VA
 (NULL, 'discover_modules', 'Discover Modules', 'update-Application\\Controller\\IndexController'),
 (NULL, 'help_support', 'Help & Support', 'index-Application\\Controller\\IndexController'),
 (NULL, 'welcome_default', 'Welcome Default', 'index-Application\\Controller\\IndexController');
+
+--
+-- default vendor for updating
+--
+INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('app-vendors', '[\"oneplace\"]');

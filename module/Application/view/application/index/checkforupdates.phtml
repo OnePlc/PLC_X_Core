@@ -1,3 +1,8 @@
+<?php
+
+use Application\Controller\CoreController;
+
+?>
 <div class="row">
     <div class="col-md-6">
         <div class="card">
@@ -46,7 +51,7 @@
             <div class="card-body">
                 <ul class="list-group">
                     <?php
-                    $aVendors = ['oneplace'];
+                    $aVendors = json_decode(CoreController::$aGlobalSettings['app-vendors']);
                     foreach ($aVendors as $sVendor) {
                         $aModules = glob('vendor/'.$sVendor.'/*', GLOB_ONLYDIR);
                         foreach ($aModules as $sMod) {

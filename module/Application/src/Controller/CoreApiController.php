@@ -78,6 +78,8 @@ class CoreApiController extends CoreController {
             return false;
         }
 
+        $iPage = $this->params()->fromRoute('id', 0);
+
         # Set default values
         $bSelect2 = true;
         $sListLabel = 'label';
@@ -104,8 +106,8 @@ class CoreApiController extends CoreController {
         $translator = new Translator();
         $aLangs = ['en_US','de_DE'];
         foreach($aLangs as $sLoadLang) {
-            if(file_exists(__DIR__.'/../../../oneplace-translation/language/'.$sLoadLang.'.mo')) {
-                $translator->addTranslationFile('gettext', __DIR__.'/../../../oneplace-translation/language/'.$sLang.'.mo', $sEntityType, $sLoadLang);
+            if(file_exists('vendor/oneplace/oneplace-translation/language/'.$sLoadLang.'.mo')) {
+                $translator->addTranslationFile('gettext', 'vendor/oneplace/oneplace-translation/language/'.$sLang.'.mo', $sEntityType, $sLoadLang);
             }
         }
 
@@ -134,8 +136,17 @@ class CoreApiController extends CoreController {
             return false;
         }
 
+        $bPaginated = false;
+        if($iPage > 0) {
+            $bPaginated = true;
+        }
+
         # Get All Article Entities from Database
-        $oItemsDB = $this->oTableGateway->fetchAll(false);
+        $oItemsDB = $this->oTableGateway->fetchAll($bPaginated);
+        if($bPaginated) {
+            $oItemsDB->setItemCountPerPage(25);
+            $oItemsDB->setCurrentPageNumber($iPage);
+        }
         if(count($oItemsDB) > 0) {
             # Loop all items
             foreach($oItemsDB as $oItem) {
@@ -241,6 +252,10 @@ class CoreApiController extends CoreController {
             'pagination' => (object)['more'=>false],
         ];
 
+        if($bPaginated) {
+            $aReturn['pages'] = $oItemsDB->getPages()->pageCount;
+        }
+
         # Print List with all Entities
         echo json_encode($aReturn);
 
@@ -287,8 +302,8 @@ class CoreApiController extends CoreController {
         $translator = new Translator();
         $aLangs = ['en_US','de_DE'];
         foreach($aLangs as $sLoadLang) {
-            if(file_exists(__DIR__.'/../../../oneplace-translation/language/'.$sLoadLang.'.mo')) {
-                $translator->addTranslationFile('gettext', __DIR__.'/../../../oneplace-translation/language/'.$sLang.'.mo', $sEntityType, $sLoadLang);
+            if(file_exists('vendor/oneplace/oneplace-translation/language/'.$sLoadLang.'.mo')) {
+                $translator->addTranslationFile('gettext', 'vendor/oneplace/oneplace-translation/language/'.$sLang.'.mo', $sEntityType, $sLoadLang);
             }
         }
 
@@ -373,9 +388,29 @@ class CoreApiController extends CoreController {
         $this->layout('layout/json');
 
         $aData = $this->getPublicFormFields($this->sSingleForm);
+        $sEntityType = explode('-',$this->sSingleForm)[0];
+
+        # get list label from query
+        $sLang = 'en_US';
+        if(isset($_REQUEST['lang'])) {
+            $sLang = $_REQUEST['lang'];
+        }
+
+        // translating system
+        $translator = new Translator();
+        $aLangs = ['en_US','de_DE'];
+        foreach($aLangs as $sLoadLang) {
+            if(file_exists('vendor/oneplace/oneplace-translation/language/'.$sLoadLang.'.mo')) {
+                $translator->addTranslationFile('gettext', 'vendor/oneplace/oneplace-translation/language/'.$sLang.'.mo', $sEntityType, $sLoadLang);
+            }
+        }
+
+        $translator->setLocale($sLang);
 
         return new ViewModel([
-            'aFields'=>$aData,
+            'aFields' => $aData,
+            'translator' => $translator,
+            'sEntityType' => $sEntityType,
         ]);
     }
 }
