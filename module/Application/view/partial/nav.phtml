@@ -24,7 +24,7 @@ if(is_object(CoreController::$oSession->oUser)) {
     ?>
     <li class="nav-item<?=$sActive?>">
         <a class="nav-link" href="<?=$aInfo['index']->nav_href?>">
-            <?=$aInfo['index']->nav_label?>
+            <?=$this->translate($aInfo['index']->nav_label)?>
         </a>
     </li>
 <?php } ?>

@@ -97,3 +97,15 @@ msgstr "Übersetzung bearbeiten"
 
 msgid "Save Translation"
 msgstr "Übersetzung speichern"
+
+msgid "Installed Themes"
+msgstr "Installierte Designs"
+
+msgid "Activate"
+msgstr "Aktivieren"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nein"

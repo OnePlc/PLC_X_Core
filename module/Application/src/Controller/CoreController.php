@@ -830,6 +830,10 @@ class CoreController extends AbstractActionController {
             if(!isset(CoreController::$oSession->aLicences)) {
                 CoreController::$oSession->aLicences = [];
             }
+            # build licence seats cache
+            if(!isset(CoreController::$oSession->aSeats)) {
+                CoreController::$oSession->aSeats = [];
+            }
             # only query each license once per session
             if(!array_key_exists($sModule,CoreController::$oSession->aLicences)) {
                 //$sApiURL = CoreController::$aGlobalSettings['license-server-url'].'/license/api/list/0?authkey='.CoreController::$aGlobalSettings['license-server-apikey'];
@@ -843,6 +847,9 @@ class CoreController extends AbstractActionController {
                     if($oResponse->state == 'success') {
                         CoreController::$oSession->aLicences[$sModule] = true;
                         CoreController::$oSession->aLicences['info-instance-id'] = $oResponse->instance_id;
+                        if(isset($oResponse->seats)) {
+                            CoreController::$oSession->aSeats[$sModule] = $oResponse->seats;
+                        }
                         return true;
                     }
                 }

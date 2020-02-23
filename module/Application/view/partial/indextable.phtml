@@ -69,7 +69,7 @@ if (isset($aFilters)) {
     foreach($this->aItems as $oItem) { ?>
         <tr>
             <?php foreach($this->layout()->aIndexColumns as $oCol) { ?>
-                <?= $this->partial('partial/indextablecell', ['oCol'=>$oCol,'oItem'=>$oItem]); ?>
+                <?= $this->partial('partial/indextablecell', ['oCol'=>$oCol,'oItem'=>$oItem,'sTableName'=>$this->sTableName]); ?>
             <?php } ?>
         </tr>
     <?php } ?>

@@ -1,30 +1,38 @@
 <?php
 
 use Application\Controller\CoreController; ?>
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h2>Installed Themes</h2>
-
-            <ul class="list-group">
-                <li class="list-group-item">
-                    Default
-                    <?=(CoreController::$oSession->oUser->getTheme() != 'default') ? '<a href="/user/settheme/default">Activate</a>' : ''?>
-                </li>
-                <?php foreach(glob($_SERVER['DOCUMENT_ROOT'].'/themes/*',GLOB_ONLYDIR) as $sThemeLocation) {
-                    $sTheme = basename($sThemeLocation); ?>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <?=$this->translate('Installed Themes')?>
+                </h2>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
                     <li class="list-group-item">
-                        <?=ucfirst($sTheme)?>
-                        <?=(CoreController::$oSession->oUser->getTheme() != $sTheme) ? '<a href="/user/settheme/'.$sTheme.'">Activate</a>' : ''?>
+                        Default
+                        <?=(CoreController::$oSession->oUser->getTheme() != 'default')
+                            ? '<a href="/user/settheme/default">'.$this->translate('Activate').'</a>' : ''?>
                     </li>
+                    <?php foreach(glob($_SERVER['DOCUMENT_ROOT'].'/themes/*',GLOB_ONLYDIR) as $sThemeLocation) {
+                        $sTheme = basename($sThemeLocation); ?>
+                        <li class="list-group-item">
+                            <?=ucfirst($sTheme)?>
+                            <?=(CoreController::$oSession->oUser->getTheme() != $sTheme)
+                                ? '<a href="/user/settheme/'.$sTheme.'">'.$this->translate('Activate').'</a>' : ''?>
+                        </li>
+                    <?php } ?>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <?php if(CoreController::$oSession->oUser->hasPermission('addtheme','Application-Controller-UploadController')) { ?>
+                    <a href="/themes/add" class="btn btn-primary">
+                        <?=$this->translate('Upload new Theme')?>
+                    </a>
                 <?php } ?>
-            </ul>
-
-            <?php if(CoreController::$oSession->oUser->hasPermission('addtheme','Application-Controller-UploadController')) { ?>
-            <a href="/themes/add" class="btn btn-primary">
-                <?=$this->translate('Upload new Theme')?>
-            </a>
-            <?php } ?>
+            </div>
         </div>
     </div>
 </div>

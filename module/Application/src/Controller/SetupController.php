@@ -47,6 +47,11 @@ class SetupController extends AbstractActionController {
      * @return ViewModel - View Object with Data from Controller
      */
     public function indexAction() {
+        $this->layout('layout/json');
+
+        echo 'FU!!!';
+        return false;
+
         # Set Layout based on users theme
         $this->layout('layout/setup');
 

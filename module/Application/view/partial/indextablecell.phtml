@@ -41,6 +41,14 @@
         case 'currency':
             echo '€ '.number_format($this->oItem->getTextField($this->oCol->fieldkey),2,',','.');
             break;
+        case 'featuredimage':
+            if($this->oItem->hasFeaturedImage()) {
+                if($this->oItem->featured_image != '') {
+                    $sPath = explode('-',$sTableName)[0];
+                    echo '<div class="rounded-circle" style="height:128px; width:128px; background:url(/data/'.$sPath.'/'.$this->oItem->getID().'/'.$this->oItem->featured_image.'); background-size: cover;"></div>';
+                }
+            }
+            break;
         default:
             break;
     }
