@@ -197,7 +197,7 @@ class CoreEntityModel {
             $sEntityType = explode('-',$this->sSingleForm)[0];
             $aFieldIDs = [];
 
-            $oTag = CoreController::$aCoreTables['core-tag']->select(['tag_key'=>$oField->fieldkey]);
+            $oTag = CoreController::$aCoreTables['core-tag']->select(['tag_key'=>$oField->tag_key]);
             if(count($oTag) > 0) {
                 $oTag = $oTag->current();
 
@@ -209,13 +209,14 @@ class CoreEntityModel {
                     'core_entity_tag.tag_idfs' => $oTag->Tag_ID,
                 ]);
 
-
                 $oIDsFromDB = CoreController::$aCoreTables['core-entity-tag-entity']->selectWith($oMultiSel);
                 if (count($oIDsFromDB) > 0) {
                     foreach ($oIDsFromDB as $oEntityTag) {
                         $aFieldIDs[] = $oEntityTag->entity_tag_idfs;
                     }
                 }
+            } else {
+                echo 'tag '.$oField->fieldkey.' not found';
             }
 
             return $aFieldIDs;

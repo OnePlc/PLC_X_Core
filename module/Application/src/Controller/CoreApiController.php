@@ -137,12 +137,32 @@ class CoreApiController extends CoreController {
         }
 
         $bPaginated = false;
+        $aWhere = [];
+        if(isset($_REQUEST['filter'])) {
+            switch($_REQUEST['filter']) {
+                case 'highlights':
+                    $aWhere['web_highlight_idfs'] = 2;
+                    break;
+                case 'category':
+                    $aWhere['multi_tag'] = $_REQUEST['filtervalue'];
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if(isset($_REQUEST['listmodefilter'])) {
+            if($_REQUEST['listmodefilter'] == 'webonly') {
+                $aWhere['show_on_web_idfs'] = 2;
+            }
+        }
+
         if($iPage > 0) {
             $bPaginated = true;
         }
 
         # Get All Article Entities from Database
-        $oItemsDB = $this->oTableGateway->fetchAll($bPaginated);
+        $oItemsDB = $this->oTableGateway->fetchAll($bPaginated,$aWhere);
         if($bPaginated) {
             $oItemsDB->setItemCountPerPage(25);
             $oItemsDB->setCurrentPageNumber($iPage);
