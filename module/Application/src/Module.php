@@ -29,17 +29,20 @@ class Module {
      */
     const VERSION = '1.0.22';
 
-    public function getConfig() : array {
+    public function getConfig() : array
+    {
         return include __DIR__ . '/../config/module.config.php';
     }
 
-    function onBootstrap(EventInterface $e) {
+    function onBootstrap(EventInterface $e)
+    {
         $application = $e->getApplication();
         $eventManager = $application->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, array($this,'onDispatchError'), 100);
     }
 
-    function onDispatchError(MvcEvent $e) {
+    function onDispatchError(MvcEvent $e)
+    {
         $viewModel = $e->getViewModel();
         $viewModel->setTemplate('layout/error');
     }

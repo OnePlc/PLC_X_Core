@@ -16,6 +16,9 @@
 namespace Application\Controller;
 
 use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\TableGateway\TableGateway;
+use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\Where;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -31,7 +34,6 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
-
 
 class CoreExportController extends CoreController
 {
@@ -63,6 +65,24 @@ class CoreExportController extends CoreController
     public function exportData($sTitle,$sKey) {
         $this->sSingleForm = $sKey.'-single';
 
+        $aOptions = ['add_labels'=>true];
+
+        if(isset($_REQUEST['exportoptions'])) {
+            $aExportOptions = $_REQUEST['exportoptions'];
+            if(array_key_exists('add_labels',$aExportOptions)) {
+                if($aExportOptions['add_labels'] == 'false') {
+                    $aOptions['add_labels'] = false;
+                } else {
+                    $aOptions['add_labels'] = true;
+                }
+            }
+        }
+
+        $iSearchID = 0;
+        if(isset($_REQUEST['search_id'])) {
+            $iSearchID = (int)$_REQUEST['search_id'];
+        }
+
         # set dump export mode
         $sMode = $this->params('id', 'csv');
         $spreadsheet = new Spreadsheet();
@@ -80,33 +100,52 @@ class CoreExportController extends CoreController
         # Add some data
         $spreadsheet->setActiveSheetIndex(0);
 
-        /**
-         * Generate Header Row
-         */
-        $sCol = 'A';
+        # load form fields
         $aFields = $this->getFormFields($this->sSingleForm);
-        foreach($aFields as $oField) {
-            $spreadsheet->getActiveSheet()->getStyle($sCol.'1')->applyFromArray([
-                'font' => [
-                    'bold'=> true,
-                    'size'=>14,
-                ],
-                'borders' => [
-                    'bottom' => [
-                        'borderStyle' => Border::BORDER_THIN,
-                    ],
-                ],
 
-            ]);
-            $spreadsheet->getActiveSheet()->setCellValue($sCol.'1',$oField->label);
-            $sCol++;
+        $iRowCounter = 1;
+        if($aOptions['add_labels'] == true) {
+            $iRowCounter++;
+            /**
+             * Generate Header Row
+             */
+            $sCol = 'A';
+            foreach ($aFields as $oField) {
+                $spreadsheet->getActiveSheet()->getStyle($sCol . '1')->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'size' => 14,
+                    ],
+                    'borders' => [
+                        'bottom' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                        ],
+                    ],
+
+                ]);
+                $spreadsheet->getActiveSheet()->setCellValue($sCol . '1', $oField->label);
+                $sCol++;
+            }
         }
 
         /**
          * Generate Data Rows
          */
-        $aData = $this->oTableGateway->fetchAll(false,[],'label ASC');
-        $iRowCounter = 2;
+        $aData = [];
+        if($iSearchID == 0) {
+            $aData = $this->oTableGateway->fetchAll(false,[],'label ASC');
+        } else {
+            $oSearchTbl = new TableGateway('user_search', CoreEntityController::$oDbAdapter);
+            $oSearch = $oSearchTbl->select(['Search_ID' => $iSearchID]);
+            if(count($oSearch) > 0) {
+                $oSearch = $oSearch->current();
+                $aWhere = (array)json_decode($oSearch->filters);
+                $aData = $this->oTableGateway->fetchAll(false,$aWhere,'label ASC');
+            } else {
+                $aData = $this->oTableGateway->fetchAll(false,[],'label ASC');
+            }
+        }
+
         $sMaxCol = 'A';
         foreach($aData as $oRow) {
             $sCol = 'A';
@@ -127,7 +166,11 @@ class CoreExportController extends CoreController
                     case 'select':
                         $oItem = $oRow->getSelectField($oField->fieldkey);
                         if($oItem) {
-                            $sVal .= $oItem->getLabel();
+                            if(is_object($oItem)) {
+                                $sVal .= $oItem->getLabel();
+                            } else {
+                                $sVal .= $oItem;
+                            }
                         } else {
                             $sVal .= '-';
                         }
@@ -211,5 +254,25 @@ class CoreExportController extends CoreController
             'icon'=>'fas fa-download',
             'class'=>'btn-primary',
         ];
+    }
+
+    public function wizardAction() {
+        $this->layout('layout/json');
+        $sKey = explode('-',$this->sSingleForm)[0];
+
+        $aSavedSearches = CoreController::$aCoreTables['user-search']->select([
+            'user_idfs' => CoreController::$oSession->oUser->getID(),
+            'list_name' => $sKey.'-index',
+        ]);
+
+        # This way we don't need a view file in each and every module ..
+        # but still are compliant with MVC structure
+        $viewRenderer = CoreController::$oServiceManager->get('ViewRenderer');
+        $sModalHtml = $viewRenderer->render('partial/exportwizardmodal.phtml', [
+            'aSavedSearches' => $aSavedSearches,
+        ]);
+        echo $sModalHtml;
+
+        return false;
     }
 }

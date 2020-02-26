@@ -109,3 +109,9 @@ msgstr "Ja"
 
 msgid "No"
 msgstr "Nein"
+
+msgid "Add Labels on First Row"
+msgstr "Beschreibungen auf Erster Zeile"
+
+msgid "All"
+msgstr "Alle"

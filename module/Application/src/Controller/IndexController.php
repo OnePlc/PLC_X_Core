@@ -22,14 +22,16 @@ use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\View\View;
 
-class IndexController extends CoreController {
+class IndexController extends CoreController
+{
     /**
      * Application Home - Main Index
      *
      * @since 1.0.0
      * @return ViewModel - View Object with Data from Controller
      */
-    public function indexAction() {
+    public function indexAction()
+    {
         # Set Layout based on users theme
         $this->layout('layout/layout-'.CoreController::$oSession->oUser->getTheme());
 
@@ -43,13 +45,15 @@ class IndexController extends CoreController {
         ]);
     }
 
-    public function themesAction() {
+    public function themesAction()
+    {
         $this->setThemeBasedLayout('application');
 
         return new ViewModel([]);
     }
 
-    public function updateAction() {
+    public function updateAction()
+    {
         $oRequest = $this->getRequest();
 
         if(!$oRequest->isPost()) {
@@ -163,7 +167,8 @@ class IndexController extends CoreController {
      *
      * @return \Laminas\Http\Response|ViewModel
      */
-    public function addthemeAction() {
+    public function addthemeAction()
+    {
         $this->setThemeBasedLayout('application');
 
         # Check if zip extension is loaded
@@ -252,7 +257,8 @@ class IndexController extends CoreController {
      * @param AdapterInterface $oAdapter database connection
      * @since 1.0.2.1
      */
-    private function parseSQLInstallFile($sFile,$oAdapter) {
+    private function parseSQLInstallFile($sFile,$oAdapter)
+    {
         $templine = '';
         $lines = file($sFile);
         // Loop through each line
@@ -276,7 +282,8 @@ class IndexController extends CoreController {
      * @return bool
      * @since 1.0.7
      */
-    public function filepondAction() {
+    public function filepondAction()
+    {
         $this->layout('layout/json');
 
         $oRequest = $this->getRequest();
@@ -350,7 +357,8 @@ class IndexController extends CoreController {
      * @return array data for json response
      * @since 1.0.12
      */
-    public function quicksearchAction() {
+    public function quicksearchAction()
+    {
         $this->layout('layout/json');
 
         # Get Term from Query (usually Select2 jQuery Plugin)

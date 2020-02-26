@@ -12,14 +12,49 @@ $(function () {
         e.preventDefault();
         e.stopImmediatePropagation();
 
-        Swal.fire({
-            icon: 'info',
-            title: 'Starting export',
-            text: 'Skeleton export started...please wait',
-            showConfirmButton: false
+        var modBase = $(this).attr('href');
+
+        $.post(modBase+'/export/wizard',{},function(retModal) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Export Data',
+                html: retModal,
+                showCancelButton: true,
+                showConfirmButton: true,
+                confirmButtonText: 'Export to xslx file'
+            }).then((result) => {
+                if (result.value) {
+                    var bAddLabels = $('input[name="plc-export-addlabels"]').prop('checked');
+                    var iSearchID = $('select[name="plc-export-filter"]').val();
+
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Exporting data',
+                        html: '<img src="/img/ajax-loader.gif" /><p>Excel export started...please wait. Depending on your request, it can take several minutes to complete</p>',
+                        showConfirmButton: false
+                    });
+
+                    $.post(modBase+'/export/dump',{exportoptions:{add_labels:bAddLabels},search_id:iSearchID},function(retVal) {
+                        Swal.close();
+                        Swal.fire({
+                            icon: 'success',
+                            html: retVal,
+                            showConfirmButton: false
+                        });
+
+                        return false;
+                    });
+                }
+            })
         });
 
-        var modBase = $(this).attr('href');
+        /**
+        Swal.fire({
+            icon: 'info',
+            title: 'Exporting data',
+            html: '<img src="/img/ajax-loader.gif" /><p>Excel export started...please wait. Depending on your request, it can take several minutes to complete</p>',
+            showConfirmButton: false
+        });
 
         $.post(modBase+'/export/dump',{},function(retVal) {
             Swal.close();
@@ -30,7 +65,7 @@ $(function () {
             });
 
             return false;
-        });
+        }); **/
 
         return false;
     });

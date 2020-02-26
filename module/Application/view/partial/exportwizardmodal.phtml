@@ -1,0 +1,22 @@
+<?php
+?>
+<div class="text-center">
+    <div class="form-row">
+        <input name="plc-export-addlabels" type="checkbox" class="form-control" style="width: 40px; "/>
+        <label for="plc-export-addlabels"><?=$this->translate('Add Labels on First Row')?></label>
+    </div>
+
+    <div class="form-row">
+        <select class="form-control" name="plc-export-filter">
+            <option value="0">- <?=$this->translate('All')?> - </option>
+        <?php
+        if(count($aSavedSearches) > 0) {
+            foreach ($aSavedSearches as $oSearch) { ?>
+                <option value="<?=$oSearch->Search_ID?>">
+                    <?=$oSearch->label?>
+                </option>
+            <?php }
+        }?>
+        </select>
+    </div>
+</div>
