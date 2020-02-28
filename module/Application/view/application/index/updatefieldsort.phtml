@@ -7,13 +7,10 @@
                 </h2>
             </div>
             <div class="card-body">
-                Form <span class="float-right"><?=$oForm->label?></span>
+                <?=$this->translate('Form')?> <span class="float-right"><?=$this->translate($oForm->label)?></span>
                 <hr/>
                 <div class="alert alert-info py-2 px-2">
-                    Here you can change your personal order for the
-                    fields of the form <?=$oForm->label?>.
-                    The order will be applied to all <?=$oForm->label?>
-                    Add / Edit and View Forms.
+                    <?=$this->translate('Here you can change your personal order for the fields of the form. The order will be applied to all Add / Edit and View Forms.');?>
                 </div>
             </div>
         </div>

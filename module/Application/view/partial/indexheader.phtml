@@ -1,3 +1,10 @@
 <?php
 ?>
-<h1><?=$this->translate($this->sTitle)?></h1>
+<h1>
+    <?php if(isset($this->sIcon)) { ?>
+        <?php if($this->sIcon != '') { ?>
+            <i class="<?=$this->sIcon?>"></i>
+        <?php } ?>
+    <?php } ?>
+    <?=$this->translate($this->sTitle)?>
+</h1>

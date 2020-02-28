@@ -12,6 +12,13 @@
                     <h2><?=$oItem->getLabel()?></h2>
                     <hr/>
                     <?php
+                    echo $this->partial('partial/viewleftwidgets', [
+                        'oItem' => $this->oItem,
+                        'sFormName' => $this->sFormName,
+                        'aFormFieldsByTab' => $this->layout()->aFormFieldsByTab
+                    ]);
+                    ?>
+                    <?php
                     $sCreatedDate = $oItem->getTextField('created_date');
                     if($sCreatedDate != '0000-00-00 00:00:00' && !empty($sCreatedDate)) { ?>
                     <div style="text-align: left;">
@@ -113,6 +120,78 @@
         update: function( event, ui ) {
             var sortedIDs = $( '#'+listID ).sortable( "toArray" );
         }
+    });
+
+    const tour = new Shepherd.Tour({
+        defaultStepOptions: {
+            classes: 'shadow-md bg-purple-dark',
+            scrollTo: false
+        },
+        useModalOverlay: true
+    });
+
+    tour.addStep({
+        id: 'edit-button',
+        text: '<?=$this->translate('Click here to edit '.$this->sFormName)?>',
+        attachTo: {
+            element: '.plc-button-panel a',
+            on: 'right'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Weiter',
+                action: tour.next
+            }
+        ]
+    });
+
+    tour.addStep({
+        id: 'breadcrumb-info',
+        text: '<?=$this->translate('See where youre currently at')?>',
+        attachTo: {
+            element: 'ol.breadcrumb',
+            on: 'left'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Weiter',
+                action: tour.next
+            }
+        ]
+    });
+
+    tour.addStep({
+        id: 'changesort-fields',
+        text: '<?=$this->translate('Click here to change field order')?>',
+        attachTo: {
+            element: 'a.plc-change-form-field-sort',
+            on: 'left'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Weiter',
+                action: tour.next
+            }
+        ]
+    });
+
+    tour.addStep({
+        id: 'formfield-Tabs',
+        text: '<?=$this->translate('Form fields are grouped in tabs')?>',
+        attachTo: {
+            element: '#article-singleForm li',
+            on: 'left'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Fertig',
+                action: tour.complete
+            }
+        ]
     });
     </script>
 <?php } ?>

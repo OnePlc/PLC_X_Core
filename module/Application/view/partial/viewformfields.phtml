@@ -14,7 +14,7 @@ if(array_key_exists($this->sTab,$this->aFormFieldsByTab)) {
         <!-- Field <?=$oField->fieldkey?> START -->
         <div class="form-group <?=$oField->class?>">
             <?php if($oField->type != 'partial' && $oField->type != 'gallery' && $oField->type != 'featuredimage' && !$bHideLabels) { ?>
-            <label class="plcViewFormLabel" for="<?=$this->sFormName?>_<?=$oField->fieldkey?>">
+            <label class="plcViewFormLabel" for="<?=$this->sFormName?>_<?=$oField->fieldkey?>" style="top:6px; height:25px; overflow:hidden;">
                 <?=$this->translate($oField->label)?>
             </label><br/>
             <?php } ?>
@@ -25,7 +25,9 @@ if(array_key_exists($this->sTab,$this->aFormFieldsByTab)) {
                     $aPartialData['aPartialExtraData'] = $this->aPartialExtraData;
                 }
                 ?>
+                <div class="form-control" style="display: inline-block;  height:auto !important; padding-left:6px; min-height:34px; ">
                 <?= $this->partial('partial/viewformfield', $aPartialData); ?>
+                </div>
             <?php } ?>
         </div>
         <!-- Field <?=$oField->fieldkey?> END -->

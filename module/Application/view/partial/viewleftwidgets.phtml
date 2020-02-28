@@ -1,0 +1,17 @@
+<?php
+foreach (array_keys($this->aFormFieldsByTab) as $sTab) {
+    foreach ($this->aFormFieldsByTab[$sTab] as $oField) {
+        if($oField->show_widget_left == 1) {
+            $aPartialData =['sFormName'=>$this->sFormName,'oField'=>$oField,'oItem'=>$this->oItem] ;
+            if(isset($this->aPartialExtraData)) {
+                $aPartialData['aPartialExtraData'] = $this->aPartialExtraData;
+            } ?>
+            <div style="width:100%; text-align: left;">
+                <h5><?=$this->translate($oField->label)?></h5>
+                <?= $this->partial('partial/viewformfield', $aPartialData); ?>
+                <hr/>
+            </div>
+        <?php
+        }
+    }
+}

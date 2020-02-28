@@ -69,4 +69,10 @@ $(function () {
 
         return false;
     });
+
+    $('#showGuideTour').on('click',function() {
+        tour.start();
+
+        return false;
+    });
 });

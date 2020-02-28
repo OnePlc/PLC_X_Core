@@ -1,1 +1,62 @@
 <?php
+
+use Application\Controller\CoreController;
+use Laminas\Db\Sql\Select;
+
+$sEntityType = explode('-',$sFormName)[0];
+
+$oImgSel = new Select(CoreController::$aCoreTables['core-gallery-media']->getTable());
+$oImgSel->where([
+    'entity_idfs'=>$oItem->getID(),
+    'entity_type'=>$sEntityType,
+]);
+$oImgSel->order('sort_id ASC');
+
+$aImages = CoreController::$aCoreTables['core-gallery-media']->selectWith($oImgSel);
+?>
+<ul class="list-group plc-webgallery-list">
+    <?php
+    if(count($aImages) > 0) {
+        foreach($aImages as $oImg) { ?>
+            <li class="list-group-item" id="gallery-media-<?=$oImg->Media_ID?>">
+                <div class="row">
+                    <div class="col-md-1">
+                        <i class="fas fa-arrows-alt-v plc-list-sort"></i>
+                    </div>
+                    <div class="col-md-2">
+                        <img src="/data/<?=$sEntityType?>/<?=$oItem->getID()?>/<?=$oImg->filename?>" style="max-width:150px; height:60px;" />
+                    </div>
+                    <div class="col-md-5">
+                        <?=$oImg->filename?>
+                    </div>
+                    <div class="col-md-2">
+                        <?=($oImg->is_public == 1) ? '<i class="fas fa-eye"></i> '.$this->translate('Is showed') : '<i class="fas fa-eye-slash"></i> '.$this->translate('Not showed')?>
+                        <br/><?=($oImg->is_public == 1) ? '<a class="btn btn-dark" href="/uppy/togglemediapub/'.$oImg->Media_ID.'">'.$this->translate('Hide').'</a>' : '<a class="btn btn-dark" href="/application/togglemediapub/'.$oImg->Media_ID.'">'.$this->translate('Show').'</a>'?>
+                    </div>
+                </div>
+            </li>
+            <?php
+        }
+    }
+    ?>
+</ul>
+<script>
+    $(function() {
+        $( "ul.plc-webgallery-list" ).sortable({
+            handle: '.plc-list-sort',
+            axis: "y",
+            update: function( event, ui ) {
+                var sortedIDs = $( "ul.plc-webgallery-list" ).sortable( "toArray" );
+                $.post('/uppy/updatesort',{entity_idfs:'<?=$oItem->getID()?>',entity_type:'<?=$sEntityType?>',images:sortedIDs},function(retVal) {
+                    console.log(retVal);
+                    var oJson = $.parseJSON(retVal);
+                    if(oJson.state == 'success') {
+                        $.printMessage('Update successful','Sorting was updated successfully','success');
+                    } else {
+                        alert('Fehler: '+oJson.message);
+                    }
+                });
+            }
+        });
+    });
+</script>

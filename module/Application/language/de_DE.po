@@ -115,3 +115,33 @@ msgstr "Beschreibungen auf Erster Zeile"
 
 msgid "All"
 msgstr "Alle"
+
+msgid "new"
+msgstr "neu"
+
+msgid "archived"
+msgstr "archiviert"
+
+msgid "available"
+msgstr "verfügbar"
+
+msgid "sold"
+msgstr "verkauft"
+
+msgid "Change Field Order"
+msgstr "Felder Reihenfolge"
+
+msgid "Form"
+msgstr "Formular"
+
+msgid "Here you can change your personal order for the fields of the form. The order will be applied to all Add / Edit and View Forms."
+msgstr "Hier kannst du deine persönliche Reihenfolge der Felder für dieses Formular einstellen. Die Einstellungen gelten für alle Ansichten (Hinzufügen/Bearbeiten/Anzeigen)."
+
+msgid "See where youre currently at"
+msgstr "Hier siehst du wo du gerade bist und kannst auch navigieren"
+
+msgid "Click here to change field order"
+msgstr "Hier klicken um deine persönliche Reihenfolge der Felder in diesem Formular zu ändern"
+
+msgid "Form fields are grouped in tabs"
+msgstr "Formular Felder sind in Tabs gruppiert"

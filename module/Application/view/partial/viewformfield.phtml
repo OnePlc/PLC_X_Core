@@ -58,80 +58,20 @@ switch($oField->type) {
             echo '-';
         }
         break;
-    case 'gallery': ?>
-        <div id="drag-drop-area"></div>
-        <script src="/vendor/uppy/dist/uppy.min.js"></script>
-        <script>
-            var uppy = Uppy.Core()
-                .use(Uppy.Dashboard, {
-                    inline: true,
-                    target: '#drag-drop-area'
-                })
-                .use(Uppy.XHRUpload, {endpoint: '/uppy',headers: {
-                        'entity_id': '<?=$oItem->getID()?>',
-                        'entity_type': '<?=explode('-',$this->sFormName)[0]?>'
-                    }})
-
-            uppy.on('file-added', (file) => {
-                uppy.setFileMeta(file.id, {
-                    entity_id: '<?=$oItem->getID()?>',
-                    entity_type: '<?=explode('-',$this->sFormName)[0]?>'
-                })
-            })
-
-            uppy.on('complete', (result) => {
-                console.log('Upload complete! We’ve uploaded these files:', result.successful)
-            })
-
-            <?php foreach(glob($_SERVER['DOCUMENT_ROOT'].'/data/'.explode('-',$this->sFormName)[0].'/'.$oItem->getID().'/*{jpg,png}',GLOB_BRACE) as $sImg) {
-            if(basename($sImg) == $oItem->getTextField('featured_image')) {
+    case 'gallery':
+        ?>
+        <div style="width:100%; display:inline-block;">
+        <?php foreach(glob($_SERVER['DOCUMENT_ROOT'].'/data/'.explode('-',$this->sFormName)[0].'/'.$this->oItem->getID().'/*{jpg,png}',GLOB_BRACE) as $sImg) {
+            if (basename($sImg) == $this->oItem->getTextField('featured_image')) {
                 continue;
-            }
-            ?>
-            console.log('<?=$sImg?>');
-            fetch('/data/<?=explode('-',$this->sFormName)[0]?>/<?=$oItem->getID()?>/<?=basename($sImg)?>')
-                .then((response) => response.blob()) // returns a Blob
-                .then((blob) => {
-                    uppy.addFile({
-                        name: '<?=basename($sImg)?>', // image name
-                        type: blob.type,
-                        data: blob,
-                        remote: false,
-                        source:'preload'
-                    });
-                }).then(() => {
-                uppy.getFiles().forEach(file => {
-                    if(file.source == "preload") {
-                        // source = remote is how I "mark" them previoulsy
-                        uppy.setFileState(file.id, {
-                            progress: { uploadComplete: true, uploadStarted: true }
-                        });
-                    }
-                });
-            });
-            <?php
             } ?>
-            $(function() {
-                $(document).on('click','.plc-uppy-remove-image',function() {
-                    alert('rm');
-                    return false;
-                });
-                $('.uppy-DashboardItem-previewImg').on('click',function() {
-                    var imgSrc = $(this).attr('src');
-                    Swal.fire({
-                        imageUrl: imgSrc,
-                        imageHeight: 300,
-                        width:600,
-                        imageAlt: 'A tall image'
-                    });
-                    return false;
-                });
-
-                $('.uppy-DashboardItem-progress').each(function() {
-                    $(this).replaceWith('<i class="fas fa-trash plc-uppy-remove-image"></i>');
-                });
-            });
-        </script>
+            <div style="height:120px; width:120px; margin-right:12px; margin-bottom:12px; float:left; display:inline-block;">
+                <div style="width:100%; height: 100%;">
+                    <img src="/data/<?=explode('-',$this->sFormName)[0]?>/<?=$this->oItem->getID()?>/<?=basename($sImg)?>" style="width:100%; height: 100%;" />
+                </div>
+            </div><?php
+        } ?>
+        </div>
         <?php
         break;
     /**

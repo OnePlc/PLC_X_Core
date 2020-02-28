@@ -23,6 +23,7 @@
     "jquery-ui": "^1.12.1",
     "jquery-ui-sortable": "^1.0.0",
     "select2": "^4.0.13",
+    "shepherd.js": "^7.0.3",
     "summernote": "^0.8.15",
     "sweetalert2": "^2.1.2",
     "uppy": "^1.8.0"

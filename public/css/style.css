@@ -7,6 +7,17 @@ body {
     color: #68b604;
 }
 
+.plcViewFormLabel {
+    display: block;
+    font-size: 14px;
+    color: #999 !important;
+    position: absolute;
+    top: 8px;
+    z-index: 2;
+    left: 16px;
+    font-weight: 500;
+}
+
 .btn-success {
     background-color: #57a900;
     background-image: -moz-linear-gradient(top, #70d900, #57a900);

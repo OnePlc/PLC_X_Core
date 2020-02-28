@@ -6,7 +6,7 @@
     switch($this->oCol->type) {
         case 'select':
             if($this->oItem->getSelectFieldID($this->oCol->fieldkey) != 0) {
-                echo $this->oItem->getSelectField($this->oCol->fieldkey)->getLabel();
+                echo $this->translate($this->oItem->getSelectField($this->oCol->fieldkey)->getLabel());
             }
             break;
         case 'text':

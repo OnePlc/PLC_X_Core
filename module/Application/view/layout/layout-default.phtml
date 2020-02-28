@@ -23,6 +23,7 @@ if(isset(CoreController::$aGlobalSettings['app-title'])) {
         <!-- Le styles -->
         <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
             ->prependStylesheet($this->basePath('/css/style.css'))
+            ->prependStylesheet($this->basePath('/vendor/shepherd.js/dist/css/shepherd.css'))
             ->prependStylesheet($this->basePath('/vendor/bootstrap/dist/css/bootstrap.min.css'))
             ->prependStylesheet($this->basePath('/vendor/@fortawesome/fontawesome-free/css/all.min.css'))
             ->prependStylesheet($this->basePath('/vendor/summernote/dist/summernote-bs4.min.css'))
@@ -37,6 +38,7 @@ if(isset(CoreController::$aGlobalSettings['app-title'])) {
         <?= $this->inlineScript()
             ->prependFile($this->basePath('/js/plc-message.js'))
             ->prependFile($this->basePath('/js/listener.js'))
+            ->prependFile($this->basePath('/vendor/shepherd.js/dist/js/shepherd.min.js'))
             ->prependFile($this->basePath('/vendor/@fortawesome/fontawesome-free/js/all.min.js'))
             ->prependFile($this->basePath('/vendor/sweetalert/dist/sweetalert.min.js'))
             ->prependFile($this->basePath('/vendor/summernote/dist/summernote-bs4.min.js'))
@@ -115,6 +117,13 @@ if(isset(CoreController::$aGlobalSettings['app-title'])) {
                                 <?=$this->translate('Logout')?>
                             </a>
                         </div>
+                    </li>
+                    <li>
+                        <a class="nav-icon" href="#" id="showGuideTour" data-toggle="dropdown">
+                            <div class="position-relative">
+                                <i class="align-middle fas fa-question-circle"></i>
+                            </div>
+                        </a>
                     </li>
                 </ul>
             </div>

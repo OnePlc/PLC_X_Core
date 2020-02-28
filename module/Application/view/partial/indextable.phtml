@@ -118,4 +118,92 @@ if (isset($aFilters)) {
             window.location = '/article/search/load/' + iSearchID;
         });
     });
+
+    const tour = new Shepherd.Tour({
+        defaultStepOptions: {
+            classes: 'shadow-md bg-purple-dark',
+            scrollTo: false
+        },
+        useModalOverlay: true
+    });
+
+    tour.addStep({
+        id: 'edit-button',
+        text: '<?=$this->translate('Click here to add '.$this->sFormName)?>',
+        attachTo: {
+            element: '.plc-button-panel a',
+            on: 'right'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Weiter',
+                action: tour.next
+            }
+        ]
+    });
+
+    tour.addStep({
+        id: 'edit-button',
+        text: '<?=$this->translate('Click here to export '.$this->sFormName)?>',
+        attachTo: {
+            element: 'a.initExcelDump',
+            on: 'right'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Weiter',
+                action: tour.next
+            }
+        ]
+    });
+
+    tour.addStep({
+        id: 'breadcrumb-info',
+        text: '<?=$this->translate('See where youre currently at')?>',
+        attachTo: {
+            element: 'ol.breadcrumb',
+            on: 'left'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Weiter',
+                action: tour.next
+            }
+        ]
+    });
+
+    tour.addStep({
+        id: 'changesort-fields',
+        text: '<?=$this->translate('Here you can load your saved searches')?>',
+        attachTo: {
+            element: 'select.plc-index-load-saved-search',
+            on: 'left'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Weiter',
+                action: tour.next
+            }
+        ]
+    });
+
+    tour.addStep({
+        id: 'formfield-Tabs',
+        text: '<?=$this->translate('click to go to single view')?>',
+        attachTo: {
+            element: 'tbody td a',
+            on: 'left'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Fertig',
+                action: tour.complete
+            }
+        ]
+    });
 </script>

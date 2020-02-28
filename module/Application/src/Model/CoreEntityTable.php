@@ -252,10 +252,28 @@ class CoreEntityTable {
         # get newly created skeletons
         $iNew = count($this->fetchAll(false,['created_date-like' => date('Y-m-d',time())]));
 
+        $aDailyStatData = ['new'=>$iNew,'total'=>$iTotal];
+
+        $oStateTag = CoreController::$aCoreTables['core-tag']->select(['tag_key' => 'state']);
+        if(count($oStateTag) > 0) {
+            $oState = $oStateTag->current();
+            $aEntityStatesDB = CoreController::$aCoreTables['core-entity-tag']->select([
+                'tag_idfs' => $oState->Tag_ID,
+                'entity_form_idfs' => $this->sSingleForm,
+            ]);
+            if(count($aEntityStatesDB) > 0) {
+                foreach($aEntityStatesDB as $oState) {
+                    $iStateCount = count($this->fetchAll(false,['state_idfs' => $oState->Entitytag_ID]));
+                    $aDailyStatData[strtolower(utf8_encode($oState->tag_value))] = $iStateCount;
+                }
+            }
+        }
+
+
         # add statistics
         CoreController::$aCoreTables['core-statistic']->insert([
             'stats_key'=>explode('-',$this->sSingleForm)[0].'-daily',
-            'data'=>json_encode(['new'=>$iNew,'total'=>$iTotal]),
+            'data'=>json_encode($aDailyStatData),
             'date'=>date('Y-m-d H:i:s',time()),
         ]);
     }
