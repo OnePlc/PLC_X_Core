@@ -49,9 +49,6 @@ class SetupController extends AbstractActionController {
     public function indexAction() {
         $this->layout('layout/json');
 
-        echo 'FU!!!';
-        return false;
-
         # Set Layout based on users theme
         $this->layout('layout/setup');
 
