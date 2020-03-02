@@ -20,8 +20,13 @@ use Application\Controller\CoreController;
                         $sPath = 'module/Application/src/Module.php';
                     }
                     if(file_exists($sPath)) {
-                        $sModule = str_replace(['-'],['\\'],$oMod->module_key);
-                        $sClass = "$sModule\\Module";
+                        $aModuleName = explode('-',$oMod->module_key);
+                        array_shift($aModuleName);
+                        $sModNamePath = $oMod->vendor;
+                        foreach ($aModuleName as $sModPath) {
+                            $sModNamePath .= "\\".$sModPath;
+                        }
+                        $sClass = "$sModNamePath\\Module";
                         $sInstalledVer = '(unknown)';
                         if($oMod->module_key == 'oneplace-core') {
                             $sClass = "Application\\Module";
@@ -53,19 +58,27 @@ use Application\Controller\CoreController;
                     <?php
                     $aVendors = json_decode(CoreController::$aGlobalSettings['app-vendors']);
                     foreach ($aVendors as $sVendor) {
-                        $aModules = glob('vendor/'.$sVendor.'/*', GLOB_ONLYDIR);
+                        $aModules = glob('vendor/'.strtolower($sVendor).'/*', GLOB_ONLYDIR);
                         foreach ($aModules as $sMod) {
+                            //echo $sMod."</br>";
                             $sModName = basename($sMod);
                             if (! array_key_exists($sModName,$aModulesInstalled)) {
-                                $sPath = 'vendor/'.$sVendor.'/'.$sModName.'/src/Module.php';
+                                $sPath = 'vendor/'.strtolower($sVendor).'/'.$sModName.'/src/Module.php';
+                                //echo $sPath ."</br>";
                                 if (file_exists($sPath)) {
                                     require_once $sPath;
-                                    $sClass = ucfirst($sVendor)."\\".ucfirst(explode('-',$sModName)[1])."\\Module";
+                                    $aModuleName = explode('-',$sModName);
+                                    array_shift($aModuleName);
+                                    $sModNamePath = '';
+                                    foreach ($aModuleName as $sModPath) {
+                                        $sModNamePath .= "\\".ucfirst($sModPath);
+                                    }
+                                    $sClass = $sVendor.$sModNamePath."\\Module";
                                     $sModVer = $sClass::VERSION;
 
                                     $sUrl = '';
                                     try {
-                                        $sModRoute = substr($sModName,strlen($sVendor.'-'));
+                                        $sModRoute = substr($sModName,strlen($aVendors[0].'-'));
                                         $sUrl = $this->url($sModRoute.'-setup');
                                     } catch(\RuntimeException $e) {
 
