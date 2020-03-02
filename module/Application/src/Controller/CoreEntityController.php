@@ -54,7 +54,7 @@ class CoreEntityController extends CoreController {
      * @return ViewModel
      * @since 1.0.5
      */
-    public function generateIndexView($sKey,$aItems = [],$aWhereForce = [])
+    public function generateIndexView($sKey,$aItems = [],$aWhereForce = [],$sLicense = '')
     {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
@@ -64,9 +64,13 @@ class CoreEntityController extends CoreController {
             (object)['label'=>ucfirst($sKey.'s')],
         ];
 
+        if($sLicense == '') {
+            $sLicense = $sKey;
+        }
+
         # Check license
-        if (! $this->checkLicense($sKey)) {
-            $this->flashMessenger()->addErrorMessage('You have no active license for '.$sKey);
+        if (! $this->checkLicense($sLicense)) {
+            $this->flashMessenger()->addErrorMessage('You have no active license for '.$sLicense);
             $this->redirect()->toRoute('home');
         }
 

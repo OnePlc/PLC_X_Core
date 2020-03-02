@@ -385,13 +385,34 @@ class IndexController extends CoreController
 
                 # Only proceed if we have an Entity Table
                 if(isset($oEntityTbl)) {
+                    $sEntityType = explode('-',$oForm->form_key)[0];
+
                     # Lets try to match by label like first
                     $aMatchedEntities = $oEntityTbl->fetchAll(false,['label-like'=>$sQueryTerm]);
+
+                    # check for custom search attributes
+                    if(array_key_exists('quicksearch-'.$sEntityType.'-customattribute',CoreController::$aGlobalSettings)) {
+                        $sCustomKey = CoreController::$aGlobalSettings['quicksearch-'.$sEntityType.'-customattribute'];
+                        $aCustomMatch = $oEntityTbl->fetchAll(false,[$sCustomKey.'-like'=>$sQueryTerm]);
+                        $aCustomSearchResults = [];
+                        if(count($aMatchedEntities) > 0) {
+                            foreach($aMatchedEntities as $oRes) {
+                                $aCustomSearchResults[] = $oRes;
+                            }
+                        }
+                        if(count($aCustomMatch) > 0) {
+                            foreach($aCustomMatch as $oMat) {
+                                $aCustomSearchResults[] = $oMat;
+                            }
+                        }
+
+                        $aMatchedEntities = $aCustomSearchResults;
+                    }
+
                     # add results
                     if(count($aMatchedEntities) > 0) {
                         # add category for select2 to group results by entity type
                         $aEntityResults = ['text'=>$oForm->label,'children'=>[]];
-                        $sEntityType = explode('-',$oForm->form_key)[0];
 
                         # special handling for matched entity tags (like categories and so on)
                         if($sEntityType == 'entitytag') {
@@ -474,7 +495,12 @@ class IndexController extends CoreController
                         } else {
                             # add matched entities to results
                             foreach($aMatchedEntities as $oEntity) {
-                                $aEntityResults['children'][] = ['id'=>$oEntity->getID(),'text'=>$oEntity->getLabel(),'view_link'=>'/'.$sEntityType.'/view/##ID##'];
+                                $sLabel = $oEntity->getLabel();
+                                if(array_key_exists('quicksearch-'.$sEntityType.'-customresultattribute',CoreController::$aGlobalSettings)) {
+                                    $sAttribute = CoreController::$aGlobalSettings['quicksearch-'.$sEntityType.'-customresultattribute'];
+                                    $sLabel .= ' ('.$oEntity->getTextField($sAttribute).')';
+                                }
+                                $aEntityResults['children'][] = ['id'=>$oEntity->getID(),'text'=>$sLabel,'view_link'=>'/'.$sEntityType.'/view/##ID##'];
                             }
                             $aResults[] = $aEntityResults;
                         }

@@ -38,3 +38,10 @@ INSERT INTO `core_widget` (`Widget_ID`, `widget_name`, `label`, `permission`) VA
 -- default vendor for updating
 --
 INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('app-vendors', '[\"oneplace\"]');
+
+--
+-- default is DE
+--
+INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES
+('app-currency-decpoint', ','),
+('app-currency-thousandsep', '.');

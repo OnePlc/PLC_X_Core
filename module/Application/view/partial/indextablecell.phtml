@@ -4,9 +4,21 @@
      * Get Column Data based on type
      */
     switch($this->oCol->type) {
+        case 'multiselect':
+            if(count($this->oItem->getMultiSelectFieldIDs($this->oCol->fieldkey)) > 0) {
+                $aData = $this->oItem->getMultiSelectField($this->oCol->fieldkey,true);
+                foreach($aData as $oRow) {
+                    echo $this->translate($oRow->getLabel());
+                }
+            }
+            break;
         case 'select':
             if($this->oItem->getSelectFieldID($this->oCol->fieldkey) != 0) {
-                echo $this->translate($this->oItem->getSelectField($this->oCol->fieldkey)->getLabel());
+                $sLabel = $this->oItem->getSelectField($this->oCol->fieldkey);
+                if(is_object($sLabel)) {
+                    $sLabel = $sLabel->getLabel();
+                }
+                echo $this->translate($sLabel);
             }
             break;
         case 'text':
@@ -46,7 +58,7 @@
             if($this->oItem->hasFeaturedImage()) {
                 if($this->oItem->featured_image != '') {
                     $sPath = explode('-',$sTableName)[0];
-                    echo '<div class="rounded-circle" style="height:128px; width:128px; background:url(/data/'.$sPath.'/'.$this->oItem->getID().'/'.$this->oItem->featured_image.'); background-size: cover;"></div>';
+                    echo '<div class="rounded-circle" style="height:128px; width:128px; background:url(\'/data/'.$sPath.'/'.$this->oItem->getID().'/'.$this->oItem->featured_image.'\'); background-size: cover;"></div>';
                 }
             }
             break;

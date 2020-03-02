@@ -142,6 +142,7 @@ class CoreEntityTable {
             $oWh->like('category_tag.entity_type',explode('-',$this->sSingleForm)[0]);
         }
         $oSel->where($oWh);
+        $oSel->order('created_date DESC');
 
         # Return Paginator or Raw ResultSet based on selection
         if ($bPaginated) {

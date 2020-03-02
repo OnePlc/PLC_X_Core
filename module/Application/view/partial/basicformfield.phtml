@@ -256,9 +256,17 @@ switch($oField->type) {
                 <span class="input-group-text">€</span>
             </div>
             <input type="text" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
-                   value="<?=(isset($this->oItem)) ? number_format($this->oItem->getTextField($oField->fieldkey),2) : ''?>"<?=$sExtraAttributes?> />
+                   value="<?=(isset($this->oItem)) ? number_format($this->oItem->getCurrencyField($oField->fieldkey),2, CoreController::$aGlobalSettings['app-currency-decpoint'], CoreController::$aGlobalSettings['app-currency-thousandsep']) : ''?>"<?=$sExtraAttributes?> />
         </div>
         <?php
+        if($oField->url_list != '') { ?>
+            <script>
+                $(function() {
+                    <?=$oField->url_list?>();
+                })
+            </script>
+        <?php
+        }
         break;
     /**
      * Partial Field

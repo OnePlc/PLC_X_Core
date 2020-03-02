@@ -560,6 +560,16 @@ class CoreController extends AbstractActionController {
             if(count($oField) > 0) {
                 $oField = $oField->current();
                 switch($oField->type) {
+                    case 'currency':
+                        if(array_key_exists('article-currency',CoreController::$aGlobalSettings)) {
+                            if(CoreController::$aGlobalSettings['article-currency'] == 'EUR') {
+                                $iVal = str_replace(['.',','],['','.'],$aRawData[$sKey]);
+                                if(!$oEntity->setTextField($sFieldName,$iVal)) {
+                                    echo 'could not save field '.$sFieldName;
+                                }
+                            }
+                        }
+                        break;
                     case 'password':
                         // DO NEVER UPDATE PASSWORD
                         break;

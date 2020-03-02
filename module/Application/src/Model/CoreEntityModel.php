@@ -110,6 +110,19 @@ class CoreEntityModel {
         }
     }
 
+    public function getCurrencyField($sField) {
+        if(property_exists($this,$sField)) {
+            if (array_key_exists('article-currency', CoreController::$aGlobalSettings)) {
+                if (CoreController::$aGlobalSettings['article-currency'] == 'EUR') {
+                    $iVal = str_replace([',', '.'], ['.', ','], $this->$sField);
+                    return $iVal;
+                }
+            }
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Set new Value for Text Field
      *
