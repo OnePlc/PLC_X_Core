@@ -477,6 +477,26 @@ class CoreEntityController extends CoreController {
         # Update Skeleton with Form Data
         $oSkeleton = $this->attachFormData($_REQUEST,$oSkeleton);
 
+        # file upload
+        $aFields = $this->getFormFields($this->sSingleForm);
+        foreach($aFields as $oField) {
+            if($oField->type == 'upload') {
+                $sFileKey = $this->sSingleForm.'_'.$oField->fieldkey;
+                if(isset($_FILES[$sFileKey])) {
+                    $sSubDir = str_replace(['##ID##'],[$oSkeleton->getID()],$oField->url_list);
+                    $sFullpath = $_SERVER['DOCUMENT_ROOT'].'/data/'.$sSubDir;
+                    if(!is_dir($sFullpath)) {
+                        mkdir($sFullpath);
+                    }
+                    if(!move_uploaded_file($_FILES[$sFileKey]['tmp_name'],$sFullpath.'/'.$_FILES[$sFileKey]['name'])) {
+                        echo 'could not upload file '.$_FILES[$sFileKey]['name'];
+                    } else {
+                        $oSkeleton->setTextField($oField->fieldkey,$_FILES[$sFileKey]['name']);
+                    }
+                }
+            }
+        }
+
         # Save Skeleton
         $iSkeletonID = $this->oTableGateway->saveSingle($oSkeleton);
 

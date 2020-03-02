@@ -74,6 +74,27 @@ switch($oField->type) {
         </div>
         <?php
         break;
+    case 'upload':
+        $sFile = $this->oItem->getTextField($oField->fieldkey);
+        if($sFile != '') {
+            $sExt = pathinfo($sFile)['extension'];
+            switch($sExt) {
+                case 'jpg':
+                case 'jpeg':
+                case 'gif':
+                case 'png':
+                case 'svg':
+                    echo '<img src="/data/'.str_replace(['##ID##'],[$this->oItem->getID()],$oField->url_list).'/'.$sFile.'" style="max-width:600px; max-height:200px;" />';
+                    echo $sFile;
+                    break;
+                default:
+                    echo $sFile;
+                    break;
+            }
+        } else {
+            echo '-';
+        }
+        break;
     /**
      * Currency Field - View
      */

@@ -308,6 +308,7 @@ class CoreEntityModel {
                         case 'url':
                         case 'featuredimage':
                         case 'tel':
+                        case 'upload':
                             $this->$sFieldName = '';
                             break;
                         case 'select':
