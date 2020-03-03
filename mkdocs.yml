@@ -6,6 +6,7 @@ nav:
   - 'Quick Start': quick-start.md
   - 'Advanced':
       - 'Installation': installation.md
+      - 'Quick Search': quicksearch.md
       - 'Themes': themes.md
       - 'Hooks': hooks.md
 site_name: oneplace-core

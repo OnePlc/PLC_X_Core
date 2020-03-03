@@ -123,6 +123,14 @@ class CoreEntityTable {
                 $oWh->like(substr($sWh,0,strlen($sWh)-strlen('-like')),$aWhere[$sWh].'%');
             }
 
+            $bIsLike = stripos($sWh,'-lkall');
+            if($bIsLike === false) {
+
+            } else {
+                # its a like
+                $oWh->like(substr($sWh,0,strlen($sWh)-strlen('-lkall')),'%'.$aWhere[$sWh].'%');
+            }
+
             $bIsIDFS = stripos($sWh,'_idfs');
             if($bIsIDFS === false) {
 

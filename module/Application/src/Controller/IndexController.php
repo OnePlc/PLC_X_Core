@@ -21,6 +21,7 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\View\View;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 class IndexController extends CoreController
 {
@@ -379,8 +380,8 @@ class IndexController extends CoreController
                 # Get Entity Table for Form
                 try {
                     $oEntityTbl = CoreController::$oServiceManager->get($oForm->entity_tbl_class);
-                } catch(\RuntimeException $e) {
-                    echo 'could not load entity table for form '.$oForm->label;
+                } catch(ServiceNotFoundException $e) {
+                    //echo 'could not load entity table for form '.$oForm->label;
                 }
 
                 # Only proceed if we have an Entity Table
@@ -388,12 +389,22 @@ class IndexController extends CoreController
                     $sEntityType = explode('-',$oForm->form_key)[0];
 
                     # Lets try to match by label like first
-                    $aMatchedEntities = $oEntityTbl->fetchAll(false,['label-like'=>$sQueryTerm]);
+                    $aMatchedEntities = [];
+                    if(array_key_exists('quicksearch-'.$sEntityType.'-likeall',CoreController::$aGlobalSettings)) {
+                        $aMatchedEntities = $oEntityTbl->fetchAll(false,['label-lkall'=>$sQueryTerm]);
+                    } else {
+                        if(array_key_exists('quicksearch-'.$sEntityType.'-customlabel',CoreController::$aGlobalSettings)) {
+                            $sCustomLabel = CoreController::$aGlobalSettings['quicksearch-'.$sEntityType.'-customlabel'];
+                            $aMatchedEntities = $oEntityTbl->fetchAll(false,[$sCustomLabel.'-like'=>$sQueryTerm]);
+                        } else {
+                            $aMatchedEntities = $oEntityTbl->fetchAll(false,['label-like'=>$sQueryTerm]);
+                        }
+                    }
 
                     # check for custom search attributes
                     if(array_key_exists('quicksearch-'.$sEntityType.'-customattribute',CoreController::$aGlobalSettings)) {
                         $sCustomKey = CoreController::$aGlobalSettings['quicksearch-'.$sEntityType.'-customattribute'];
-                        $aCustomMatch = $oEntityTbl->fetchAll(false,[$sCustomKey.'-like'=>$sQueryTerm]);
+                        $aCustomMatch = $oEntityTbl->fetchAll(false,[$sCustomKey.'-lkall'=>$sQueryTerm]);
                         $aCustomSearchResults = [];
                         if(count($aMatchedEntities) > 0) {
                             foreach($aMatchedEntities as $oRes) {
@@ -498,7 +509,29 @@ class IndexController extends CoreController
                                 $sLabel = $oEntity->getLabel();
                                 if(array_key_exists('quicksearch-'.$sEntityType.'-customresultattribute',CoreController::$aGlobalSettings)) {
                                     $sAttribute = CoreController::$aGlobalSettings['quicksearch-'.$sEntityType.'-customresultattribute'];
-                                    $sLabel .= ' ('.$oEntity->getTextField($sAttribute).')';
+                                    $oAttr = json_decode($sAttribute);
+                                    if(is_object($oAttr)) {
+                                        $aFields = $oAttr->fields;
+                                        $sLabel .= ' (';
+                                        foreach($aFields as $sFieldKey) {
+                                            switch($oAttr->format) {
+                                                case 'datetime':
+                                                    $sLabel.= date('d.m.Y H:i',strtotime($oEntity->getTextField($sFieldKey))).$oAttr->seperator;
+                                                    break;
+                                                case 'date':
+                                                    $sLabel.= date('d.m.Y',strtotime($oEntity->getTextField($sFieldKey))).$oAttr->seperator;
+                                                    break;
+                                                default:
+                                                    $sLabel.= $oEntity->getTextField($sFieldKey).$oAttr->seperator;
+                                                    break;
+                                            }
+                                        }
+                                        # strip last sep
+                                        $sLabel = substr($sLabel,0,strlen($sLabel)-strlen($oAttr->seperator));
+                                        $sLabel .= ')';
+                                    } else {
+                                        $sLabel .= ' ('.$oEntity->getTextField($sAttribute).')';
+                                    }
                                 }
                                 $aEntityResults['children'][] = ['id'=>$oEntity->getID(),'text'=>$sLabel,'view_link'=>'/'.$sEntityType.'/view/##ID##'];
                             }
