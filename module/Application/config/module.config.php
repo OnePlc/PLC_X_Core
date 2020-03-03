@@ -170,6 +170,7 @@ return [
         'exception_template'       => 'error/index',
         'template_map' => [
             'layout/layout'           => __DIR__ . '/../view/layout/layout-default.phtml',
+            'layout/modal'           => __DIR__ . '/../view/layout/modal.phtml',
             'layout/setup'           => __DIR__ . '/../view/layout/layout-setup.phtml',
             'layout/error' => __DIR__ . '/../view/layout/error.phtml',
             'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
