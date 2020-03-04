@@ -211,6 +211,9 @@ class CoreEntityTable {
             'label' => $oSkeleton->label,
         ];
 
+        if(count($aDefaultData) > 0) {
+            $aData = $aDefaultData;
+        }
         $aData = $this->attachDynamicFields($aData,$oSkeleton);
 
         $id = (int) $oSkeleton->id;

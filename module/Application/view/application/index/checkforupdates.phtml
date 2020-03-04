@@ -79,6 +79,7 @@ use Application\Controller\CoreController;
                                     $sUrl = '';
                                     try {
                                         $sModRoute = substr($sModName,strlen($aVendors[0].'-'));
+                                        echo $sModRoute.'-setup';
                                         $sUrl = $this->url($sModRoute.'-setup');
                                     } catch(\RuntimeException $e) {
 

@@ -210,7 +210,16 @@ class CoreEntityModel {
             $sEntityType = explode('-',$this->sSingleForm)[0];
             $aFieldIDs = [];
 
-            $oTag = CoreController::$aCoreTables['core-tag']->select(['tag_key'=>$oField->tag_key]);
+            $sTagKey = $oField->tag_key;
+            $bIsIDFS = stripos($sTagKey,'_idfs');
+            if($bIsIDFS === false) {
+
+            } else {
+                # its a like
+                $sTagKey = substr($sTagKey,0,strlen('_idfs'));
+            }
+
+            $oTag = CoreController::$aCoreTables['core-tag']->select(['tag_key'=>$sTagKey]);
             if(count($oTag) > 0) {
                 $oTag = $oTag->current();
 
@@ -228,8 +237,6 @@ class CoreEntityModel {
                         $aFieldIDs[] = $oEntityTag->entity_tag_idfs;
                     }
                 }
-            } else {
-                echo 'tag '.$oField->fieldkey.' not found';
             }
 
             return $aFieldIDs;
