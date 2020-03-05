@@ -119,26 +119,27 @@ switch($oField->type) {
      * Upload field
      */
     case 'upload':
-        $sFile = $this->oItem->getTextField($oField->fieldkey);
-        if($sFile != '') {
-            $sExt = pathinfo($sFile)['extension'];
-            switch ($sExt) {
-                case 'jpg':
-                case 'jpeg':
-                case 'gif':
-                case 'png':
-                case 'svg':
-                    echo '<img src="/data/' . str_replace(['##ID##'], [$this->oItem->getID()], $oField->url_list) . '/' . $sFile . '" style="max-width:600px; max-height:200px;" />';
-                    echo $sFile;
-                    break;
-                default:
-                    echo $sFile;
-                    break;
+        if(isset($this->oItem)) {
+            $sFile = $this->oItem->getTextField($oField->fieldkey);
+            if ($sFile != '') {
+                $sExt = pathinfo($sFile)['extension'];
+                switch ($sExt) {
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'gif':
+                    case 'png':
+                    case 'svg':
+                        echo '<img src="/data/' . str_replace(['##ID##'], [$this->oItem->getID()], $oField->url_list) . '/' . $sFile . '" style="max-width:600px; max-height:200px;" />';
+                        echo $sFile;
+                        break;
+                    default:
+                        echo $sFile;
+                        break;
+                }
             }
         }
         ?>
-        <input type="file" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
-               value="<?=(isset($this->oItem)) ? '*****************' : ''?>"<?=$sExtraAttributes?> />
+        <input type="file" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"<?=$sExtraAttributes?> />
         <?php
         break;
     /**
