@@ -30,8 +30,6 @@ use Laminas\Mime\Message as MimeMessage;
 use Laminas\Mime\Part as MimePart;
 
 class CoreEntityController extends CoreController {
-    private static $aEntityHooks = [];
-
     /**
      * CoreEntityController constructor.
      *

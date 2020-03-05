@@ -225,6 +225,8 @@ class CoreApiController extends CoreController {
                                 }
                                 break;
                             case 'text':
+                            case 'currency':
+                            case 'number':
                             case 'date':
                             case 'textarea':
                                 $aPublicItem[$oField->fieldkey] = $translator->translate($oItem->getTextField($oField->fieldkey),$sEntityType,$sLang);
@@ -253,6 +255,14 @@ class CoreApiController extends CoreController {
                                 break;
                             default:
                                 break;
+                        }
+                    }
+
+                    if (array_key_exists($this->sSingleForm.'-api-list-before',CoreEntityController::$aEntityHooks)) {
+                        foreach(CoreEntityController::$aEntityHooks[$this->sSingleForm.'-api-list-before'] as $oHook) {
+                            $sHookFunc = $oHook->sFunction;
+                            $aCustomData = $oHook->oItem->$sHookFunc($oItem);
+                            $aPublicItem = array_merge($aPublicItem,$aCustomData);
                         }
                     }
 

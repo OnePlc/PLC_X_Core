@@ -31,6 +31,8 @@ use Laminas\Mime\Message as MimeMessage;
 use Laminas\Mime\Part as MimePart;
 
 class CoreController extends AbstractActionController {
+    protected static $aEntityHooks = [];
+
     /**
      * onePlace Session Object
      *
