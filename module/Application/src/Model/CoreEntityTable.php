@@ -77,6 +77,7 @@ class CoreEntityTable {
                             $aData[$sFieldName] = $oObject->$sFieldName;
                             break;
                         case 'currency':
+                        case 'number':
                             $aData[$sFieldName] = (float)$oObject->$sFieldName;
                             break;
                         case 'select':
@@ -186,7 +187,7 @@ class CoreEntityTable {
      * @since 1.0.0
      */
     public function getSingleEntity($id,$sKey = 'Skeleton_ID') {
-        $id = (int) $id;
+        $id = $id;
         $rowset = $this->oTableGateway->select([$sKey => $id]);
         $row = $rowset->current();
         if (! $row) {

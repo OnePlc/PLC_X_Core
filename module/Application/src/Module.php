@@ -27,7 +27,7 @@ class Module {
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.24';
+    const VERSION = '1.0.25';
 
     public function getConfig() : array
     {

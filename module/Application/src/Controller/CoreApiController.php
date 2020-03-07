@@ -407,6 +407,14 @@ class CoreApiController extends CoreController {
             }
         }
 
+        if (array_key_exists($this->sSingleForm.'-api-list-before',CoreEntityController::$aEntityHooks)) {
+            foreach(CoreEntityController::$aEntityHooks[$this->sSingleForm.'-api-list-before'] as $oHook) {
+                $sHookFunc = $oHook->sFunction;
+                $aCustomData = $oHook->oItem->$sHookFunc($oItem);
+                $aPublicItem = array_merge($aPublicItem,$aCustomData);
+            }
+        }
+
         # Print Entity
         $aReturn = ['state'=>'success','message'=>'Item found','oItem'=>$aPublicItem];
         echo json_encode($aReturn);
