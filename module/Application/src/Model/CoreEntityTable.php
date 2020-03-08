@@ -208,9 +208,12 @@ class CoreEntityTable {
      * @since 1.0.0
      */
     public function saveSingleEntity($oSkeleton,$sIDKey = 'Skeleton_ID',$aDefaultData = []) {
-        $aData = [
-            'label' => $oSkeleton->label,
-        ];
+        $aData = [];
+        if(isset($oSkeleton->label)) {
+            $aData = [
+                'label' => $oSkeleton->label,
+            ];
+        }
 
         if(count($aDefaultData) > 0) {
             $aData = $aDefaultData;
