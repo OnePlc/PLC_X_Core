@@ -67,6 +67,16 @@ return [
                     ],
                 ],
             ],
+            'form-updatetabsort' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/application/updatetabsort',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'updatetabsort',
+                    ],
+                ],
+            ],
             'uppy-updatesort' => [
                 'type'    => Literal::class,
                 'options' => [

@@ -118,7 +118,11 @@
         axis:'x',
         containment:'parent',
         update: function( event, ui ) {
-            var sortedIDs = $( '#'+listID ).sortable( "toArray" );
+            var sortedIDs = $( '#<?=$this->sFormName?>Form' ).sortable( "toArray" );
+            console.log(sortedIDs);
+            $.post('/application/updatetabsort',{form:"<?=$this->sFormName?>",tabs:sortedIDs},function () {
+
+            });
         }
     });
 

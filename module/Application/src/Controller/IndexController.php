@@ -660,4 +660,27 @@ class IndexController extends CoreController
             'aModulesInstalled' => $aModulesInstalled
         ]);
     }
+
+    public function updatetabsortAction()
+    {
+        $this->layout('layout/json');
+
+        $sForm = $_REQUEST['form'];
+        $aTabs = $_REQUEST['tabs'];
+
+        $iSortID = 0;
+        foreach($aTabs as $sTab) {
+            $sTab = substr($sTab,strlen('tab-'));
+            echo $sTab;
+            CoreController::$aCoreTables['form-tab']->update([
+                'sort_id' => $iSortID,
+            ],[
+                'tab_idfs' => $sTab,
+                'user_idfs' => CoreController::$oSession->oUser->getID(),
+            ]);
+            $iSortID++;
+        }
+
+        return false;
+    }
 }

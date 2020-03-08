@@ -23,7 +23,8 @@ INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav
 ('quicksearch', 'Application\\Controller\\IndexController', 'Quick Search', '', '', 0, 0),
 ('updatefieldsort', 'Application\\Controller\\IndexController', 'Update Form Field Sorting', '', '', 0, 0),
 ('selectbool', 'Application\\Controller\\IndexController', 'Select Yes/No', '', '', 0, 0),
-('checkforupdates', 'Application\\Controller\\IndexController', 'Check for Updates', '', '', 0, 1);
+('checkforupdates', 'Application\\Controller\\IndexController', 'Check for Updates', '', '', 0, 1),
+('updatetabsort', 'Application\\Controller\\IndexController', 'Update Tab Order', '', '', 0, 0);
 
 --
 -- Default Widgets
