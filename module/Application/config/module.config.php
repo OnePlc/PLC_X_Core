@@ -55,7 +55,7 @@ return [
                 ],
             ],
             'uppy-togglepub' => [
-                'type'    => Literal::class,
+                'type'    => Segment::class,
                 'options' => [
                     'route'    => '/uppy/togglemediapub[/:id]',
                     'constraints' => [

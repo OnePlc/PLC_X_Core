@@ -18,7 +18,7 @@ INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav
 ('themes', 'Application\\Controller\\IndexController', 'Theme Selection', '', '/application/themes', 0, 0),
 ('filepond', 'Application\\Controller\\UploadController', 'Upload Featured Image', '', '', 0, 0),
 ('uppy', 'Application\\Controller\\UploadController', 'Gallery Upload', '', '', 0, 0),
-('togglemediapub', 'Application\\Controller\\UploadController', 'Gallery Upload', '', '', 0, 0),
+('togglemediapub', 'Application\\Controller\\UploadController', 'Gallery Sorting', '', '', 0, 0),
 ('updateuppysort', 'Application\\Controller\\UploadController', 'Gallery Upload', '', '', 0, 0),
 ('quicksearch', 'Application\\Controller\\IndexController', 'Quick Search', '', '', 0, 0),
 ('updatefieldsort', 'Application\\Controller\\IndexController', 'Update Form Field Sorting', '', '', 0, 0),

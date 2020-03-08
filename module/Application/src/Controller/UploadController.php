@@ -283,7 +283,7 @@ class UploadController extends CoreController {
                 $bPublic = ($oMedia->is_public == 1) ? 0 : 1;
                 $oGalleryTbl->update(['is_public'=>$bPublic],'Media_ID = '.$iMediaID);
 
-                return $this->redirect()->toRoute($oMedia->entity_type,['action'=>'view','id'=>$oMedia->entity_idfs]);
+                return $this->redirect()->toRoute($oMedia->entity_type,['action'=>'edit','id'=>$oMedia->entity_idfs]);
 
             }
         }
