@@ -104,6 +104,9 @@ msgstr "Installierte Designs"
 msgid "Activate"
 msgstr "Aktivieren"
 
+msgid "State"
+msgstr "Status"
+
 msgid "Yes"
 msgstr "Ja"
 

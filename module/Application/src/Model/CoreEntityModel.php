@@ -177,7 +177,12 @@ class CoreEntityModel {
                             CoreEntityModel::$aEntityTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
                             //CoreEntityModel::$aEntityTables[$oField->tbl_name] = CoreController::$oServiceManager->get('OnePlace\Contact\Model\ContactTable');
                         }
-                        return CoreEntityModel::$aEntityTables[$oField->tbl_cached_name]->getSingle($iSelectIDFS);
+                        try {
+                            return CoreEntityModel::$aEntityTables[$oField->tbl_cached_name]->getSingle($iSelectIDFS);
+                        } catch(\RuntimeException $e) {
+                            return false;
+                        }
+
                     } else {
                         if($oField->tbl_class == 'OnePlace\BoolSelect') {
                             return ($this->$sField == 2) ? 'Yes' : 'No';

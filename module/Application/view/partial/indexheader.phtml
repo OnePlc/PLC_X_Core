@@ -7,4 +7,7 @@
         <?php } ?>
     <?php } ?>
     <?=$this->translate($this->sTitle)?>
+    <?php if(isset($this->sCount)) { ?>
+        <small><?=$this->sCount?></small>
+    <?php } ?>
 </h1>

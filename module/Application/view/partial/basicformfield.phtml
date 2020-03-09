@@ -101,6 +101,14 @@ switch($oField->type) {
         <?php
         break;
     /**
+     * Number
+     */
+    case 'number': ?>
+        <input type="number" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
+               value="<?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?>"<?=$sExtraAttributes?> />
+        <?php
+        break;
+    /**
      * Textarea
      */
     case 'textarea': ?>
