@@ -169,6 +169,11 @@ class UploadController extends CoreController {
                                 break;
                             default:
                                 if(is_object($oEntityTbl)) {
+                                    if(is_object($oEntity)) {
+                                        if($oEntity->featured_image != '') {
+                                            unlink($sPath.'/'.$oEntity->featured_image);
+                                        }
+                                    }
                                     $oEntityTbl->updateAttribute('featured_image', $aFile['name'], ucfirst($sEntityType).'_ID', $iEntityID);
                                 }
                                 break;

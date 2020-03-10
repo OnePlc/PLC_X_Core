@@ -146,6 +146,15 @@ class CoreApiController extends CoreController {
                 case 'category':
                     $aWhere['multi_tag'] = $_REQUEST['filtervalue'];
                     break;
+                // Date Filter
+                case 'onlycurrent':
+                    // Set Minimum Date
+                    $aWhere[$_REQUEST['filtervalue'].'-greaterthanequalto'] = date('Y-m-d H:i:s',time());
+                    // If provided - set maximum date
+                    if(isset($_REQUEST['filterlimit'])) {
+                        $aWhere[$_REQUEST['filtervalue'].'-lessthanequalto'] = $_REQUEST['filterlimit'];
+                    }
+                    break;
                 default:
                     break;
             }
@@ -170,6 +179,17 @@ class CoreApiController extends CoreController {
         if(count($oItemsDB) > 0) {
             # Loop all items
             foreach($oItemsDB as $oItem) {
+                // Event Fix
+                // todo: create hook here and move code to hook
+                if(isset($oItem->root_event_idfs)) {
+                    if($oItem->root_event_idfs != 0) {
+                        $oRoot = $this->oTableGateway->getSingle($oItem->root_event_idfs);
+                        $oItem->label = $oRoot->label;
+                        $oItem->excerpt = $oRoot->excerpt;
+                        $oItem->featured_image = $oRoot->featured_image;
+                        $oItem->description = $oRoot->description;
+                    }
+                }
 
                 # Output depending on list mode
                 if($bSelect2) {
@@ -228,13 +248,18 @@ class CoreApiController extends CoreController {
                             case 'currency':
                             case 'number':
                             case 'date':
+                            case 'datetime':
                             case 'textarea':
                                 $aPublicItem[$oField->fieldkey] = $translator->translate($oItem->getTextField($oField->fieldkey),$sEntityType,$sLang);
                                 break;
                             case 'featuredimage':
                                 $sImg = $oItem->getTextField('featured_image');
                                 if($sImg != '') {
-                                    $aPublicItem['featured_image'] = '/data/'.$sEntityType.'/' . $oItem->getID() . '/' . $sImg;
+                                    $iID = $oItem->getID();
+                                    if(isset($oRoot)) {
+                                        $iID = $oRoot->getID();
+                                    }
+                                    $aPublicItem['featured_image'] = '/data/'.$sEntityType.'/' . $iID . '/' . $sImg;
                                 }
                                 break;
                             case 'gallery':

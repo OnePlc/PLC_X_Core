@@ -97,7 +97,7 @@ switch($oField->type) {
     case 'url':
     case 'text': ?>
         <input type="text" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
-               value="<?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?>"<?=$sExtraAttributes?> />
+               value="<?=(isset($this->oItem)) ? htmlspecialchars($this->oItem->getTextField($oField->fieldkey)) : ''?>"<?=$sExtraAttributes?> />
         <?php
         break;
     /**

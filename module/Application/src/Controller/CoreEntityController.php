@@ -257,8 +257,10 @@ class CoreEntityController extends CoreController {
         $iSkeletonID = $this->oTableGateway->saveSingle($oSkeletonBasedObject);
         $oSkeletonBasedObject = $this->oTableGateway->getSingle($iSkeletonID);
 
+        $aFormData = $this->parseFormData($_REQUEST);
+
         # Save Multiselect
-        $this->updateMultiSelectFields($_REQUEST,$oSkeletonBasedObject,$sKey.'-single');
+        $this->updateMultiSelectFields($aFormData,$oSkeletonBasedObject,$sKey.'-single');
 
         # Add XP for creating a new entity
         CoreController::$oSession->oUser->addXP($sKey.'-add');

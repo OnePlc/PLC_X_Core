@@ -395,7 +395,11 @@ class IndexController extends CoreController
                     } else {
                         if(array_key_exists('quicksearch-'.$sEntityType.'-customlabel',CoreController::$aGlobalSettings)) {
                             $sCustomLabel = CoreController::$aGlobalSettings['quicksearch-'.$sEntityType.'-customlabel'];
-                            $aMatchedEntities = $oEntityTbl->fetchAll(false,[$sCustomLabel.'-like'=>$sQueryTerm]);
+                            if($sCustomLabel == 'disable') {
+                                // skip this entity
+                            } else {
+                                $aMatchedEntities = $oEntityTbl->fetchAll(false,[$sCustomLabel.'-like'=>$sQueryTerm]);
+                            }
                         } else {
                             $aMatchedEntities = $oEntityTbl->fetchAll(false,['label-like'=>$sQueryTerm]);
                         }

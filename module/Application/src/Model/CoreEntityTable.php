@@ -110,7 +110,7 @@ class CoreEntityTable {
      * @return Paginator Paginated Table Connection
      * @since 1.0.0
      */
-    public function fetchAll($bPaginated = false,$aWhere = []) {
+    public function fetchAll($bPaginated = false,$aWhere = [],$sSort = 'created_date DESC') {
         $oSel = new Select($this->oTableGateway->getTable());
 
         # Build where
@@ -139,6 +139,22 @@ class CoreEntityTable {
                 # its a like
                 $oWh->equalTo($sWh,$aWhere[$sWh]);
             }
+
+            $bIsGreaterEqual = stripos($sWh,'-greaterthanequalto');
+            if($bIsGreaterEqual === false) {
+
+            } else {
+                # its a like
+                $oWh->greaterThanOrEqualTo(substr($sWh,0,strlen($sWh)-strlen('-greaterthanequalto')),$aWhere[$sWh]);
+            }
+
+            $bIsLessEqual = stripos($sWh,'-lessthanequalto');
+            if($bIsLessEqual === false) {
+
+            } else {
+                # its a like
+                $oWh->lessThanOrEqualTo(substr($sWh,0,strlen($sWh)-strlen('-lessthanequalto')),$aWhere[$sWh]);
+            }
         }
         if(array_key_exists('created_by',$aWhere)) {
             $oWh->equalTo('created_by',$aWhere['created_by']);
@@ -152,7 +168,7 @@ class CoreEntityTable {
             $oWh->like('category_tag.entity_type',explode('-',$this->sSingleForm)[0]);
         }
         $oSel->where($oWh);
-        $oSel->order('created_date DESC');
+        $oSel->order($sSort);
 
         # Return Paginator or Raw ResultSet based on selection
         if ($bPaginated) {
