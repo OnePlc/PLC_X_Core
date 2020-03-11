@@ -163,7 +163,8 @@ class CoreEntityTable {
             $oWh->equalTo('modified_by',$aWhere['modified_by']);
         }
         if(array_key_exists('multi_tag',$aWhere)) {
-            $oSel->join(['category_tag'=>'core_entity_tag_entity'],'category_tag.entity_idfs = article.Article_ID');
+            $sEntityType = explode('-',$this->sSingleForm)[0];
+            $oSel->join(['category_tag'=>'core_entity_tag_entity'],'category_tag.entity_idfs = '.$sEntityType.'.'.ucfirst($sEntityType).'_ID');
             $oWh->equalTo('category_tag.entity_tag_idfs',$aWhere['multi_tag']);
             $oWh->like('category_tag.entity_type',explode('-',$this->sSingleForm)[0]);
         }

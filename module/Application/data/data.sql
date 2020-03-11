@@ -45,4 +45,6 @@ INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES ('app-vendors',
 --
 INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES
 ('app-currency-decpoint', ','),
-('app-currency-thousandsep', '.');
+('app-currency-thousandsep', '.'),
+('app-currency-sign', '€'),
+('app-currency-sign-position', 'after');

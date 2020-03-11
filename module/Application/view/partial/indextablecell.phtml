@@ -38,7 +38,14 @@
         case 'date':
             $sDate = $this->oItem->getTextField($this->oCol->fieldkey);
             if($sDate != '0000-00-00 00:00:00' && !empty($sDate)) {
-                echo date('d.m.Y',strtotime($sDate));
+                if($this->oCol->url_view != '') {
+                    $sFinalURL = str_replace(['##ID##'],[$this->oItem->getID()],$this->oCol->url_view);
+                    echo '<a href="'.$sFinalURL.'">';
+                        echo date('d.m.Y',strtotime($sDate));
+                    echo '</a>';
+                } else {
+                    echo date('d.m.Y',strtotime($sDate));
+                }
             } else {
                 echo '-';
             }
@@ -46,7 +53,18 @@
         case 'datetime':
             $sDate = $this->oItem->getTextField($this->oCol->fieldkey);
             if($sDate != '0000-00-00 00:00:00' && !empty($sDate)) {
-                echo date('d.m.Y H:i',strtotime($sDate));
+                if($sDate != '0000-00-00 00:00:00' && !empty($sDate)) {
+                    if($this->oCol->url_view != '') {
+                        $sFinalURL = str_replace(['##ID##'],[$this->oItem->getID()],$this->oCol->url_view);
+                        echo '<a href="'.$sFinalURL.'">';
+                            echo date('d.m.Y H:i',strtotime($sDate));
+                        echo '</a>';
+                    } else {
+                        echo date('d.m.Y H:i',strtotime($sDate));
+                    }
+                } else {
+                    echo '-';
+                }
             } else {
                 echo '-';
             }

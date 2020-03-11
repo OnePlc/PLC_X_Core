@@ -139,25 +139,57 @@ class CoreApiController extends CoreController {
         $bPaginated = false;
         $aWhere = [];
         if(isset($_REQUEST['filter'])) {
-            switch($_REQUEST['filter']) {
-                case 'highlights':
-                    $aWhere['web_highlight_idfs'] = 2;
-                    break;
-                case 'category':
-                    $aWhere['multi_tag'] = $_REQUEST['filtervalue'];
-                    break;
-                // Date Filter
-                case 'onlycurrent':
-                    // Set Minimum Date
-                    $aWhere[$_REQUEST['filtervalue'].'-greaterthanequalto'] = date('Y-m-d H:i:s',time());
-                    // If provided - set maximum date
-                    if(isset($_REQUEST['filterlimit'])) {
-                        $aWhere[$_REQUEST['filtervalue'].'-lessthanequalto'] = $_REQUEST['filterlimit'];
+            $aFilters = json_decode($_REQUEST['filter']);
+
+            if(is_array($aFilters)) {
+                $aFilterValues = json_decode($_REQUEST['filtervalue']);
+                $i = 0;
+                foreach($aFilters as $sFilter) {
+                    $sFilterValue = $aFilterValues[$i];
+                    switch($sFilter) {
+                        case 'highlights':
+                            $aWhere['web_spotlight_idfs'] = 2;
+                            break;
+                        case 'category':
+                            $aWhere['multi_tag'] = $sFilterValue;
+                            break;
+                        // Date Filter
+                        case 'onlycurrent':
+                            // Set Minimum Date
+                            $aWhere[$sFilterValue.'-greaterthanequalto'] = date('Y-m-d H:i:s',time());
+                            // If provided - set maximum date
+                            if(isset($_REQUEST['filterlimit'])) {
+                                $aWhere[$sFilterValue.'-lessthanequalto'] = $_REQUEST['filterlimit'];
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                    break;
-                default:
-                    break;
+                    $i++;
+                }
+            } else {
+                $sFilter = $_REQUEST['filter'];
+                switch($sFilter) {
+                    case 'highlights':
+                        $aWhere['web_spotlight_idfs'] = 2;
+                        break;
+                    case 'category':
+                        $aWhere['multi_tag'] = $_REQUEST['filtervalue'];
+                        break;
+                    // Date Filter
+                    case 'onlycurrent':
+                        // Set Minimum Date
+                        $aWhere[$_REQUEST['filtervalue'].'-greaterthanequalto'] = date('Y-m-d H:i:s',time());
+                        // If provided - set maximum date
+                        if(isset($_REQUEST['filterlimit'])) {
+                            $aWhere[$_REQUEST['filtervalue'].'-lessthanequalto'] = $_REQUEST['filterlimit'];
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
+
         }
 
         if(isset($_REQUEST['listmodefilter'])) {
@@ -179,6 +211,7 @@ class CoreApiController extends CoreController {
         if(count($oItemsDB) > 0) {
             # Loop all items
             foreach($oItemsDB as $oItem) {
+                $oRoot = false;
                 // Event Fix
                 // todo: create hook here and move code to hook
                 if(isset($oItem->root_event_idfs)) {
@@ -256,7 +289,7 @@ class CoreApiController extends CoreController {
                                 $sImg = $oItem->getTextField('featured_image');
                                 if($sImg != '') {
                                     $iID = $oItem->getID();
-                                    if(isset($oRoot)) {
+                                    if($oRoot) {
                                         $iID = $oRoot->getID();
                                     }
                                     $aPublicItem['featured_image'] = '/data/'.$sEntityType.'/' . $iID . '/' . $sImg;
