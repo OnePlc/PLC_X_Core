@@ -775,20 +775,20 @@ class CoreController extends AbstractActionController {
         $oMail = new Mail\Message();
         $oMail->setEncoding('UTF-8');
         $oMail->setBody($oBody);
-        $oMail->setFrom('no-reply@1plc.ch', 'onePlace');
+        $oMail->setFrom(CoreController::$aGlobalSettings['noreply-email'], CoreController::$aGlobalSettings['noreply-from']);
         $oMail->addTo($sToMail, $sToName);
         $oMail->setSubject($sSubject);
 
         # Setup SMTP Transport for proper email sending
         $oTransport = new SmtpTransport();
         $aOptions   = new SmtpOptions([
-            'name'              => 'mail.cyon.ch',
-            'host'              => 'mail.cyon.ch',
+            'name'              => CoreController::$aGlobalSettings['noreply-server'],
+            'host'              => CoreController::$aGlobalSettings['noreply-server'],
             'port'              => 587,
             'connection_class'  => 'login',
             'connection_config' => [
-                'username' => 'no-reply@1plc.ch',
-                'password' => 'gH:KFPb8<!9D',
+                'username' => CoreController::$aGlobalSettings['noreply-email'],
+                'password' => CoreController::$aGlobalSettings['noreply-pw'],
                 'ssl'      => 'tls',
             ],
         ]);

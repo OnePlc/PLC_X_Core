@@ -407,6 +407,19 @@ class CoreApiController extends CoreController {
         # Init public item
         $aPublicItem = ['id'=>$oItem->getID()];
 
+        $oRoot = false;
+        // Event Fix
+        // todo: create hook here and move code to hook
+        if(isset($oItem->root_event_idfs)) {
+            if($oItem->root_event_idfs != 0) {
+                $oRoot = $this->oTableGateway->getSingle($oItem->root_event_idfs);
+                $oItem->label = $oRoot->label;
+                $oItem->excerpt = $oRoot->excerpt;
+                $oItem->featured_image = $oRoot->featured_image;
+                $oItem->description = $oRoot->description;
+            }
+        }
+
         # add all fields to item
         foreach($aFields as $oField) {
             switch($oField->type) {
@@ -438,11 +451,16 @@ class CoreApiController extends CoreController {
                     break;
                 case 'text':
                 case 'date':
+                case 'datetime':
                 case 'textarea':
                     $aPublicItem[$oField->fieldkey] = $translator->translate($oItem->getTextField($oField->fieldkey),$sEntityType,$sLang);
                     break;
                 case 'featuredimage':
-                    $aPublicItem['featured_image'] = '/data/'.$sEntityType.'/'.$oItem->getID().'/'.$oItem->getTextField('featured_image');
+                    $iImageID = $oItem->getID();
+                    if($oRoot) {
+                        $iImageID = $oRoot->getID();
+                    }
+                    $aPublicItem['featured_image'] = '/data/'.$sEntityType.'/'.$iImageID.'/'.$oItem->getTextField('featured_image');
                     break;
                 case 'gallery':
                     $oMediaSel = new Select(CoreApiController::$aCoreTables['core-gallery-media']->getTable());
@@ -465,8 +483,8 @@ class CoreApiController extends CoreController {
             }
         }
 
-        if (array_key_exists($this->sSingleForm.'-api-list-before',CoreEntityController::$aEntityHooks)) {
-            foreach(CoreEntityController::$aEntityHooks[$this->sSingleForm.'-api-list-before'] as $oHook) {
+        if (array_key_exists($this->sSingleForm.'-api-get-before',CoreEntityController::$aEntityHooks)) {
+            foreach(CoreEntityController::$aEntityHooks[$this->sSingleForm.'-api-get-before'] as $oHook) {
                 $sHookFunc = $oHook->sFunction;
                 $aCustomData = $oHook->oItem->$sHookFunc($oItem);
                 $aPublicItem = array_merge($aPublicItem,$aCustomData);
