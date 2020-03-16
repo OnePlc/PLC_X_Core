@@ -193,9 +193,22 @@ switch($oField->type) {
     /**
      * Select field
      */
-    case 'select':?>
+    case 'select':
+        if($oField->default_value != '') {
+            switch($oField->default_value) {
+                case '##first##':
+                    if($oField->tbl_class != '') {
+                        $oListTbl = CoreController::$oServiceManager->get($oField->tbl_class);
+                        $oFirst = $oListTbl->getSingle('first');
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        ?>
         <select class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" id="plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>"<?=$sExtraAttributes?> >
-            <?php if(isset($this->oItem)) { ?>
+            <?php if(isset($this->oItem)) {?>
                 <?php if($this->oItem->getSelectFieldID($oField->fieldkey) != 0) { ?>
                     <option value="<?= $this->oItem->getSelectFieldID($oField->fieldkey) ?>">
                         <?php $sLabel = $this->oItem->getSelectField($oField->fieldkey);
@@ -207,6 +220,11 @@ switch($oField->type) {
                     </option>
                     <?php
                 }
+            } elseif(isset($oFirst)) { ?>
+                <option value="<?=$oFirst->getID()?>">
+                    <?=$oFirst->getLabel()?>
+                </option>
+            <?php
             }
             ?>
         </select>

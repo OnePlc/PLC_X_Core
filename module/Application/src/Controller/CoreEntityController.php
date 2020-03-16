@@ -256,7 +256,6 @@ class CoreEntityController extends CoreController {
         }
         $iSkeletonID = $this->oTableGateway->saveSingle($oSkeletonBasedObject);
         $oSkeletonBasedObject = $this->oTableGateway->getSingle($iSkeletonID);
-
         $aFormData = $this->parseFormData($_REQUEST);
 
         # Save Multiselect

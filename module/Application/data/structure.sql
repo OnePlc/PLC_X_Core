@@ -88,6 +88,7 @@ CREATE TABLE `core_form_field` (
   `Field_ID` int(11) NOT NULL,
   `type` varchar(20) NOT NULL,
   `label` varchar(100) NOT NULL,
+  `default_value` VARCHAR(255) NOT NULL DEFAULT '',
   `fieldkey` varchar(100) NOT NULL,
   `tab` varchar(50) NOT NULL,
   `form` varchar(100) NOT NULL,

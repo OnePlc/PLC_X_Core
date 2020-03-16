@@ -205,8 +205,16 @@ class CoreEntityTable {
      */
     public function getSingleEntity($id,$sKey = 'Skeleton_ID') {
         $id = $id;
-        $rowset = $this->oTableGateway->select([$sKey => $id]);
-        $row = $rowset->current();
+        if($id == 'first') {
+            $oFirstSel = new Select($this->oTableGateway->getTable());
+            $oFirstSel->order($sKey.' DESC');
+            $oFirstSel->limit(1);
+            $rowset = $this->oTableGateway->selectWith($oFirstSel);
+            $row = $rowset->current();
+        } else {
+            $rowset = $this->oTableGateway->select([$sKey => $id]);
+            $row = $rowset->current();
+        }
         if (! $row) {
             throw new \RuntimeException(sprintf(
                 'Could not find skeleton with identifier %d',

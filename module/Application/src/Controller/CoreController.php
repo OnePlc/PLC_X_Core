@@ -47,7 +47,7 @@ class CoreController extends AbstractActionController {
      * @var array
      * @since 1.0.0
      */
-    public static $aCoreTables;
+    public static $aCoreTables = [];
 
     /**
      * Database Connection
@@ -100,32 +100,32 @@ class CoreController extends AbstractActionController {
         CoreController::$oSession = new Container('plcauth');
         CoreController::$oServiceManager = $oServiceManager;
         CoreController::$oDbAdapter = $oDbAdapter;
-        CoreController::$aCoreTables = [];
 
         # Init Core Tables
-        CoreController::$aCoreTables['core-log-performance'] = new TableGateway('core_perfomance_log',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['form-button'] = new TableGateway('core_form_button',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['core-tag'] = new TableGateway('core_tag',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['core-form'] = new TableGateway('core_form',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['core-form-tab'] = new TableGateway('core_form_tab',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['form-tab'] = new TableGateway('user_form_tab',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['form-field'] = new TableGateway('user_form_field',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['core-form-field'] = new TableGateway('core_form_field',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['table-col'] = new TableGateway('user_table_column',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['core-entity-tag'] = new TableGateway('core_entity_tag',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['core-entity-tag-entity'] = new TableGateway('core_entity_tag_entity',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['table-index'] = new TableGateway('core_index_table',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['permission'] = new TableGateway('permission',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['settings'] = new TableGateway('settings',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['user-xp-level'] = new TableGateway('user_xp_level', CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['user'] = new TableGateway('user', CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['user-xp-activity'] = new TableGateway('user_xp_activity', CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['core-widget'] = new TableGateway('core_widget',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['user-search'] = new TableGateway('user_search',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['user-widget'] = new TableGateway('core_widget_user',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['core-statistic'] = new TableGateway('core_statistic',CoreController::$oDbAdapter);
-        CoreController::$aCoreTables['core-gallery-media'] = new TableGateway('core_gallery_media',CoreController::$oDbAdapter);
-
+        if(count(CoreController::$aCoreTables) == 0) {
+            CoreController::$aCoreTables['core-log-performance'] = new TableGateway('core_perfomance_log', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['form-button'] = new TableGateway('core_form_button', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['core-tag'] = new TableGateway('core_tag', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['core-form'] = new TableGateway('core_form', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['core-form-tab'] = new TableGateway('core_form_tab', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['form-tab'] = new TableGateway('user_form_tab', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['form-field'] = new TableGateway('user_form_field', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['core-form-field'] = new TableGateway('core_form_field', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['table-col'] = new TableGateway('user_table_column', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['core-entity-tag'] = new TableGateway('core_entity_tag', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['core-entity-tag-entity'] = new TableGateway('core_entity_tag_entity', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['table-index'] = new TableGateway('core_index_table', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['permission'] = new TableGateway('permission', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['settings'] = new TableGateway('settings', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['user-xp-level'] = new TableGateway('user_xp_level', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['user'] = new TableGateway('user', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['user-xp-activity'] = new TableGateway('user_xp_activity', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['core-widget'] = new TableGateway('core_widget', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['user-search'] = new TableGateway('user_search', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['user-widget'] = new TableGateway('core_widget_user', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['core-statistic'] = new TableGateway('core_statistic', CoreController::$oDbAdapter);
+            CoreController::$aCoreTables['core-gallery-media'] = new TableGateway('core_gallery_media', CoreController::$oDbAdapter);
+        }
         $this->loadSettings();
     }
 
@@ -490,7 +490,10 @@ class CoreController extends AbstractActionController {
                         break;
                     # Datetime Field
                     case 'datetime':
-                        $aFormData[$sFieldName] = $_REQUEST[$sKey].' '.$_REQUEST[$sKey.'-time'];
+                        $aFormData[$sFieldName] = $_REQUEST[$sKey];
+                        if($_REQUEST[$sKey.'-time'] != '') {
+                            $aFormData[$sFieldName] .= ' '.$_REQUEST[$sKey.'-time'];
+                        }
                         break;
                     # Multiselect Field
                     case 'multiselect':
