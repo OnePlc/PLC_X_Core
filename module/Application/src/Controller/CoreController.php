@@ -527,14 +527,20 @@ class CoreController extends AbstractActionController {
                             if(!array_key_exists($oField->tbl_cached_name,CoreController::$aCoreTables)) {
                                 CoreController::$aCoreTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
                             }
-                            # check if addMinimal exists on TableModel
-                            if(method_exists(CoreController::$aCoreTables[$oField->tbl_cached_name],'addMinimal')) {
-                                $iNewEntryID = CoreController::$aCoreTables[$oField->tbl_cached_name]->addMinimal($aRawData[$sKey],$this->sSingleForm,$oField->fieldkey);
-                                # Save New Entry
-                                $aFormData[$sFieldName] = $iNewEntryID;
+                            try {
+                                $oCheck = CoreController::$aCoreTables[$oField->tbl_cached_name]->getSingle($aRawData[$sKey],'tag_value');
+                                $aFormData[$sFieldName] = $oCheck->getID();
+                            } catch(\RuntimeException $e) {
+                                # check if addMinimal exists on TableModel
+                                if(method_exists(CoreController::$aCoreTables[$oField->tbl_cached_name],'addMinimal')) {
+                                    $sTagKey = ($oField->tag_key != '') ? $oField->tag_key : $oField->fieldkey;
+                                    $iNewEntryID = CoreController::$aCoreTables[$oField->tbl_cached_name]->addMinimal($aRawData[$sKey],$this->sSingleForm,$sTagKey);
+                                    # Save New Entry
+                                    $aFormData[$sFieldName] = $iNewEntryID;
+                                }
+                                # if we are here - field is ignored
                             }
 
-                            # if we are here - field is ignored
                         } else {
                             $aFormData[$sFieldName] = $aRawData[$sKey];
                         }
@@ -614,16 +620,24 @@ class CoreController extends AbstractActionController {
                             if(!array_key_exists($oField->tbl_cached_name,CoreController::$aCoreTables)) {
                                 CoreController::$aCoreTables[$oField->tbl_cached_name] = CoreController::$oServiceManager->get($oField->tbl_class);
                             }
-                            # check if addMinimal exists on TableModel
-                            if(method_exists(CoreController::$aCoreTables[$oField->tbl_cached_name],'addMinimal')) {
-                                $iNewEntryID = CoreController::$aCoreTables[$oField->tbl_cached_name]->addMinimal($aRawData[$sKey],$this->sSingleForm,$oField->fieldkey);
-                                # Save New Entry
-                                if(!$oEntity->setTextField($sFieldName,$iNewEntryID)) {
+                            try {
+                                $oCheck = CoreController::$aCoreTables[$oField->tbl_cached_name]->getSingle($aRawData[$sKey],'tag_value');
+                                # save entry
+                                if(!$oEntity->setTextField($sFieldName,$oCheck->getID())) {
                                     echo 'could not save field '.$sFieldName;
                                 }
+                            } catch(\RuntimeException $e) {
+                                # check if addMinimal exists on TableModel
+                                if(method_exists(CoreController::$aCoreTables[$oField->tbl_cached_name],'addMinimal')) {
+                                    $sTagKey = ($oField->tag_key != '') ? $oField->tag_key : $oField->fieldkey;
+                                    $iNewEntryID = CoreController::$aCoreTables[$oField->tbl_cached_name]->addMinimal($aRawData[$sKey],$this->sSingleForm,$sTagKey);
+                                    # save entry
+                                    if(!$oEntity->setTextField($sFieldName,$iNewEntryID)) {
+                                        echo 'could not save field '.$sFieldName;
+                                    }
+                                }
+                                # if we are here - field is ignored
                             }
-
-                            # if we are here - field is ignored
                         } else {
                             # save entry
                             if(!$oEntity->setTextField($sFieldName,$aRawData[$sKey])) {

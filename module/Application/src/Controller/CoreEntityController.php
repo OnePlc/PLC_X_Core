@@ -499,16 +499,17 @@ class CoreEntityController extends CoreController {
             }
         }
 
+        $this->layout('layout/json');
+
+
         # Update Skeleton with Form Data
         $oSkeleton = $this->attachFormData($_REQUEST,$oSkeleton);
 
-        # Save Skeleton
-        $iSkeletonID = $this->oTableGateway->saveSingle($oSkeleton);
-
-        $this->layout('layout/json');
-
         # Parse Form Data
         $aFormData = $this->parseFormData($_REQUEST);
+
+        # Save Skeleton
+        $iSkeletonID = $this->oTableGateway->saveSingle($oSkeleton);
 
         # Save Multiselect
         $this->updateMultiSelectFields($aFormData,$oSkeleton,$sKey.'-single');
