@@ -11,7 +11,7 @@ if(array_key_exists($this->sTab,$this->aFieldsByTab)) {
         ?>
         <!-- Field <?=$oField->fieldkey?> START -->
         <div class="form-group <?=$oField->class?>">
-            <?php if($oField->type != 'partial' && $oField->type != 'gallery') { ?>
+            <?php if($oField->type != 'partial' && $oField->type != 'gallery' && $oField->type != 'boolselect') { ?>
             <label class="plcViewFormLabel" for="<?=$this->sFormName?>_<?=$oField->fieldkey?>">
                 <?=$this->translate($oField->label)?>
             </label><br/>

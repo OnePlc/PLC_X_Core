@@ -71,6 +71,7 @@ class CoreEntityTable {
                         case 'text':
                         case 'textarea':
                         case 'email':
+                        case 'boolselect':
                         case 'upload':
                         case 'tel':
                         case 'url':

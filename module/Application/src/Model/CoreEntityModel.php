@@ -327,6 +327,7 @@ class CoreEntityModel {
                         case 'currency':
                         case 'hidden':
                         case 'number':
+                        case 'boolselect':
                             $this->$sFieldName = 0;
                             break;
                         case 'date':

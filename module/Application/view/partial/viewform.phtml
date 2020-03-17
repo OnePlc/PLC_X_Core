@@ -108,7 +108,9 @@
     fieldsetElement.addEventListener('FilePond:error', e => {
         $('#plc-featured-image').printMessage('Fehler',e.detail.error.main,'error');
     });
-
+    </script>
+<?php } ?>
+<script>
     $('#<?=$this->sFormName?>Form').sortable({
         axis:'x',
         containment:'parent',
@@ -192,5 +194,4 @@
             }
         ]
     });
-    </script>
-<?php } ?>
+</script>

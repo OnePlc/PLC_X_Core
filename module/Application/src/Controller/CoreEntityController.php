@@ -473,9 +473,6 @@ class CoreEntityController extends CoreController {
         $iSkeletonID = $oRequest->getPost('Item_ID');
         $oSkeleton = $this->oTableGateway->getSingle($iSkeletonID);
 
-        # Update Skeleton with Form Data
-        $oSkeleton = $this->attachFormData($_REQUEST,$oSkeleton);
-
         # file upload
         $aFields = $this->getFormFields($this->sSingleForm);
         foreach($aFields as $oField) {
@@ -493,8 +490,16 @@ class CoreEntityController extends CoreController {
                         $oSkeleton->setTextField($oField->fieldkey,$_FILES[$sFileKey]['name']);
                     }
                 }
+                # attach empty checkboxes
+            } elseif($oField->type == 'boolselect') {
+                if(!isset($_REQUEST[$this->sSingleForm.'_'.$oField->fieldkey])) {
+                    $_REQUEST[$this->sSingleForm.'_'.$oField->fieldkey] = 0;
+                }
             }
         }
+
+        # Update Skeleton with Form Data
+        $oSkeleton = $this->attachFormData($_REQUEST,$oSkeleton);
 
         # Save Skeleton
         $iSkeletonID = $this->oTableGateway->saveSingle($oSkeleton);

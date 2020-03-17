@@ -1,18 +1,206 @@
-<form action="" method="POST" enctype="multipart/form-data" class="plc-core-basic-form">
-    <?php if(isset($this->oItem)) { ?>
-    <input type="hidden" name="Item_ID" value="<?=$this->oItem->getID()?>" />
-    <?php } ?>
-    <?php if(isset($this->iRefIDFS)) { ?>
-        <input type="hidden" name="ref_idfs" value="<?=$this->iRefIDFS?>" />
-    <?php } ?>
-    <div class="row">
-        <?= $this->partial('partial/basictabs', ['sFormName'=>$this->sFormName]); ?>
-        <?php
-        $aPartialData = ['sFormName'=>$this->sFormName,'oItem'=>$this->oItem];
-        if(isset($this->aPartialExtraData)) {
-            $aPartialData['aPartialExtraData'] = $this->aPartialExtraData;
-        }
-        ?>
-        <?= $this->partial('partial/basictabcontents',$aPartialData); ?>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <?php if($oItem->hasFeaturedImage()) { ?>
+                    <div style="max-width:250px; margin:auto;">
+                        <!-- our filepond input -->
+                        <input type="file" name="filepond" id="filepond">
+                    </div>
+                <?php } ?>
+                <h2><?=$oItem->getLabel()?></h2>
+                <hr/>
+                <?php
+                echo $this->partial('partial/viewleftwidgets', [
+                    'oItem' => $this->oItem,
+                    'sFormName' => $this->sFormName,
+                    'aFormFieldsByTab' => $this->layout()->aFormFieldsByTab
+                ]);
+                ?>
+                <?php
+                $sCreatedDate = $oItem->getTextField('created_date');
+                if($sCreatedDate != '0000-00-00 00:00:00' && !empty($sCreatedDate)) { ?>
+                    <div style="text-align: left;">
+                        <small><?=$this->translate('Created')?>: <?=date('d.m.Y H:i',strtotime($sCreatedDate))?></small><br/>
+                        <small><?=$this->translate('Last Edited')?>: <?=date('d.m.Y H:i',strtotime($oItem->getTextField('modified_date')))?></small>
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
     </div>
-</form>
+    <div class="col-md-9">
+        <div class="card px-0">
+            <div class="card-body px-0 py-2 px-3">
+                <form action="" method="POST" enctype="multipart/form-data" class="plc-core-basic-form">
+                    <?php if(isset($this->oItem)) { ?>
+                        <input type="hidden" name="Item_ID" value="<?=$this->oItem->getID()?>" />
+                    <?php } ?>
+                    <?php if(isset($this->iRefIDFS)) { ?>
+                        <input type="hidden" name="ref_idfs" value="<?=$this->iRefIDFS?>" />
+                    <?php } ?>
+                    <div class="row">
+                        <?= $this->partial('partial/basictabs', ['sFormName'=>$this->sFormName]); ?>
+                        <?php
+                        $aPartialData = ['sFormName'=>$this->sFormName,'oItem'=>$this->oItem];
+                        if(isset($this->aPartialExtraData)) {
+                            $aPartialData['aPartialExtraData'] = $this->aPartialExtraData;
+                        }
+                        ?>
+                        <?= $this->partial('partial/basictabcontents',$aPartialData); ?>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php if($oItem->hasFeaturedImage()) { ?>
+    <script>
+        const fieldsetElement = document.getElementById('filepond');
+
+        FilePond.registerPlugin(
+            FilePondPluginFileValidateType,
+            FilePondPluginImageExifOrientation,
+            FilePondPluginImagePreview,
+            FilePondPluginImageTransform
+        );
+        FilePond.create(
+            fieldsetElement,
+            {
+                labelIdle: `Drag & Drop your picture or <span class="filepond--label-action">Browse</span>`,
+                imagePreviewHeight: 170,
+                stylePanelLayout: 'compact circle',
+                styleLoadIndicatorPosition: 'center bottom',
+                styleProgressIndicatorPosition: 'right bottom',
+                styleButtonRemoveItemPosition: 'left bottom',
+                styleButtonProcessItemPosition: 'right bottom',
+            }
+        );
+
+        FilePond.setOptions({
+            server: {
+                process: {
+                    url: '/filepond',
+                    method: 'POST',
+                    withCredentials: false,
+                    headers: {},
+                    timeout: 7000,
+                    onload: (response) => {
+                        console.log(response);
+                    },
+                    onerror: (e) => {
+                        $('#plc-featured-image').printMessage('Fehler',e.detail.error.main,'error');
+                    },
+                    ondata: (formData) => {
+                        formData.append('type', '<?=explode('-',$this->sFormName)[0]?>');
+                        formData.append('entity_id', '<?=$oItem->getID()?>');
+                        return formData;
+                    }
+                },
+                load: '/'
+            },
+            <?php if($oItem->getTextField('featured_image')) { ?>
+            files: [
+                {
+                    // the server file reference
+                    source: '/data/<?=explode('-',$this->sFormName)[0]?>/<?=$oItem->getID()?>/<?=$oItem->getTextField('featured_image')?>',
+
+                    // set type to limbo to tell FilePond this is a temp file
+                    options: {
+                        type: 'local'
+                    }
+                }
+            ]
+            <?php } ?>
+        });
+
+        fieldsetElement.addEventListener('FilePond:error', e => {
+            $('#plc-featured-image').printMessage('Fehler',e.detail.error.main,'error');
+        });
+    </script>
+<?php } ?>
+<script>
+    $('#<?=$this->sFormName?>Form').sortable({
+        axis:'x',
+        containment:'parent',
+        update: function( event, ui ) {
+            var sortedIDs = $( '#<?=$this->sFormName?>Form' ).sortable( "toArray" );
+            console.log(sortedIDs);
+            $.post('/application/updatetabsort',{form:"<?=$this->sFormName?>",tabs:sortedIDs},function () {
+
+            });
+        }
+    });
+
+    const tour = new Shepherd.Tour({
+        defaultStepOptions: {
+            classes: 'shadow-md bg-purple-dark',
+            scrollTo: false
+        },
+        useModalOverlay: true
+    });
+
+    tour.addStep({
+        id: 'edit-button',
+        text: '<?=$this->translate('Click here to edit '.$this->sFormName)?>',
+        attachTo: {
+            element: '.plc-button-panel a',
+            on: 'right'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Weiter',
+                action: tour.next
+            }
+        ]
+    });
+
+    tour.addStep({
+        id: 'breadcrumb-info',
+        text: '<?=$this->translate('See where youre currently at')?>',
+        attachTo: {
+            element: 'ol.breadcrumb',
+            on: 'left'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Weiter',
+                action: tour.next
+            }
+        ]
+    });
+
+    tour.addStep({
+        id: 'changesort-fields',
+        text: '<?=$this->translate('Click here to change field order')?>',
+        attachTo: {
+            element: 'a.plc-change-form-field-sort',
+            on: 'left'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Weiter',
+                action: tour.next
+            }
+        ]
+    });
+
+    tour.addStep({
+        id: 'formfield-Tabs',
+        text: '<?=$this->translate('Form fields are grouped in tabs')?>',
+        attachTo: {
+            element: '#article-singleForm li',
+            on: 'left'
+        },
+        classes: 'example-step-extra-class',
+        buttons: [
+            {
+                text: 'Fertig',
+                action: tour.complete
+            }
+        ]
+    });
+</script>

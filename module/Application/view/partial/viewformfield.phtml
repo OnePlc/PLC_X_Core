@@ -25,6 +25,17 @@ switch($oField->type) {
             echo '-';
         }
         break;
+    case 'boolselect':
+            $sChecked = '';
+            if(isset($this->oItem)) {
+                if($this->oItem->getTextField($oField->fieldkey) == 1) {
+                    echo '<i class="fas fa-check"></i> ';
+                } else {
+                    echo '<i class="fas fa-times"></i> ';
+                }
+            }
+            echo $this->translate($oField->label);
+        break;
     case 'datetime':
         if($this->oItem->getTextField($oField->fieldkey) != '0000-00-00 00:00:00') {
             echo date('d.m.Y H:i',strtotime($this->oItem->getTextField($oField->fieldkey)));
