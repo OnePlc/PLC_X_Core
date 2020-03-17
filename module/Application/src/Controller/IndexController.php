@@ -537,7 +537,9 @@ class IndexController extends CoreController
                                         $sLabel .= ' ('.$oEntity->getTextField($sAttribute).')';
                                     }
                                 }
-                                $aEntityResults['children'][] = ['id'=>$oEntity->getID(),'text'=>$sLabel,'view_link'=>'/'.$sEntityType.'/view/##ID##'];
+                                $sViewLink = (array_key_exists('quicksearch-'.$sEntityType.'-viewlink',CoreController::$aGlobalSettings))
+                                    ? CoreController::$aGlobalSettings['quicksearch-'.$sEntityType.'-viewlink'] : '/'.$sEntityType.'/view/##ID##';
+                                $aEntityResults['children'][] = ['id'=>$oEntity->getID(),'text'=>$sLabel,'view_link'=>$sViewLink];
                             }
                             $aResults[] = $aEntityResults;
                         }

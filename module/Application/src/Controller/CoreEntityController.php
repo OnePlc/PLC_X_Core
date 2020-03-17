@@ -381,9 +381,15 @@ class CoreEntityController extends CoreController {
      * @return bool|ViewModel
      * @since 1.0.5
      */
-    public function generateEditView($sKey,$sSingleForm = '') {
+    public function generateEditView($sKey,$sSingleForm = '',$sRoute = '',$sRouteAction = 'view',$iRouteID = 0,$aExtraViewData = [],$sSuccessMessage = '') {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
+
+        if($sSuccessMessage == '') {
+            $sSuccessMessage = ucfirst($sKey).' successfully saved';
+        }
+
+        $sRoute = ($sRoute == '') ? $sKey : $sRoute;
 
         # Check license
         if(!$this->checkLicense($sKey)) {
@@ -467,6 +473,7 @@ class CoreEntityController extends CoreController {
             ];
 
             $aViewData = array_merge($aBasicViewData,$aViewExtraData);
+            $aViewData = array_merge($aViewData,$aExtraViewData);
 
             return new ViewModel($aViewData);
         }
@@ -527,13 +534,15 @@ class CoreEntityController extends CoreController {
             }
         }
 
+        $iRouteID = ($iRouteID == 0) ? $iSkeletonID : $iRouteID;
+
         # Log Performance in DB
         $aMeasureEnd = getrusage();
         $this->logPerfomance($sKey.'-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         # Display Success Message and View New User
-        $this->flashMessenger()->addSuccessMessage(ucfirst($sKey).' successfully saved');
-        return $this->redirect()->toRoute($sKey,['action'=>'view','id'=>$iSkeletonID]);
+        $this->flashMessenger()->addSuccessMessage($sSuccessMessage);
+        return $this->redirect()->toRoute($sRoute,['action'=>$sRouteAction,'id'=>$iRouteID]);
     }
 
     /**
