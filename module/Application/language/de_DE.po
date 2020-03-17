@@ -148,3 +148,6 @@ msgstr "Hier klicken um deine persönliche Reihenfolge der Felder in diesem Form
 
 msgid "Form fields are grouped in tabs"
 msgstr "Formular Felder sind in Tabs gruppiert"
+
+msgid "This instance will be reset in"
+msgstr "Diese Instanz wird zurückgesetzt in"

@@ -163,10 +163,11 @@ class CoreEntityController extends CoreController {
      * @param string $sRouteAction
      * @param int $iRouteID
      * @param array $aExtraViewData
+     * @param string $sSuccessMessage
      * @return ViewModel
      * @since 1.0.5
      */
-    protected function generateAddView($sKey,$sSingleForm = '',$sRoute = '',$sRouteAction = 'view',$iRouteID = 0,$aExtraViewData = []) {
+    protected function generateAddView($sKey,$sSingleForm = '',$sRoute = '',$sRouteAction = 'view',$iRouteID = 0,$aExtraViewData = [],$sSuccessMessage = 'Skeleton successfully created') {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
 
@@ -281,7 +282,7 @@ class CoreEntityController extends CoreController {
         $this->logPerfomance($sKey.'-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
 
         # Display Success Message and View New Skeleton
-        $this->flashMessenger()->addSuccessMessage('Skeleton successfully created');
+        $this->flashMessenger()->addSuccessMessage($sSuccessMessage);
         return $this->redirect()->toRoute($sRoute,['action'=>$sRouteAction,'id'=>$iRouteID]);
     }
 

@@ -2,28 +2,32 @@
     <div class="col-md-3">
         <div class="card">
             <div class="card-body text-center">
-                <?php if($oItem->hasFeaturedImage()) { ?>
-                    <div style="max-width:250px; margin:auto;">
-                        <!-- our filepond input -->
-                        <input type="file" name="filepond" id="filepond">
-                    </div>
-                <?php } ?>
-                <h2><?=$oItem->getLabel()?></h2>
-                <hr/>
-                <?php
-                echo $this->partial('partial/viewleftwidgets', [
-                    'oItem' => $this->oItem,
-                    'sFormName' => $this->sFormName,
-                    'aFormFieldsByTab' => $this->layout()->aFormFieldsByTab
-                ]);
-                ?>
-                <?php
-                $sCreatedDate = $oItem->getTextField('created_date');
-                if($sCreatedDate != '0000-00-00 00:00:00' && !empty($sCreatedDate)) { ?>
-                    <div style="text-align: left;">
-                        <small><?=$this->translate('Created')?>: <?=date('d.m.Y H:i',strtotime($sCreatedDate))?></small><br/>
-                        <small><?=$this->translate('Last Edited')?>: <?=date('d.m.Y H:i',strtotime($oItem->getTextField('modified_date')))?></small>
-                    </div>
+                <?php if(isset($oItem)) { ?>
+                    <?php if($oItem->hasFeaturedImage()) { ?>
+                        <div style="max-width:250px; margin:auto;">
+                            <!-- our filepond input -->
+                            <input type="file" name="filepond" id="filepond">
+                        </div>
+                    <?php } ?>
+                    <h2><?=$oItem->getLabel()?></h2>
+                    <hr/>
+                    <?php
+                    echo $this->partial('partial/viewleftwidgets', [
+                        'oItem' => $this->oItem,
+                        'sFormName' => $this->sFormName,
+                        'aFormFieldsByTab' => $this->layout()->aFormFieldsByTab
+                    ]);
+                    ?>
+                    <?php
+                    $sCreatedDate = $oItem->getTextField('created_date');
+                    if($sCreatedDate != '0000-00-00 00:00:00' && !empty($sCreatedDate)) { ?>
+                        <div style="text-align: left;">
+                            <small><?=$this->translate('Created')?>: <?=date('d.m.Y H:i',strtotime($sCreatedDate))?></small><br/>
+                            <small><?=$this->translate('Last Edited')?>: <?=date('d.m.Y H:i',strtotime($oItem->getTextField('modified_date')))?></small>
+                        </div>
+                    <?php } ?>
+                <?php } else { ?>
+                    New <?=$this->translate(ucfirst(explode('-',$this->sFormName)[0]))?>
                 <?php } ?>
             </div>
         </div>
@@ -53,71 +57,72 @@
         </div>
     </div>
 </div>
+<?php if(isset($oItem)) { ?>
+    <?php if($oItem->hasFeaturedImage()) { ?>
+        <script>
+            const fieldsetElement = document.getElementById('filepond');
 
-<?php if($oItem->hasFeaturedImage()) { ?>
-    <script>
-        const fieldsetElement = document.getElementById('filepond');
-
-        FilePond.registerPlugin(
-            FilePondPluginFileValidateType,
-            FilePondPluginImageExifOrientation,
-            FilePondPluginImagePreview,
-            FilePondPluginImageTransform
-        );
-        FilePond.create(
-            fieldsetElement,
-            {
-                labelIdle: `Drag & Drop your picture or <span class="filepond--label-action">Browse</span>`,
-                imagePreviewHeight: 170,
-                stylePanelLayout: 'compact circle',
-                styleLoadIndicatorPosition: 'center bottom',
-                styleProgressIndicatorPosition: 'right bottom',
-                styleButtonRemoveItemPosition: 'left bottom',
-                styleButtonProcessItemPosition: 'right bottom',
-            }
-        );
-
-        FilePond.setOptions({
-            server: {
-                process: {
-                    url: '/filepond',
-                    method: 'POST',
-                    withCredentials: false,
-                    headers: {},
-                    timeout: 7000,
-                    onload: (response) => {
-                        console.log(response);
-                    },
-                    onerror: (e) => {
-                        $('#plc-featured-image').printMessage('Fehler',e.detail.error.main,'error');
-                    },
-                    ondata: (formData) => {
-                        formData.append('type', '<?=explode('-',$this->sFormName)[0]?>');
-                        formData.append('entity_id', '<?=$oItem->getID()?>');
-                        return formData;
-                    }
-                },
-                load: '/'
-            },
-            <?php if($oItem->getTextField('featured_image')) { ?>
-            files: [
+            FilePond.registerPlugin(
+                FilePondPluginFileValidateType,
+                FilePondPluginImageExifOrientation,
+                FilePondPluginImagePreview,
+                FilePondPluginImageTransform
+            );
+            FilePond.create(
+                fieldsetElement,
                 {
-                    // the server file reference
-                    source: '/data/<?=explode('-',$this->sFormName)[0]?>/<?=$oItem->getID()?>/<?=$oItem->getTextField('featured_image')?>',
-
-                    // set type to limbo to tell FilePond this is a temp file
-                    options: {
-                        type: 'local'
-                    }
+                    labelIdle: `Drag & Drop your picture or <span class="filepond--label-action">Browse</span>`,
+                    imagePreviewHeight: 170,
+                    stylePanelLayout: 'compact circle',
+                    styleLoadIndicatorPosition: 'center bottom',
+                    styleProgressIndicatorPosition: 'right bottom',
+                    styleButtonRemoveItemPosition: 'left bottom',
+                    styleButtonProcessItemPosition: 'right bottom',
                 }
-            ]
-            <?php } ?>
-        });
+            );
 
-        fieldsetElement.addEventListener('FilePond:error', e => {
-            $('#plc-featured-image').printMessage('Fehler',e.detail.error.main,'error');
-        });
-    </script>
+            FilePond.setOptions({
+                server: {
+                    process: {
+                        url: '/filepond',
+                        method: 'POST',
+                        withCredentials: false,
+                        headers: {},
+                        timeout: 7000,
+                        onload: (response) => {
+                            console.log(response);
+                        },
+                        onerror: (e) => {
+                            $('#plc-featured-image').printMessage('Fehler',e.detail.error.main,'error');
+                        },
+                        ondata: (formData) => {
+                            formData.append('type', '<?=explode('-',$this->sFormName)[0]?>');
+                            formData.append('entity_id', '<?=$oItem->getID()?>');
+                            return formData;
+                        }
+                    },
+                    load: '/'
+                },
+                <?php if($oItem->getTextField('featured_image')) { ?>
+                files: [
+                    {
+                        // the server file reference
+                        source: '/data/<?=explode('-',$this->sFormName)[0]?>/<?=$oItem->getID()?>/<?=$oItem->getTextField('featured_image')?>',
+
+                        // set type to limbo to tell FilePond this is a temp file
+                        options: {
+                            type: 'local'
+                        }
+                    }
+                ]
+                <?php } ?>
+            });
+
+            fieldsetElement.addEventListener('FilePond:error', e => {
+                $('#plc-featured-image').printMessage('Fehler',e.detail.error.main,'error');
+            });
+        </script>
+    <?php } ?>
 <?php } ?>
 <script>
     $('#<?=$this->sFormName?>Form').sortable({
