@@ -151,3 +151,6 @@ msgstr "Formular Felder sind in Tabs gruppiert"
 
 msgid "This instance will be reset in"
 msgstr "Diese Instanz wird zurückgesetzt in"
+
+msgid "Delete"
+msgstr "Entfernen"

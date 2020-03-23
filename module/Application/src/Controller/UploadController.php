@@ -126,6 +126,7 @@ class UploadController extends CoreController {
             $sEntityType = $_REQUEST['type'];
 
             $sPath = '';
+            $sFileName = '';
             $oEntityTbl = false;
             switch($sEntityType) {
                 case 'skeleton':
@@ -141,6 +142,10 @@ class UploadController extends CoreController {
                     if($oEntity) {
                         $sPath = $_SERVER['DOCUMENT_ROOT'].'/data/'.$sEntityType.'/'.$oEntity->getID().'/';
                     }
+                    break;
+                case 'wizard':
+                    $sPath = $_SERVER['DOCUMENT_ROOT'].'/data/wizard/'.$iEntityID.'/';
+                    $sFileName = 'logo.jpg';
                     break;
                 default:
                     $oForm = CoreController::$aCoreTables['core-form']->select(['form_key'=>$sEntityType.'-single']);
@@ -162,7 +167,8 @@ class UploadController extends CoreController {
 
                 if(array_key_exists('filepond',$_FILES)) {
                     $aFile = $_FILES['filepond'];
-                    if(move_uploaded_file($aFile['tmp_name'],$sPath.'/'.$aFile['name'])) {
+                    $sFileName = ($sFileName == '') ? $aFile['name'] : $sFileName;
+                    if(move_uploaded_file($aFile['tmp_name'],$sPath.'/'.$sFileName)) {
                         switch($sEntityType) {
                             case 'user':
                                 $oEntityTbl->updateAttribute('featured_image', $aFile['name'], 'User_ID', $iEntityID);

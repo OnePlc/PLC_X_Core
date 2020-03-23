@@ -169,6 +169,13 @@ class CoreEntityTable {
             $oWh->equalTo('category_tag.entity_tag_idfs',$aWhere['multi_tag']);
             $oWh->like('category_tag.entity_type',explode('-',$this->sSingleForm)[0]);
         }
+        if(array_key_exists('tag_like',$aWhere)) {
+            $sEntityType = explode('-',$this->sSingleForm)[0];
+            $oSel->join(['category_tag'=>'core_entity_tag_entity'],'category_tag.entity_idfs = '.$sEntityType.'.'.ucfirst($sEntityType).'_ID');
+            $oSel->join(['entity_tag' => 'core_entity_tag'],'entity_tag.Entitytag_ID = category_tag.entity_tag_idfs',['Entitytag_ID','tag_value','tag_idfs']);
+            $oWh->like('entity_tag.tag_value','%'.$aWhere['tag_like'].'%');
+            //$oWh->like('category_tag.entity_type',explode('-',$this->sSingleForm)[0]);
+        }
         $oSel->where($oWh);
         $oSel->order($sSort);
 

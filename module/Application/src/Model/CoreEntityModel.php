@@ -114,7 +114,7 @@ class CoreEntityModel {
         if(property_exists($this,$sField)) {
             if (array_key_exists('article-currency', CoreController::$aGlobalSettings)) {
                 if (CoreController::$aGlobalSettings['article-currency'] == 'EUR') {
-                    $iVal = str_replace([',', '.'], ['.', ','], $this->$sField);
+                    $iVal = number_format($this->$sField,2, CoreController::$aGlobalSettings['app-currency-decpoint'], CoreController::$aGlobalSettings['app-currency-thousandsep']);
                     return $iVal;
                 }
             }

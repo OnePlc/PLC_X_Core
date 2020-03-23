@@ -324,7 +324,7 @@ switch($oField->type) {
                 <span class="input-group-text">€</span>
             </div>
             <input type="text" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"
-                   value="<?=(isset($this->oItem)) ? number_format($this->oItem->getCurrencyField($oField->fieldkey),2, CoreController::$aGlobalSettings['app-currency-decpoint'], CoreController::$aGlobalSettings['app-currency-thousandsep']) : ''?>"<?=$sExtraAttributes?> />
+                   value="<?=(isset($this->oItem)) ? $this->oItem->getCurrencyField($oField->fieldkey) : ''?>"<?=$sExtraAttributes?> />
         </div>
         <?php
         if($oField->url_list != '') { ?>

@@ -140,7 +140,6 @@ class CoreApiController extends CoreController {
         $aWhere = [];
         if(isset($_REQUEST['filter'])) {
             $aFilters = json_decode($_REQUEST['filter']);
-
             if(is_array($aFilters)) {
                 $aFilterValues = json_decode($_REQUEST['filtervalue']);
                 $i = 0;
@@ -150,8 +149,14 @@ class CoreApiController extends CoreController {
                         case 'highlights':
                             $aWhere['web_spotlight_idfs'] = 2;
                             break;
+                        case 'label-like':
+                            $aWhere['label-lkall'] = $sFilterValue;
+                            break;
                         case 'category':
                             $aWhere['multi_tag'] = $sFilterValue;
+                            break;
+                        case 'state_idfs':
+                            $aWhere['state_idfs'] = (int)$sFilterValue;
                             break;
                         // Date Filter
                         case 'onlycurrent':
@@ -173,8 +178,17 @@ class CoreApiController extends CoreController {
                     case 'highlights':
                         $aWhere['web_spotlight_idfs'] = 2;
                         break;
+                    case 'label-like':
+                        $aWhere['label-lkall'] = $_REQUEST['filtervalue'];
+                        break;
+                    case 'highlightsdep':
+                        $aWhere['web_highlight_idfs'] = 2;
+                        break;
                     case 'category':
                         $aWhere['multi_tag'] = $_REQUEST['filtervalue'];
+                        break;
+                    case 'state_idfs':
+                        $aWhere['state_idfs'] = (int)$_REQUEST['filtervalue'];
                         break;
                     // Date Filter
                     case 'onlycurrent':
@@ -198,12 +212,20 @@ class CoreApiController extends CoreController {
             }
         }
 
+        $sSort = 'created_date DESC';
+        if(isset($_REQUEST['listsorting'])) {
+            if($_REQUEST['listsorting'] == 'websort') {
+                $sSort = 'web_sort_id ASC';
+            }
+        }
+
         if($iPage > 0) {
             $bPaginated = true;
         }
 
         # Get All Article Entities from Database
-        $oItemsDB = $this->oTableGateway->fetchAll($bPaginated,$aWhere);
+
+        $oItemsDB = $this->oTableGateway->fetchAll($bPaginated,$aWhere,$sSort);
         if($bPaginated) {
             $oItemsDB->setItemCountPerPage(25);
             $oItemsDB->setCurrentPageNumber($iPage);
@@ -270,9 +292,13 @@ class CoreApiController extends CoreController {
                                 if(isset($oTag)) {
                                     if (is_object($oTag)) {
                                         if (property_exists($oTag, 'tag_value')) {
-                                            $aPublicItem[$oField->fieldkey] = ['id' => $oTag->id, 'label' => $translator->translate($oTag->tag_value, $sEntityType, $sLang)];
+                                            $aPublicItem[$oField->fieldkey] = [
+                                                'id' => $oTag->id,
+                                                'label' => $translator->translate($oTag->tag_value, $sEntityType, $sLang)];
                                         } else {
-                                            $aPublicItem[$oField->fieldkey] = ['id' => $oTag->getID(), 'label' => $translator->translate($oTag->getLabel(), $sEntityType, $sLang)];
+                                            $aPublicItem[$oField->fieldkey] = [
+                                                'id' => $oTag->getID(),
+                                                'label' => $translator->translate($oTag->getLabel(), $sEntityType, $sLang)];
                                         }
                                     }
                                 }
