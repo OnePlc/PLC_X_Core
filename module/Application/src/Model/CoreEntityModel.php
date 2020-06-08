@@ -316,6 +316,7 @@ class CoreEntityModel {
                     switch($oField->type) {
                         case 'text':
                         case 'textarea':
+                        case 'code':
                         case 'email':
                         case 'url':
                         case 'featuredimage':

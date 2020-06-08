@@ -67,6 +67,14 @@ class Module {
                         $container
                     );
                 },
+                Controller\WebController::class => function($container) {
+                    $oDbAdapter = $container->get(AdapterInterface::class);
+                    return new Controller\WebController(
+                        $oDbAdapter,
+                        false,
+                        $container
+                    );
+                },
                 Controller\ApiController::class => function($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\ApiController(

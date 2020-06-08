@@ -29,6 +29,9 @@ if(count($aImages) > 0) {
                 <div class="col-md-2">
                     <?=($oImg->is_public == 1) ? '<i class="fas fa-eye"></i> '.$this->translate('Is showed') : '<i class="fas fa-eye-slash"></i> '.$this->translate('Not showed')?>
                 </div>
+                <div class="col-md-1">
+                    <a href="/rmimage/<?=$oImg->Media_ID?>"><i class="fas fa-trash"></i></a>
+                </div>
             </div>
         </li>
     <?php

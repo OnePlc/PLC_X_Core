@@ -1,0 +1,55 @@
+<!-- Hero Section-->
+<section class="hero hero-page gray-bg padding-small" style="height:120px; padding-top:30px !important;">
+    <div class="container">
+        <div class="row d-flex">
+            <div class="col-lg-9 order-2 order-lg-1">
+                <h1>Map</h1>
+            </div>
+            <div class="col-lg-3 text-right order-1 order-lg-2">
+                <ul class="breadcrumb justify-content-lg-end">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item active">Map</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<main class="contact-page">
+    <div id="mapid"></div>
+</main>
+
+<style>
+    #mapid { height: 580px; }
+</style>
+<?php
+$oComTbl = \Application\Controller\CoreController::$oServiceManager->get(\OnePlace\Community\Model\CommunityTable::class);
+$oComsDB = $oComTbl->fetchAll(false, []);
+$aCommunities = [];
+if(count($oComsDB) > 0) {
+    foreach($oComsDB as $oCom) {
+        if($oCom->coords_lat != '' && $oCom->coords_long != '') {
+            $aCommunities[] = $oCom;
+        }
+    }
+}
+
+?>
+<script>
+    $(function() {
+        var mymap = L.map('mapid').setView([0, -0.09], 3);
+
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'pk.eyJ1IjoiaHVtYW51c2NvbW11bml0YXMiLCJhIjoiY2s4dDY4dDR1MDBhbzNmcDRmZnBvMWM1NiJ9.0RpG7fFfiSS6y9jK38PVlw'
+        }).addTo(mymap);
+
+        <?php foreach($aCommunities as $oCommunity) { ?>
+            var marker<?=$oCommunity->getID()?> = L.marker([<?=$oCommunity->coords_lat?>, <?=$oCommunity->coords_long?>]).addTo(mymap);
+            marker<?=$oCommunity->getID()?>.bindPopup("<b><?=$oCommunity->getLabel()?></b><br/><a href='/kb/community/view/<?=$oCommunity->getID()?>'>More Details</a>").openPopup();
+        <?php } ?>
+    });
+</script>

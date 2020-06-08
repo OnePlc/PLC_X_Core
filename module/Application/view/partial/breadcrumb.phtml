@@ -8,7 +8,8 @@
                     $iItemID = (isset($this->layout()->oItem)) ? $this->layout()->oItem->getID() : 0;
 
                     # Build final link for button
-                    $sFinalHref = str_replace(['##ID##'],[$iItemID],$oBtn->href);
+                    $sUrl = (isset($this->layout()->oItem->int_key)) ? $this->layout()->oItem->int_key : '';
+                    $sFinalHref = str_replace(['##ID##','##URL##'],[$iItemID,$sUrl],$oBtn->href);
                     $bPrint = true;
                     if(isset($this->layout()->oItem)) {
                         if($oBtn->filter_check != '') {
@@ -23,7 +24,7 @@
 
                     if($bPrint) {
                         ?>
-                        <a href="<?= $sFinalHref ?>" title="<?= $oBtn->title ?>" class="btn btn-<?= $oBtn->class ?>">
+                        <a href="<?= $sFinalHref ?>" title="<?= $oBtn->title ?>" class="btn btn-<?= $oBtn->class ?>" <?=($oBtn->mode == 'blank') ? 'target="_blank"' : ''?>>
                             <?= ($oBtn->icon != '') ? '<i class="' . $oBtn->icon . '"></i> ' : '' ?>
                             <?= $this->translate($oBtn->label) ?>
                         </a>

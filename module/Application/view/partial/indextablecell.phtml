@@ -80,6 +80,13 @@
                 }
             }
             break;
+        case 'hidden':
+            try {
+                echo $this->partial('tablecell/'.$this->oCol->form.'-'.$this->oCol->fieldkey, ['oItem' => $this->oItem]);
+            } catch(\RuntimeException $e) {
+                echo '-';
+            }
+            break;
         default:
             break;
     }

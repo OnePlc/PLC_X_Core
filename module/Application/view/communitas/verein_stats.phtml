@@ -1,0 +1,24 @@
+<?php
+$oDiscTbl = \Application\Controller\CoreController::$oServiceManager->get(\OnePlace\Taskforce\Model\TaskforceTable::class);
+$aDisciplines = $oDiscTbl->fetchAll(true, []);
+$iTaskforceCount = $aDisciplines->getTotalItemCount();
+
+$oDiscTbl = \Application\Controller\CoreController::$oServiceManager->get(\OnePlace\User\Model\UserTable::class);
+$aDisciplines = $oDiscTbl->fetchAll(true, []);
+$iUserCount = $aDisciplines->getTotalItemCount();
+?>
+<section data-parallax="scroll" data-image-src="/img/communitas/love.jpg" class="parallax text-white text-center" style="padding:120px;">
+    <div class="container">
+        <div class="row verein-stats">
+            <div class="col-md-4 text-center">
+                <h3><?=$iUserCount?><br/><small><?=$this->translate('Members')?></small></h3>
+            </div>
+            <div class="col-md-4 text-center">
+                <h3><?=$iTaskforceCount?><br/><small><?=$this->translate('Taskforces')?></small></h3>
+            </div>
+            <div class="col-md-4 text-center">
+                <h3>25<br/><small><?=$this->translate('Communities')?></small></h3>
+            </div>
+        </div>
+    </div>
+</section>

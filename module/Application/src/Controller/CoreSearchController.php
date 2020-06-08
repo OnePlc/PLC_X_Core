@@ -141,6 +141,56 @@ class CoreSearchController extends CoreEntityController
         }
     }
 
+    public function ajaxsearchAction() {
+        $sKey = explode('-',$this->sSingleForm)[0];
+
+        $aData = [];
+        if(isset($_REQUEST['tag'])) {
+            $aData[$_REQUEST['tag']] = $_REQUEST['tag_val'];
+        }
+        if(isset($_REQUEST['filtertag'])) {
+            $aData[$_REQUEST['filtertag']] = $_REQUEST['filter_val'];
+        }
+
+        # Set Layout based on users theme
+        $this->setThemeBasedLayout($sKey);
+
+        $aAllFields = $this->getFormFields($sKey.'-single');
+        $aFieldsByKey = [];
+        foreach($aAllFields as $oField) {
+            $aFieldsByKey[$oField->fieldkey] = $oField;
+        }
+
+        # Start building where query
+        $aWhere = [];
+
+        # loop data
+        foreach(array_keys($aData) as $sFieldKey) {
+            if($aData[$sFieldKey] != '') {
+                # add field to query based on type
+                switch($aFieldsByKey[$sFieldKey]->type) {
+                    case 'select':
+                        $aWhere[$sFieldKey] = $aData[$sFieldKey];
+                        break;
+                    case 'text':
+                    case 'currency':
+                    case 'textarea':
+                    case 'date':
+                    case 'time':
+                    case 'datetime':
+                    case 'email':
+                    case 'number':
+                        $aWhere[$sFieldKey.'-like'] = $aData[$sFieldKey];
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        return $this->generateIndexView($sKey,[],$aWhere);
+    }
+
     /**
      * Save Search filters for index view for later use
      *
@@ -203,14 +253,27 @@ class CoreSearchController extends CoreEntityController
                     CoreEntityController::$oSession->aCurrentIndexFilter = [];
                 }
                 CoreEntityController::$oSession->aCurrentIndexFilter[$sRoute] = (array)json_decode($oSearch->filters);
+                CoreEntityController::$oSession->iCurrentSearchLoaded = $iSearchID;
+                CoreEntityController::$oSession->sCurrentSearchRoute = $sRoute;
                 $this->redirect()->toUrl('/'.$sRoute.'?page=1');
             } else {
                 $this->flashMessenger()->addErrorMessage('Search not found');
                 $this->redirect()->toRoute('home');
             }
         } else {
-            $this->flashMessenger()->addErrorMessage('Search not found');
-            $this->redirect()->toRoute('home');
+            if($iSearchID == 0) {
+                if(is_array(CoreEntityController::$oSession->aCurrentIndexFilter)) {
+                    CoreEntityController::$oSession->aCurrentIndexFilter = [];
+                }
+                $sRoute = CoreEntityController::$oSession->sCurrentSearchRoute;
+                CoreEntityController::$oSession->sCurrentSearchRoute = '';
+                CoreEntityController::$oSession->iCurrentSearchLoaded = 0;
+                $this->redirect()->toUrl('/'.$sRoute.'?page=1');
+            } else {
+                $this->flashMessenger()->addErrorMessage('Search not found');
+                $this->redirect()->toRoute('home');
+            }
+
         }
     }
 }

@@ -24,13 +24,63 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 return [
     'router' => [
         'routes' => [
+            'app-home' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/home',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
             'home' => [
                 'type'    => Literal::class,
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
-                        'controller' => Controller\IndexController::class,
+                        'controller' => Controller\WebController::class,
                         'action'     => 'index',
+                    ],
+                ],
+            ],
+            'websettings' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/websettings',
+                    'defaults' => [
+                        'controller' => Controller\WebController::class,
+                        'action'     => 'settings',
+                    ],
+                ],
+            ],
+            'web-contact' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/contact',
+                    'defaults' => [
+                        'controller' => Controller\WebController::class,
+                        'action'     => 'contact',
+                    ],
+                ],
+            ],
+            'web-blog' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/blog',
+                    'defaults' => [
+                        'controller' => Controller\WebController::class,
+                        'action'     => 'blog',
+                    ],
+                ],
+            ],
+            'web-map' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/towns/map',
+                    'defaults' => [
+                        'controller' => Controller\WebController::class,
+                        'action'     => 'map',
                     ],
                 ],
             ],
@@ -127,6 +177,20 @@ return [
                     ],
                 ],
             ],
+            'rmimage' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/rmimage[/:mediaid[/:returnid]]',
+                    'constraints' => [
+                        'mediaid' => '[a-zA-Z0-9]*',
+                        'returnid' => '[a-zA-Z0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\UploadController::class,
+                        'action'     => 'rmimage',
+                    ],
+                ],
+            ],
             'form-updatesorting' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -180,6 +244,8 @@ return [
         'exception_template'       => 'error/index',
         'template_map' => [
             'layout/layout'           => __DIR__ . '/../view/layout/layout-default.phtml',
+            'layout/shop'           => __DIR__ . '/../view/layout/shop.phtml',
+            'layout/communitas'           => __DIR__ . '/../view/layout/communitas.phtml',
             'layout/modal'           => __DIR__ . '/../view/layout/modal.phtml',
             'layout/setup'           => __DIR__ . '/../view/layout/layout-setup.phtml',
             'layout/error' => __DIR__ . '/../view/layout/error.phtml',

@@ -774,8 +774,15 @@ class CoreController extends AbstractActionController {
      * @param $sSubject e-mail subject
      * @since 1.0.4
      */
-    protected function sendEmail($sTemplate,$aTemplateData,$sToMail,$sToName,$sSubject) {
+    protected function sendEmail($sTemplate,$aTemplateData,$sToMail,$sToName,$sSubject,$sFrom = '') {
         $viewRenderer = CoreController::$oServiceManager->get('ViewRenderer');
+
+        $sFromLabel = CoreController::$aGlobalSettings['noreply-from'];
+        if($sFrom == '') {
+            $sFrom = CoreController::$aGlobalSettings['noreply-email'];
+        } else {
+            $sFromLabel = $sFrom;
+        }
 
         # Get E-Mail html based on template
         $sBodyHtml = $viewRenderer->render($sTemplate, $aTemplateData);
@@ -790,10 +797,10 @@ class CoreController extends AbstractActionController {
 
         # Build Message
         $oMail = new Mail\Message();
-        $oMail->setEncoding('UTF-8');
+        //$oMail->setEncoding('UTF-8');
         $oMail->setBody($oBody);
-        $oMail->setFrom(CoreController::$aGlobalSettings['noreply-email'], CoreController::$aGlobalSettings['noreply-from']);
-        $oMail->addTo($sToMail, $sToName);
+        $oMail->setFrom($sFrom);
+        $oMail->addTo($sToMail);
         $oMail->setSubject($sSubject);
 
         # Setup SMTP Transport for proper email sending

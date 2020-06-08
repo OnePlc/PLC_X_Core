@@ -66,7 +66,13 @@ switch($oField->type) {
                 echo $this->translate($oItem->text).', ';
             }
         } else {
-            echo '-';
+            if(is_array($this->oItem->getTextField($oField->fieldkey))) {
+                foreach($this->oItem->getTextField($oField->fieldkey) as $aVal) {
+                    echo $aVal['text'].', ';
+                }
+            } else {
+                echo '-';
+            }
         }
         break;
     case 'gallery':
@@ -84,6 +90,9 @@ switch($oField->type) {
         } ?>
         </div>
         <?php
+        break;
+    case 'custom':
+        echo '<hr style="margin:0; border:3px solid #666;"/>';
         break;
     case 'upload':
         $sFile = $this->oItem->getTextField($oField->fieldkey);

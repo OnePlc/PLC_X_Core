@@ -5,6 +5,10 @@
 
 $bHideLabels = (isset($this->bHideLabels)) ? $this->bHideLabels : false;
 $bOnlyLabels = (isset($this->bOnlyLabels)) ? $this->bOnlyLabels : false;
+$sSpacing = '6px';
+if(\Application\Controller\CoreController::$oSession->oUser->getSetting('form-label-spacing')) {
+    $sSpacing = \Application\Controller\CoreController::$oSession->oUser->getSetting('form-label-spacing');
+}
 if(array_key_exists($this->sTab,$this->aFormFieldsByTab)) {
     foreach($this->aFormFieldsByTab[$this->sTab] as $oField) {
         $iMargin = 0;
@@ -19,7 +23,7 @@ if(array_key_exists($this->sTab,$this->aFormFieldsByTab)) {
         <!-- Field <?=$oField->fieldkey?> START -->
         <div class="form-group <?=$oField->class?>">
             <?php if($oField->type != 'partial' && $oField->type != 'gallery' && $oField->type != 'featuredimage' && !$bHideLabels && $oField->type != 'boolselect') { ?>
-            <label class="plcViewFormLabel" for="<?=$this->sFormName?>_<?=$oField->fieldkey?>" style="top:6px; height:25px; overflow:hidden;">
+            <label class="plcViewFormLabel" for="<?=$this->sFormName?>_<?=$oField->fieldkey?>" style="top:<?=$sSpacing?>; height:25px; overflow:hidden;">
                 <?=$this->translate($oField->label)?>
             </label><br/>
             <?php } ?>
@@ -30,9 +34,13 @@ if(array_key_exists($this->sTab,$this->aFormFieldsByTab)) {
                     $aPartialData['aPartialExtraData'] = $this->aPartialExtraData;
                 }
                 ?>
+                <?php if($oField->type != 'custom') { ?>
                 <div class="form-control" style="display: inline-block;  margin-top:<?=$iMargin?>; height:auto !important; padding-left:6px; min-height:34px; ">
+                <?php } ?>
                 <?= $this->partial('partial/viewformfield', $aPartialData); ?>
+                <?php if($oField->type != 'custom') { ?>
                 </div>
+                <?php } ?>
             <?php } ?>
         </div>
         <!-- Field <?=$oField->fieldkey?> END -->

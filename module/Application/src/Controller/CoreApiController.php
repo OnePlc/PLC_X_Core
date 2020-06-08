@@ -206,6 +206,12 @@ class CoreApiController extends CoreController {
 
         }
 
+        if(isset($_REQUEST['term'])) {
+            if($_REQUEST['term'] != '') {
+                $aWhere['label-lkall'] = substr($_REQUEST['term'],0,200);
+            }
+        }
+
         if(isset($_REQUEST['listmodefilter'])) {
             if($_REQUEST['listmodefilter'] == 'webonly') {
                 $aWhere['show_on_web_idfs'] = 2;
@@ -216,6 +222,8 @@ class CoreApiController extends CoreController {
         if(isset($_REQUEST['listsorting'])) {
             if($_REQUEST['listsorting'] == 'websort') {
                 $sSort = 'web_sort_id ASC';
+            } elseif($_REQUEST['listsorting'] == 'recent') {
+                $sSort = 'created_date DESC';
             }
         }
 
@@ -269,6 +277,9 @@ class CoreApiController extends CoreController {
                 } else {
                     # Init public item
                     $aPublicItem = ['id'=>$oItem->getID()];
+                    if(property_exists($oItem,'created_date')) {
+                        $aPublicItem['created_date'] = $oItem->created_date;
+                    }
 
                     # add all fields to item
                     foreach($aFields as $oField) {
@@ -432,6 +443,9 @@ class CoreApiController extends CoreController {
 
         # Init public item
         $aPublicItem = ['id'=>$oItem->getID()];
+        if(property_exists($oItem,'created_date')) {
+            $aPublicItem['created_date'] = $oItem->created_date;
+        }
 
         $oRoot = false;
         // Event Fix

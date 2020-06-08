@@ -301,4 +301,31 @@ class UploadController extends CoreController {
 
         return $this->redirect()->toRoute('home');
     }
+
+    public function rmimageAction() {
+        $this->layout('layout/json');
+
+        $iMediaID = $this->params('mediaid');
+
+        $oGalleryTbl = CoreController::$aCoreTables['core-gallery-media'];
+        $oMedia = $oGalleryTbl->select(['Media_ID'=>$iMediaID]);
+        if(count($oMedia) > 0) {
+            $oMedia = $oMedia->current();
+            $iReturnID = $oMedia->entity_idfs;
+            $sType = $oMedia->entity_type;
+            if(file_exists($_SERVER['DOCUMENT_ROOT'].'/data/'.$oMedia->entity_type.'/'.$iReturnID.'/'.$oMedia->filename)) {
+                unlink($_SERVER['DOCUMENT_ROOT'].'/data/'.$oMedia->entity_type.'/'.$iReturnID.'/'.$oMedia->filename);
+                $oGalleryTbl->delete(['Media_ID'=>$iMediaID]);
+                return $this->redirect()->toRoute($sType,['action' => 'view','id' => $iReturnID]);
+            } else {
+                $this->flashMessenger()->addErrorMessage('file nout found');
+                return $this->redirect()->toRoute('home');
+            }
+        } else {
+            $this->flashMessenger()->addErrorMessage('Media nout found');
+            return $this->redirect()->toRoute('home');
+        }
+
+        return false;
+    }
 }

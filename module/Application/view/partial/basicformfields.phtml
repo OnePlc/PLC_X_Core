@@ -1,4 +1,9 @@
 <?php
+$sSpacing = '6px';
+if(\Application\Controller\CoreController::$oSession->oUser->getSetting('form-label-spacing')) {
+    $sSpacing = \Application\Controller\CoreController::$oSession->oUser->getSetting('form-label-spacing');
+}
+
 /**
  * Print Container and Label for each Field in Form
  */
@@ -12,7 +17,7 @@ if(array_key_exists($this->sTab,$this->aFieldsByTab)) {
         <!-- Field <?=$oField->fieldkey?> START -->
         <div class="form-group <?=$oField->class?>">
             <?php if($oField->type != 'partial' && $oField->type != 'gallery' && $oField->type != 'boolselect') { ?>
-            <label class="plcViewFormLabel" for="<?=$this->sFormName?>_<?=$oField->fieldkey?>">
+            <label class="plcViewFormLabel" for="<?=$this->sFormName?>_<?=$oField->fieldkey?>" style="top:<?=$sSpacing?>;">
                 <?=$this->translate($oField->label)?>
             </label><br/>
             <?php } ?>

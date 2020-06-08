@@ -78,6 +78,12 @@ class CoreEntityController extends CoreController {
         # Set Table Rows for Index
         $this->setIndexColumns($sKey.'-index');
 
+        if(isset($_REQUEST['load'])) {
+            if(CoreController::$oSession->oUser->getSetting('article-index-default-search')) {
+                $iSearchID = CoreController::$oSession->oUser->getSetting('article-index-default-search');
+                return $this->redirect()->toRoute('article-search', ['action' => 'load', 'id' => $iSearchID]);
+            }
+        }
         ##USERID##
         /**
          * ['state_idfs'] = # Entity Tag IDFS - tag_value = "available"

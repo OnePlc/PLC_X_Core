@@ -1,0 +1,113 @@
+<?php
+?>
+<h2>Webseite Einstellungen</h2>
+<form action="" method="POST" enctype="multipart/form-data">
+    <div class="form-md">
+        <div class="col-md-5">
+            <label>Website Titel</label>
+            <input type="text" class="form-control" name="website_title" value="<?=\Application\Controller\CoreController::$aGlobalSettings['web-title']?>" />
+        </div>
+        <div class="col-md-5">
+            <label>Website Untertitel</label>
+            <input type="text" class="form-control" name="website_subtitle" value="<?=\Application\Controller\CoreController::$aGlobalSettings['web-subtitle']?>" />
+        </div>
+        <div class="col-md-5">
+            <label>Favicon</label>
+            <?php
+            if(file_exists($_SERVER['DOCUMENT_ROOT'].'/img/favicon.ico')) {
+                echo '<img src="/img/favicon.ico" style="max-width:32px; max-height:32px;" />';
+            }
+            ?>
+            <input type="file" class="form-control" name="logo_favicon" />
+        </div>
+        <div class="col-md-5">
+            <label>Logo</label>
+            <?php
+            if(file_exists($_SERVER['DOCUMENT_ROOT'].'/img/becho/logo.png')) {
+                echo '<img src="/img/becho/logo.png" style="max-width:200px; max-height:150px;" />';
+            }
+            ?>
+            <input type="file" class="form-control" name="logo_web" />
+        </div>
+        <div class="col-md-5">
+            <label>Logo Footer</label>
+            <?php
+            if(file_exists($_SERVER['DOCUMENT_ROOT'].'/img/becho/logo_white.png')) {
+                echo '<img src="/img/becho/logo_white.png" style="max-width:200px; max-height:150px;" />';
+            }
+            ?>
+            <input type="file" class="form-control" name="logo_footer" />
+        </div>
+        <div class="col-md-5">
+            <label>Logo App</label>
+            <?php
+            if(file_exists($_SERVER['DOCUMENT_ROOT'].'/img/logo.png')) {
+                echo '<img src="/img/logo.png" style="max-width:200px; max-height:150px;" />';
+            }
+            ?>
+            <input type="file" class="form-control" name="logo_app" />
+        </div>
+        <div class="col-md-5">
+            <label>RSS Feed Startseite</label>
+            <input type="text" class="form-control" name="rssfeed_home" value="<?=\Application\Controller\CoreController::$aGlobalSettings['rssfeed-home']?>" />
+        </div>
+        <div class="col-md-12">
+            <hr/>
+        </div>
+        <div class="col-md-5">
+            <label>Icon 1</label> <small>(Icons siehe <a href="https://fontawesome.com/icons" target="_blank">fontawesome.com</a>)</small><br/>
+            Icon: <input type="text" class="form-control" name="spoticon1_icon" value="<?=\Application\Controller\CoreController::$aGlobalSettings['spoticon1-icon']?>" />
+            Titel: <input type="text" class="form-control" name="spoticon1_title" value="<?=\Application\Controller\CoreController::$aGlobalSettings['spoticon1-title']?>" />
+            Text: <input type="text" class="form-control" name="spoticon1_text" value="<?=\Application\Controller\CoreController::$aGlobalSettings['spoticon1-text']?>" />
+            Link: <input type="text" class="form-control" name="spoticon1_url" value="<?=\Application\Controller\CoreController::$aGlobalSettings['spoticon1-url']?>" />
+        </div>
+        <div class="col-md-5">
+            <label>Icon 2</label><br/>
+            Icon: <input type="text" class="form-control" name="spoticon2_icon" value="<?=\Application\Controller\CoreController::$aGlobalSettings['spoticon2-icon']?>" />
+            Titel: <input type="text" class="form-control" name="spoticon2_title" value="<?=\Application\Controller\CoreController::$aGlobalSettings['spoticon2-title']?>" />
+            Text: <input type="text" class="form-control" name="spoticon2_text" value="<?=\Application\Controller\CoreController::$aGlobalSettings['spoticon2-text']?>" />
+            Link: <input type="text" class="form-control" name="spoticon2_url" value="<?=\Application\Controller\CoreController::$aGlobalSettings['spoticon2-url']?>" />
+        </div>
+        <div class="col-md-5">
+            <label>Icon 3</label><br/>
+            Icon: <input type="text" class="form-control" name="spoticon3_icon" value="<?=\Application\Controller\CoreController::$aGlobalSettings['spoticon3-icon']?>" />
+            Titel: <input type="text" class="form-control" name="spoticon3_title" value="<?=\Application\Controller\CoreController::$aGlobalSettings['spoticon3-title']?>" />
+            Text: <input type="text" class="form-control" name="spoticon3_text" value="<?=\Application\Controller\CoreController::$aGlobalSettings['spoticon3-text']?>" />
+            Link: <input type="text" class="form-control" name="spoticon3_url" value="<?=\Application\Controller\CoreController::$aGlobalSettings['spoticon3-url']?>" />
+        </div>
+
+        <div class="col-md-12">
+            <hr/>
+        </div>
+
+        <div class="col-md-5">
+            <label>Telegram Link</label><br/>
+            Link: <input type="text" class="form-control" name="telegram_link" value="<?=\Application\Controller\CoreController::$aGlobalSettings['telegram-link']?>" />
+            Titel: <input type="text" class="form-control" name="telegram_label" value="<?=\Application\Controller\CoreController::$aGlobalSettings['telegram-label']?>" />
+        </div>
+
+        <div class="col-md-12">
+            <hr/>
+        </div>
+
+        <div class="col-md-5">
+            <label>Es stellt sich vor:</label><br/>
+            Titel: <input type="text" class="form-control" name="showcase_title" value="<?=\Application\Controller\CoreController::$aGlobalSettings['showcase-title']?>" />
+            Text: <textarea class="form-control" name="showcase_description"><?=\Application\Controller\CoreController::$aGlobalSettings['showcase-description']?></textarea>
+            Url: <input type="text" class="form-control" name="showcase_url" value="<?=\Application\Controller\CoreController::$aGlobalSettings['showcase-url']?>" />
+            Bild: <?php
+            if(file_exists($_SERVER['DOCUMENT_ROOT'].'/img/becho/showcase.jpg')) {
+                echo '<img src="/img/becho/showcase.jpg" style="max-width:200px; max-height:150px;" />';
+            }
+            ?>
+            <input type="file" class="form-control" name="showcase_image" />
+        </div>
+    </div>
+
+
+    <div class="form-md">
+        <div class="col-md-12">
+            <input type="submit" class="btn btn-primary" value="Einstellungen speichern" />
+        </div>
+    </div>
+</form>

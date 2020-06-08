@@ -109,6 +109,13 @@ switch($oField->type) {
         <?php
         break;
     /**
+     * Code
+     */
+    case 'code': ?>
+        <textarea class="form-control" rows="10" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>"<?=$sExtraAttributes?> ><?=(isset($this->oItem)) ? $this->oItem->getTextField($oField->fieldkey) : ''?></textarea>
+        <?php
+        break;
+    /**
      * Textarea
      */
     case 'textarea': ?>
@@ -190,6 +197,9 @@ switch($oField->type) {
         <input type="time" class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>" />
         <?php
         break;
+    case 'custom':
+        echo '<hr style="margin:0; border:3px solid #666;"/>';
+        break;
     case 'boolselect': ?>
         <div class="form-control" style="margin-top:22px;">
             <?php
@@ -212,9 +222,11 @@ switch($oField->type) {
         if($oField->default_value != '') {
             switch($oField->default_value) {
                 case '##first##':
-                    if($oField->tbl_class != '') {
+                    if($oField->tbl_class != '' && $oField->tbl_class != 'OnePlace\BoolSelect') {
                         $oListTbl = CoreController::$oServiceManager->get($oField->tbl_class);
                         $oFirst = $oListTbl->getSingle('first');
+                    } elseif($oField->tbl_class == 'OnePlace\BoolSelect') {
+                        $oFirst = ['id' => 1,'text' => 'No'];
                     }
                     break;
                 default:
@@ -228,17 +240,23 @@ switch($oField->type) {
                     <option value="<?= $this->oItem->getSelectFieldID($oField->fieldkey) ?>">
                         <?php $sLabel = $this->oItem->getSelectField($oField->fieldkey);
                         if(is_object($sLabel)) {
-                            echo $this->oItem->getSelectField($oField->fieldkey)->getLabel();
+                            echo $this->translate($this->oItem->getSelectField($oField->fieldkey)->getLabel());
                         } else {
-                            echo $this->oItem->getSelectField($oField->fieldkey);
+                            echo $this->translate($this->oItem->getSelectField($oField->fieldkey));
                         } ?>
                     </option>
                     <?php
                 }
             } elseif(isset($oFirst)) { ?>
+                <?php if(is_array($oFirst)) { ?>
+                    <option value="<?=$oFirst['id']?>">
+                        <?=$this->translate($oFirst['text'])?>
+                    </option>
+                <?php } else { ?>
                 <option value="<?=$oFirst->getID()?>">
-                    <?=$oFirst->getLabel()?>
+                    <?=$this->translate($oFirst->getLabel())?>
                 </option>
+                <?php } ?>
             <?php
             }
             ?>
@@ -262,6 +280,9 @@ switch($oField->type) {
                 <?php }?>
                 placeholder: '<?=$this->translate($oField->label)?>'
             });
+            $('#plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>').on('select2:clear', function (e) {
+                $('#plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>').append('<option value="0" selected></option>');
+            });
         </script>
         <?php
         break;
@@ -277,6 +298,15 @@ switch($oField->type) {
                             <?= $oItem->text ?>
                         </option>
                         <?php
+                    }
+                } else {
+                    if(is_array($this->oItem->getTextField($oField->fieldkey))) {
+                        foreach($this->oItem->getTextField($oField->fieldkey) as $aVal) { ?>
+                            <option value="<?= $aVal['id'] ?>">
+                                <?= $aVal['text'] ?>
+                            </option>
+                        <?php
+                        }
                     }
                 }
             }
@@ -309,6 +339,14 @@ switch($oField->type) {
                     var option = new Option('<?=$oItem->text?>', <?=$oItem->id?>, true, true);
                     $('#plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>').append(option).trigger('change');
                     <?php
+                    }
+                } else {
+                    if(is_array($this->oItem->getTextField($oField->fieldkey))) {
+                        foreach ($this->oItem->getTextField($oField->fieldkey) as $aVal) { ?>
+                        var option = new Option('<?=$aVal['text']?>', <?=$aVal['id']?>, true, true);
+                        $('#plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>').append(option).trigger('change');
+                        <?php
+                        }
                     }
                 }
             } ?>

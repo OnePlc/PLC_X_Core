@@ -62,9 +62,6 @@ msgstr "Hilfe"
 msgid "About us"
 msgstr "Über uns"
 
-msgid "Contact"
-msgstr "Kontakt"
-
 msgid "Terms & Conditions"
 msgstr "AGB"
 
@@ -154,3 +151,102 @@ msgstr "Diese Instanz wird zurückgesetzt in"
 
 msgid "Delete"
 msgstr "Entfernen"
+
+msgid "Research & Share"
+msgstr "Forsche & Teile"
+
+msgid "Where once was money, is now love - in our hearts, thoughts, actions."
+msgstr "Wo einst Geld war, ist jetzt Liebe - in unseren Herzen, Gedanken, Handlungen."
+
+msgid "Educate yourself"
+msgstr "Bilde dich"
+
+msgid "Build a community"
+msgstr "Baue eine Community auf"
+
+msgid "be the change you want to see"
+msgstr "sei der Wandel den du sehen möchtest"
+
+msgid "knowledge across borders"
+msgstr "Grenzübergreifendes Wissen"
+
+msgid "to be whatever we want"
+msgstr "um zu sein was immer wir wollen"
+
+msgid "Taskforces"
+msgstr "Arbeitsgruppen"
+
+msgid "Taskforce"
+msgstr "Arbeitsgruppe"
+
+msgid "Discipline"
+msgstr "Fachrichtung"
+
+msgid "Disciplines"
+msgstr "Fachrichtungen"
+
+msgid "Projects"
+msgstr "Projekte"
+
+msgid "Project"
+msgstr "Projekt"
+
+msgid "Power"
+msgstr "Elektrizität"
+
+msgid "Food & Water"
+msgstr "Essen & Wasser"
+
+msgid "Education"
+msgstr "Bildung"
+
+msgid "Communication"
+msgstr "Kommunikation"
+
+msgid "Mobility"
+msgstr "Mobilität"
+
+msgid "Logistics"
+msgstr "Logistik"
+
+msgid "Infrastructure"
+msgstr "Infrastruktur"
+
+msgid "Overview"
+msgstr "Übersicht"
+
+msgid "Knowledge Base"
+msgstr "Wissensbasis"
+
+msgid "Contact"
+msgstr "Kontakt"
+
+msgid "Communities"
+msgstr "Gemeinschaften"
+
+msgid "Most recent"
+msgstr "Neueste"
+
+msgid "manifest love in everyday life"
+msgstr "manifestiere Liebe im Alltag"
+
+msgid "Transform the world"
+msgstr "Verwandle die Welt"
+
+msgid "On the way to the new world"
+msgstr "Auf dem Weg in die neue Welt"
+
+msgid "It is time to leave yesterday's world behind and to shape the new world with love."
+msgstr "Es ist Zeit, die Welt von gestern hinter uns zu lassen und gemeinsam mit Liebe die neue Welt zu gestalten."
+
+msgid "Start now"
+msgstr "Jetzt loslegen"
+
+msgid "Map"
+msgstr "Karte"
+
+msgid "List"
+msgstr "Liste"
+
+msgid "Healthcare"
+msgstr "Gesundheitswesen"

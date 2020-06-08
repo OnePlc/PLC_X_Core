@@ -70,6 +70,7 @@ class CoreEntityTable {
                     switch($oField->type) {
                         case 'text':
                         case 'textarea':
+                        case 'code':
                         case 'email':
                         case 'boolselect':
                         case 'upload':
@@ -168,6 +169,11 @@ class CoreEntityTable {
             $oSel->join(['category_tag'=>'core_entity_tag_entity'],'category_tag.entity_idfs = '.$sEntityType.'.'.ucfirst($sEntityType).'_ID');
             $oWh->equalTo('category_tag.entity_tag_idfs',$aWhere['multi_tag']);
             $oWh->like('category_tag.entity_type',explode('-',$this->sSingleForm)[0]);
+        }
+        if(array_key_exists('multi_tag_custom',$aWhere)) {
+            $sEntityType = explode('-',$this->sSingleForm)[0];
+            $oSel->join(['category_tag_custom'=>$aWhere['multi_tag_custom-tbl']],'category_tag_custom.'.$aWhere['multi_tag_custom-keyjoin'].' = '.$sEntityType.'.'.ucfirst($sEntityType).'_ID');
+            $oWh->equalTo('category_tag_custom.'.$aWhere['multi_tag_custom-keylike'],$aWhere['multi_tag_custom']);
         }
         if(array_key_exists('tag_like',$aWhere)) {
             $sEntityType = explode('-',$this->sSingleForm)[0];
