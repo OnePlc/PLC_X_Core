@@ -2,6 +2,7 @@
 
 use Application\Controller\CoreController;
 
+$aAlreadyInstalled = [];
 ?>
 <div class="row">
     <div class="col-md-6">
@@ -26,6 +27,7 @@ use Application\Controller\CoreController;
                         foreach ($aModuleName as $sModPath) {
                             $sModNamePath .= "\\".$sModPath;
                         }
+                        $aAlreadyInstalled[$oMod->module_key] = true;
                         $sClass = "$sModNamePath\\Module";
                         $sInstalledVer = '(unknown)';
                         if($oMod->module_key == 'oneplace-core') {
@@ -60,9 +62,9 @@ use Application\Controller\CoreController;
                     foreach ($aVendors as $sVendor) {
                         $aModules = glob('vendor/'.strtolower($sVendor).'/*', GLOB_ONLYDIR);
                         foreach ($aModules as $sMod) {
-                            //echo $sMod."</br>";
                             $sModName = basename($sMod);
-                            if (! array_key_exists($sModName,$aModulesInstalled)) {
+                            $sPackageName = 'oneplace-'.strtolower(substr($sModName,strlen('PLC_X_')));
+                            if (! array_key_exists($sModName,$aModulesInstalled) && !array_key_exists($sPackageName,$aAlreadyInstalled)) {
                                 $sPath = 'vendor/'.strtolower($sVendor).'/'.$sModName.'/src/Module.php';
                                 //echo $sPath ."</br>";
                                 if (file_exists($sPath)) {
@@ -74,10 +76,18 @@ use Application\Controller\CoreController;
                                         $sModNamePath .= "\\".ucfirst($sModPath);
                                     }
                                     $sClass = $sVendor.$sModNamePath."\\Module";
-                                    $sModVer = $sClass::VERSION;
+
+                                    try {
+                                        if(is_object($sClass)) {
+                                            $sModVer = $sClass::VERSION;
+                                        }
+                                    } catch(\RuntimeException $e) {
+
+                                    }
 
                                     $sUrl = '';
                                     try {
+
                                         $sModRoute = substr($sModName,strlen($aVendors[0].'-'));
                                         echo $sModRoute.'-setup';
                                         $sUrl = $this->url($sModRoute.'-setup');
