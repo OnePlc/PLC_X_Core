@@ -109,10 +109,12 @@ class CoreEntityTable {
      *
      * @param bool $bPaginated
      * @param array $aWhere
+     * @param  string $sSort
+     * @param int $iLimit - since 1.0.33
      * @return Paginator Paginated Table Connection
      * @since 1.0.0
      */
-    public function fetchAll($bPaginated = false,$aWhere = [],$sSort = 'created_date DESC') {
+    public function fetchAll($bPaginated = false,$aWhere = [],$sSort = 'created_date DESC',$iLimit = 0) {
         $oSel = new Select($this->oTableGateway->getTable());
 
         # Build where
@@ -184,6 +186,10 @@ class CoreEntityTable {
         }
         $oSel->where($oWh);
         $oSel->order($sSort);
+
+        if($iLimit != 0) {
+            $oSel->limit($iLimit);
+        }
 
         # Return Paginator or Raw ResultSet based on selection
         if ($bPaginated) {

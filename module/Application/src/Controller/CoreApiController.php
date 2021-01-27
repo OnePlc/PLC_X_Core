@@ -152,6 +152,12 @@ class CoreApiController extends CoreController {
                         case 'label-like':
                             $aWhere['label-lkall'] = $sFilterValue;
                             break;
+                        case 'created_by':
+                            $aWhere['created_by'] = $sFilterValue;
+                            break;
+                        case 'wtmonth':
+                            $aWhere['time_start-like'] = date('Y',time()).'-'.$sFilterValue;
+                            break;
                         case 'category':
                             $aWhere['multi_tag'] = $sFilterValue;
                             break;
@@ -233,7 +239,13 @@ class CoreApiController extends CoreController {
 
         # Get All Article Entities from Database
 
-        $oItemsDB = $this->oTableGateway->fetchAll($bPaginated,$aWhere,$sSort);
+        $iLimit = 0;
+        if(isset($_REQUEST['limit'])) {
+            $iLimit = (int)$_REQUEST['limit'];
+        }
+
+        $oItemsDB = $this->oTableGateway->fetchAll($bPaginated,$aWhere,$sSort,$iLimit);
+
         if($bPaginated) {
             $oItemsDB->setItemCountPerPage(25);
             $oItemsDB->setCurrentPageNumber($iPage);
