@@ -177,6 +177,8 @@ class CoreEntityController extends CoreController {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
 
+        $this->sSingleForm = ($sSingleForm != '') ? $sSingleForm : $sKey.'-single';
+
         $sRoute = ($sRoute == '') ? $sKey : $sRoute;
 
         # Add Links for Breadcrumb
@@ -233,8 +235,6 @@ class CoreEntityController extends CoreController {
             # Log Performance in DB
             $aMeasureEnd = getrusage();
             $this->logPerfomance($sKey.'-add',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
-
-            $this->sSingleForm = ($sSingleForm != '') ? $sSingleForm : $sKey.'-single';
 
             $aViewData = [
                 'sFormName' => $this->sSingleForm,

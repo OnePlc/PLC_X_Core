@@ -22,6 +22,7 @@
             }
             break;
         case 'text':
+        case 'number':
         case 'email':
             if($this->oCol->url_view != '') {
                 $sFinalURL = str_replace(['##ID##'],[$this->oItem->getID()],$this->oCol->url_view);
