@@ -718,12 +718,21 @@ class CoreController extends AbstractActionController {
                 if(array_key_exists($oField->fieldkey,$aRawFormData)) {
                     # save new tags for entity
                     if(count($aRawFormData[$oField->fieldkey]) > 0) {
+                        if($oField->tbl_cached_name != 'entitytag-single') {
+                            $oTbl = CoreEntityController::$oServiceManager->get($oField->tbl_class);
+                        }
                         foreach($aRawFormData[$oField->fieldkey] as $iVal) {
-                            CoreController::$aCoreTables['core-entity-tag-entity']->insert([
-                                'entity_idfs'=>$oItem->getID(),
-                                'entity_tag_idfs'=>$iVal,
-                                'entity_type'=>$sEntityType,
-                            ]);
+                            if($oField->tbl_cached_name != 'entitytag-single') {
+                                if(method_exists($oTbl,'addLink')) {
+                                    $bLinked = $oTbl->addLink($oItem->getID(),$iVal);
+                                }
+                            } else {
+                                CoreController::$aCoreTables['core-entity-tag-entity']->insert([
+                                    'entity_idfs'=>$oItem->getID(),
+                                    'entity_tag_idfs'=>$iVal,
+                                    'entity_type'=>$sEntityType,
+                                ]);
+                            }
                         }
                     }
                 }
