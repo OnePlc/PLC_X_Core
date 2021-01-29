@@ -10,6 +10,14 @@
                     </div>
                     <?php } ?>
                     <h2><?=$oItem->getLabel()?></h2>
+                    <?php
+                    if(count($this->layout()->aViewLeftWidgets) > 0) {
+                        foreach($this->layout()->aViewLeftWidgets as $oWidget) {
+                            echo '<hr/>';
+                            echo $this->partial('partial/'.$oWidget->sName, $oWidget->aParams);
+                        }
+                    }
+                    ?>
                     <hr/>
                     <?php
                     echo $this->partial('partial/viewleftwidgets', [
