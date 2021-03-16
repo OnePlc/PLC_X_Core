@@ -289,11 +289,20 @@ switch($oField->type) {
     /**
      * Multiselect field
      */
-    case 'multiselect':?>
+    case 'multiselect':
+        ?>
         <select class="form-control" name="<?=$this->sFormName?>_<?=$oField->fieldkey?>[]" id="plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>" multiple>
-            <?php if(isset($this->oItem)) { ?>
-                <?php if(count($this->oItem->getMultiSelectFieldIDs($oField->fieldkey)) != 0) {
-                    foreach($this->oItem->getMultiSelectField($oField->fieldkey) as $oItem) { ?>
+            <?php if(isset($this->oItem)) {
+                if(isset($oField->entity_form)) {
+                    $iCount = count($this->oItem->getMultiSelectFieldIDs($oField->fieldkey, $oField->entity_form));
+                    $aFieldVals = $this->oItem->getMultiSelectField($oField->fieldkey, false, $oField->entity_form);
+                } else {
+                    $iCount = count($this->oItem->getMultiSelectFieldIDs($oField->fieldkey));
+                    $aFieldVals = $this->oItem->getMultiSelectField($oField->fieldkey);
+                }
+                ?>
+                <?php if($iCount != 0) {
+                    foreach($aFieldVals as $oItem) { ?>
                         <option value="<?= $oItem->id ?>">
                             <?= $oItem->text ?>
                         </option>
@@ -334,8 +343,8 @@ switch($oField->type) {
             <?php
             # Add selected items to multiselect
             if(isset($this->oItem)) {
-                if(count($this->oItem->getMultiSelectFieldIDs($oField->fieldkey)) != 0) {
-                    foreach($this->oItem->getMultiSelectField($oField->fieldkey) as $oItem) { ?>
+                if($iCount != 0) {
+                    foreach($aFieldVals as $oItem) { ?>
                     var option = new Option('<?=$oItem->text?>', <?=$oItem->id?>, true, true);
                     $('#plc-select-<?=$this->sFormName?>_<?=$oField->fieldkey?>').append(option).trigger('change');
                     <?php

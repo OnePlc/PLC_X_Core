@@ -202,17 +202,19 @@ class CoreEntityModel {
      * Get Real Values (IDs) of multiselect field
      *
      * @param $sField name of field (fieldkey)
+     * @param string $sEnforceForm enforce different form for this function
      * @return array array with IDs of linked entity
      * @since 1.0.2
      */
-    public function getMultiSelectFieldIDs($sField) {
+    public function getMultiSelectFieldIDs($sField, $sEnforceForm = '') {
+        $sSingleForm = ($sEnforceForm != '') ? $sEnforceForm : $this->sSingleForm;
         $oField = CoreController::$aCoreTables['core-form-field']->select([
             'fieldkey'=>$sField,
-            'form'=>$this->sSingleForm
+            'form'=>$sSingleForm
         ]);
         if(count($oField) > 0) {
             $oField = $oField->current();
-            $sEntityType = explode('-',$this->sSingleForm)[0];
+            $sEntityType = explode('-',$sSingleForm)[0];
             $aFieldIDs = [];
 
             $sTagKey = $oField->tag_key;
@@ -242,6 +244,19 @@ class CoreEntityModel {
                         $aFieldIDs[] = $oEntityTag->entity_tag_idfs;
                     }
                 }
+            } else {
+                /**
+                 * Is no tag but an different entity
+                 */
+                if($sTagKey == '') {
+                    #todo: count items from table eg contact_contact_campaign
+                    return [];
+                } else {
+                    throw new \RuntimeException(sprintf(
+                    'Could not find tag with identifier %s',
+                    $sTagKey
+                ));}
+
             }
 
             return $aFieldIDs;
@@ -259,11 +274,12 @@ class CoreEntityModel {
      *
      * @param $sField name of field (fieldkey)
      * @param bool $bReturnModels return array (for select2) or entity models
+     * @param string $sEnforceForm enforce different form for this function
      * @return bool|array false if not found, otherwise array with Entity Models
      * @since 1.0.2
      */
-    public function getMultiSelectField($sField,$bReturnModels = false) {
-        $aEntityTagIDs = $this->getMultiSelectFieldIDs($sField);
+    public function getMultiSelectField($sField, $bReturnModels = false, $sEnforceForm = '') {
+        $aEntityTagIDs = $this->getMultiSelectFieldIDs($sField, $sEnforceForm);
         $aEntityModels = [];
         if(count($aEntityTagIDs) > 0) {
             foreach($aEntityTagIDs as $iEntityTagID) {
@@ -370,5 +386,15 @@ class CoreEntityModel {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Overwrite Single Form for this entity
+     *
+     * @param $sSingleForm
+     * @since 1.0.33
+     */
+    public function updateSingleForm($sSingleForm) {
+        $this->sSingleForm = $sSingleForm;
     }
 }

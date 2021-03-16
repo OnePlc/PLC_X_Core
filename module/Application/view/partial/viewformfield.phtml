@@ -61,8 +61,15 @@ switch($oField->type) {
         }
         break;
     case 'multiselect':
-        if(count($this->oItem->getMultiSelectFieldIDs($oField->fieldkey)) != 0) {
-            foreach($this->oItem->getMultiSelectField($oField->fieldkey) as $oItem) {
+        if(isset($oField->entity_form)) {
+            $iCount = count($this->oItem->getMultiSelectFieldIDs($oField->fieldkey, $oField->entity_form));
+            $aFieldVals = $this->oItem->getMultiSelectField($oField->fieldkey, false, $oField->entity_form);
+        } else {
+            $iCount = count($this->oItem->getMultiSelectFieldIDs($oField->fieldkey));
+            $aFieldVals = $this->oItem->getMultiSelectField($oField->fieldkey);
+        }
+        if($iCount != 0) {
+            foreach($aFieldVals as $oItem) {
                 echo $this->translate($oItem->text).', ';
             }
         } else {

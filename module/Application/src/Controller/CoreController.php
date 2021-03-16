@@ -200,10 +200,11 @@ class CoreController extends AbstractActionController {
      * Get Fields for select Form and current User
      *
      * @param string $sForm
+     * @param sring $sSelectEntityForm enforce different form for select fields
      * @return array
      * @since 1.0.0
      */
-    public function getUserFormFields($sForm) {
+    public function getUserFormFields($sForm,$sSelectEntityForm = '') {
         # Build Query to get User Based Formfields
         $oFieldSel = new Select(CoreController::$aCoreTables['form-field']->getTable());
         $oFieldSel->join(['core_field'=>'core_form_field'],'core_field.Field_ID = user_form_field.field_idfs');
@@ -217,6 +218,9 @@ class CoreController extends AbstractActionController {
             foreach($aFieldsDB as $oField) {
                 if(!array_key_exists($oField->tab,$aFieldsByTab)) {
                     $aFieldsByTab[$oField->tab] = [];
+                }
+                if(($oField->type == 'multiselect' || $oField->type == 'select') && $sSelectEntityForm != '') {
+                    $oField->entity_form = $sSelectEntityForm;
                 }
                 $aFieldsByTab[$oField->tab][] = $oField;
             }
@@ -249,10 +253,11 @@ class CoreController extends AbstractActionController {
      * Set Fields for current Form
      *
      * @param string $sForm
+     * @param sring $sSelectEntityForm enforce different form for select fields
      * @since 1.0.0
      */
-    public function setFormFields($sForm) {
-        $this->layout()->aFormFieldsByTab = $this->getUserFormFields($sForm);
+    public function setFormFields($sForm, $sSelectEntityForm = '') {
+        $this->layout()->aFormFieldsByTab = $this->getUserFormFields($sForm,$sSelectEntityForm);
     }
 
     /**
@@ -472,15 +477,16 @@ class CoreController extends AbstractActionController {
      * Parse Raw Data from Form based on DB Fields
      *
      * @param array $aRawData
+     * @param string $sSelectEntityForm enforce form for select fields
      * @return array parsed Form Data
      * @since 1.0.0
      */
-    protected function parseFormData(array $aRawData) {
+    protected function parseFormData(array $aRawData, $sSelectEntityForm = '') {
         $aFormData = [];
-
+        $sMinimalForm = ($sSelectEntityForm != '') ? $sSelectEntityForm : $this->sSingleForm;
         foreach(array_keys($aRawData) as $sKey) {
-            $sFieldName = substr($sKey,strlen($this->sSingleForm.'_'));
-            $oField = CoreController::$aCoreTables['core-form-field']->select(['form'=>$this->sSingleForm,'fieldkey'=>$sFieldName]);
+            $sFieldName = substr($sKey,strlen($sMinimalForm.'_'));
+            $oField = CoreController::$aCoreTables['core-form-field']->select(['form'=>$sMinimalForm,'fieldkey'=>$sFieldName]);
             if(count($oField) > 0) {
                 $oField = $oField->current();
                 switch($oField->type) {
@@ -506,7 +512,7 @@ class CoreController extends AbstractActionController {
                                     # check if addMinimal exists on TableModel
                                     if(method_exists($oTblEntity,'addMinimal')) {
                                         echo 'tbl:'.$oField->tbl_cached_name;
-                                        $iNewEntryID = $oTblEntity->addMinimal($iData,$this->sSingleForm,$oField->fieldkey);
+                                        $iNewEntryID = $oTblEntity->addMinimal($iData,$sMinimalForm,$oField->fieldkey);
                                         echo 'id:'.$iNewEntryID.'#';
                                         # Save New Entry
                                         $aNewData[] = $iNewEntryID;

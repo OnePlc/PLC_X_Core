@@ -170,10 +170,11 @@ class CoreEntityController extends CoreController {
      * @param int $iRouteID
      * @param array $aExtraViewData
      * @param string $sSuccessMessage
+     * @param array $aExtraFormData
      * @return ViewModel
      * @since 1.0.5
      */
-    protected function generateAddView($sKey,$sSingleForm = '',$sRoute = '',$sRouteAction = 'view',$iRouteID = 0,$aExtraViewData = [],$sSuccessMessage = 'Skeleton successfully created') {
+    protected function generateAddView($sKey,$sSingleForm = '',$sRoute = '',$sRouteAction = 'view',$iRouteID = 0,$aExtraViewData = [],$sSuccessMessage = 'Skeleton successfully created',$aExtraFormData = []) {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
 
@@ -249,9 +250,12 @@ class CoreEntityController extends CoreController {
         # Get and validate Form Data
         $aFormData = $this->parseFormData($_REQUEST);
 
+        $aFormData = array_merge($aFormData, $aExtraFormData);
+
         # Save Add Form
         $oSkeletonBasedObject = $this->oTableGateway->generateNew();
         $oSkeletonBasedObject->exchangeArray($aFormData);
+
         /**
          * CHeck for hooks - execute them if found
          */
@@ -297,10 +301,14 @@ class CoreEntityController extends CoreController {
      *
      * @param $sKey
      * @param string $sSingleForm
+     * @param string $sSelectEntityForm enforce different form for select fields
      * @return bool|ViewModel
      * @since 1.0.5
      */
-    public function generateViewView($sKey,$sSingleForm = '') {
+    public function generateViewView($sKey, $sSingleForm = '', $sSelectEntityForm = '') {
+
+        $this->sSingleForm = ($sSingleForm != '') ? $sSingleForm : $sKey.'-single';
+
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
 
@@ -321,6 +329,9 @@ class CoreEntityController extends CoreController {
             return false;
         }
 
+        # Update Single Form in case is modified
+        $oSkeleton->updateSingleForm($this->sSingleForm);
+
         # Add Links for Breadcrumb
         $this->layout()->aNavLinks = [
             (object)['label'=>ucfirst($sKey.'s'),'href'=>'/'.$sKey],
@@ -337,7 +348,7 @@ class CoreEntityController extends CoreController {
         $this->setViewTabs($this->sSingleForm);
 
         # Load Fields for View Form
-        $this->setFormFields($this->sSingleForm);
+        $this->setFormFields($this->sSingleForm, $sSelectEntityForm);
 
         /**
          * CHeck for hooks - execute them if found
@@ -384,10 +395,16 @@ class CoreEntityController extends CoreController {
      *
      * @param $sKey
      * @param string $sSingleForm
+     * @param string $sRoute
+     * @param string $sRouteAction
+     * @param string $iRouteID
+     * @param array $aExtraViewData
+     * @param string $sSuccessMessage
+     * @param string $sSelectEntityForm enforce different form for select fields
      * @return bool|ViewModel
      * @since 1.0.5
      */
-    public function generateEditView($sKey,$sSingleForm = '',$sRoute = '',$sRouteAction = 'view',$iRouteID = 0,$aExtraViewData = [],$sSuccessMessage = '') {
+    public function generateEditView($sKey,$sSingleForm = '',$sRoute = '',$sRouteAction = 'view',$iRouteID = 0,$aExtraViewData = [],$sSuccessMessage = '', $sSelectEntityForm = '') {
         # Set Layout based on users theme
         $this->setThemeBasedLayout($sKey);
 
@@ -412,6 +429,8 @@ class CoreEntityController extends CoreController {
         # Get Request to decide wether to save or display form
         $oRequest = $this->getRequest();
 
+        $this->sSingleForm = ($sSingleForm != '') ? $sSingleForm : $sKey.'-single';
+
         # Display Edit Form
         if(!$oRequest->isPost()) {
 
@@ -426,6 +445,9 @@ class CoreEntityController extends CoreController {
                 return false;
             }
 
+            # Update Single Form in case is modified
+            $oSkeleton->updateSingleForm($this->sSingleForm);
+
             # Attach Skeleton Entity to Layout
             $this->setViewEntity($oSkeleton);
 
@@ -436,7 +458,7 @@ class CoreEntityController extends CoreController {
             $this->setViewTabs($this->sSingleForm);
 
             # Load Fields for View Form
-            $this->setFormFields($this->sSingleForm);
+            $this->setFormFields($this->sSingleForm, $sSelectEntityForm);
 
             $aViewExtraData = [];
 
@@ -519,7 +541,7 @@ class CoreEntityController extends CoreController {
         $oSkeleton = $this->attachFormData($_REQUEST,$oSkeleton);
 
         # Parse Form Data
-        $aFormData = $this->parseFormData($_REQUEST);
+        $aFormData = $this->parseFormData($_REQUEST, $sSelectEntityForm);
 
         # Save Skeleton
         $iSkeletonID = $this->oTableGateway->saveSingle($oSkeleton);
