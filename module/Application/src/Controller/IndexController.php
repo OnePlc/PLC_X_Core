@@ -33,6 +33,14 @@ class IndexController extends CoreController
      */
     public function indexAction()
     {
+        if(!is_dir($_SERVER['DOCUMENT_ROOT'].'/vendor')) {
+            $this->layout('layout/json');
+            echo '<b style="color:red">Assets are missing. Please install them first.</b>';
+            echo '<br>Switch to your onePlace Core Directory (default is /var/www/plc) and execute:';
+            echo '<br><code>yarn install</code><br>Checkout <a href="https://docs.1plc.ch" target="_blank">onePlace Docs</a> for more info';
+            echo '<br/><br/><a href="/logout">Logout</a>';
+            return false;
+        }
         # Set Layout based on users theme
         $this->layout('layout/layout-'.CoreController::$oSession->oUser->getTheme());
 
