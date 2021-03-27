@@ -90,6 +90,14 @@ class CoreController extends AbstractActionController {
     public static $oServiceManager;
 
     /**
+     * Laminas Translation Service
+     *
+     * @var $oTranslator
+     * @since 1.0.33
+     */
+    public static $oTranslator;
+
+    /**
      * CoreController constructor.
      *
      * @param AdapterInterface $oDbAdapter
@@ -787,9 +795,11 @@ class CoreController extends AbstractActionController {
      * @param $sToMail E-Mail address of receiver
      * @param $sToName Name of receiver
      * @param $sSubject e-mail subject
+     * @param string $sFrom
+     * @param MimePart $oAttachment
      * @since 1.0.4
      */
-    protected function sendEmail($sTemplate,$aTemplateData,$sToMail,$sToName,$sSubject,$sFrom = '') {
+    protected function sendEmail($sTemplate,$aTemplateData,$sToMail,$sToName,$sSubject,$sFrom = '',MimePart $oAttachment = NULL) {
         $viewRenderer = CoreController::$oServiceManager->get('ViewRenderer');
 
         $sFromLabel = CoreController::$aGlobalSettings['noreply-from'];
@@ -809,6 +819,10 @@ class CoreController extends AbstractActionController {
         # Build Body
         $oBody = new MimeMessage();
         $oBody->addPart($oHtml);
+
+        if($oAttachment != NULL) {
+            $oBody->addPart($oAttachment);
+        }
 
         # Build Message
         $oMail = new Mail\Message();
