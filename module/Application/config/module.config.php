@@ -39,8 +39,8 @@ return [
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
-                        'controller' => Controller\WebController::class,
-                        'action'     => 'index',
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'route',
                     ],
                 ],
             ],

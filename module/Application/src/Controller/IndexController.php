@@ -25,6 +25,22 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 class IndexController extends CoreController
 {
+
+    /**
+     * Home Router - go to Webpage or login or api
+     * depending in mode this oneplace is working in
+     *
+     * @return mixed
+     * @since 1.0.34
+     */
+    public function routeAction()
+    {
+        if(isset(CoreController::$aGlobalSettings['home-route'])) {
+            return $this->redirect()->toRoute(CoreController::$aGlobalSettings['home-route']);
+        } else {
+            return $this->redirect()->toRoute('app-home');
+        }
+    }
     /**
      * Application Home - Main Index
      *
@@ -54,6 +70,12 @@ class IndexController extends CoreController
         ]);
     }
 
+    /**
+     * Themes Overview
+     *
+     * @return ViewModel - View Object with Data from Controller
+     * @since 1.0.18
+     */
     public function themesAction()
     {
         $this->setThemeBasedLayout('application');
@@ -61,6 +83,12 @@ class IndexController extends CoreController
         return new ViewModel([]);
     }
 
+    /**
+     * System Update Page
+     *
+     * @return ViewModel - View Object with Data from Controller
+     * @since 1.0.18
+     */
     public function updateAction()
     {
         $oRequest = $this->getRequest();
