@@ -2,10 +2,11 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## [1.0.35] - 
+## [1.0.35] - 2021-04-01
 
 ### Added
 - Core Update Function
+- Theme Update Function
 
 ## [1.0.34] - 2021-04-01
 
