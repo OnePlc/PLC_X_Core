@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## [1.0.36] - 
+
+### Added
+
 ## [1.0.35] - 2021-04-01
 
 ### Added
