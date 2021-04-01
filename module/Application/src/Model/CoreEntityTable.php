@@ -117,74 +117,78 @@ class CoreEntityTable {
     public function fetchAll($bPaginated = false,$aWhere = [],$sSort = 'created_date DESC',$iLimit = 0) {
         $oSel = new Select($this->oTableGateway->getTable());
 
-        # Build where
-        $oWh = new Where();
-        foreach(array_keys($aWhere) as $sWh) {
-            $bIsLike = stripos($sWh,'-like');
-            if($bIsLike === false) {
+        if(is_object($aWhere)) {
+            $oSel->where($aWhere);
+        } else {
+            # Build where
+            $oWh = new Where();
+            foreach(array_keys($aWhere) as $sWh) {
+                $bIsLike = stripos($sWh,'-like');
+                if($bIsLike === false) {
 
-            } else {
-                # its a like
-                $oWh->like(substr($sWh,0,strlen($sWh)-strlen('-like')),$aWhere[$sWh].'%');
+                } else {
+                    # its a like
+                    $oWh->like(substr($sWh,0,strlen($sWh)-strlen('-like')),$aWhere[$sWh].'%');
+                }
+
+                $bIsLike = stripos($sWh,'-lkall');
+                if($bIsLike === false) {
+
+                } else {
+                    # its a like
+                    $oWh->like(substr($sWh,0,strlen($sWh)-strlen('-lkall')),'%'.$aWhere[$sWh].'%');
+                }
+
+                $bIsIDFS = stripos($sWh,'_idfs');
+                if($bIsIDFS === false) {
+
+                } else {
+                    # its a like
+                    $oWh->equalTo($sWh,$aWhere[$sWh]);
+                }
+
+                $bIsGreaterEqual = stripos($sWh,'-greaterthanequalto');
+                if($bIsGreaterEqual === false) {
+
+                } else {
+                    # its a like
+                    $oWh->greaterThanOrEqualTo(substr($sWh,0,strlen($sWh)-strlen('-greaterthanequalto')),$aWhere[$sWh]);
+                }
+
+                $bIsLessEqual = stripos($sWh,'-lessthanequalto');
+                if($bIsLessEqual === false) {
+
+                } else {
+                    # its a like
+                    $oWh->lessThanOrEqualTo(substr($sWh,0,strlen($sWh)-strlen('-lessthanequalto')),$aWhere[$sWh]);
+                }
             }
-
-            $bIsLike = stripos($sWh,'-lkall');
-            if($bIsLike === false) {
-
-            } else {
-                # its a like
-                $oWh->like(substr($sWh,0,strlen($sWh)-strlen('-lkall')),'%'.$aWhere[$sWh].'%');
+            if(array_key_exists('created_by',$aWhere)) {
+                $oWh->equalTo('created_by',$aWhere['created_by']);
             }
-
-            $bIsIDFS = stripos($sWh,'_idfs');
-            if($bIsIDFS === false) {
-
-            } else {
-                # its a like
-                $oWh->equalTo($sWh,$aWhere[$sWh]);
+            if(array_key_exists('modified_by',$aWhere)) {
+                $oWh->equalTo('modified_by',$aWhere['modified_by']);
             }
-
-            $bIsGreaterEqual = stripos($sWh,'-greaterthanequalto');
-            if($bIsGreaterEqual === false) {
-
-            } else {
-                # its a like
-                $oWh->greaterThanOrEqualTo(substr($sWh,0,strlen($sWh)-strlen('-greaterthanequalto')),$aWhere[$sWh]);
+            if(array_key_exists('multi_tag',$aWhere)) {
+                $sEntityType = explode('-',$this->sSingleForm)[0];
+                $oSel->join(['category_tag'=>'core_entity_tag_entity'],'category_tag.entity_idfs = '.$sEntityType.'.'.ucfirst($sEntityType).'_ID');
+                $oWh->equalTo('category_tag.entity_tag_idfs',$aWhere['multi_tag']);
+                $oWh->like('category_tag.entity_type',explode('-',$this->sSingleForm)[0]);
             }
-
-            $bIsLessEqual = stripos($sWh,'-lessthanequalto');
-            if($bIsLessEqual === false) {
-
-            } else {
-                # its a like
-                $oWh->lessThanOrEqualTo(substr($sWh,0,strlen($sWh)-strlen('-lessthanequalto')),$aWhere[$sWh]);
+            if(array_key_exists('multi_tag_custom',$aWhere)) {
+                $sEntityType = explode('-',$this->sSingleForm)[0];
+                $oSel->join(['category_tag_custom'=>$aWhere['multi_tag_custom-tbl']],'category_tag_custom.'.$aWhere['multi_tag_custom-keyjoin'].' = '.$sEntityType.'.'.ucfirst($sEntityType).'_ID');
+                $oWh->equalTo('category_tag_custom.'.$aWhere['multi_tag_custom-keylike'],$aWhere['multi_tag_custom']);
             }
+            if(array_key_exists('tag_like',$aWhere)) {
+                $sEntityType = explode('-',$this->sSingleForm)[0];
+                $oSel->join(['category_tag'=>'core_entity_tag_entity'],'category_tag.entity_idfs = '.$sEntityType.'.'.ucfirst($sEntityType).'_ID');
+                $oSel->join(['entity_tag' => 'core_entity_tag'],'entity_tag.Entitytag_ID = category_tag.entity_tag_idfs',['Entitytag_ID','tag_value','tag_idfs']);
+                $oWh->like('entity_tag.tag_value','%'.$aWhere['tag_like'].'%');
+                //$oWh->like('category_tag.entity_type',explode('-',$this->sSingleForm)[0]);
+            }
+            $oSel->where($oWh);
         }
-        if(array_key_exists('created_by',$aWhere)) {
-            $oWh->equalTo('created_by',$aWhere['created_by']);
-        }
-        if(array_key_exists('modified_by',$aWhere)) {
-            $oWh->equalTo('modified_by',$aWhere['modified_by']);
-        }
-        if(array_key_exists('multi_tag',$aWhere)) {
-            $sEntityType = explode('-',$this->sSingleForm)[0];
-            $oSel->join(['category_tag'=>'core_entity_tag_entity'],'category_tag.entity_idfs = '.$sEntityType.'.'.ucfirst($sEntityType).'_ID');
-            $oWh->equalTo('category_tag.entity_tag_idfs',$aWhere['multi_tag']);
-            $oWh->like('category_tag.entity_type',explode('-',$this->sSingleForm)[0]);
-        }
-        if(array_key_exists('multi_tag_custom',$aWhere)) {
-            $sEntityType = explode('-',$this->sSingleForm)[0];
-            $oSel->join(['category_tag_custom'=>$aWhere['multi_tag_custom-tbl']],'category_tag_custom.'.$aWhere['multi_tag_custom-keyjoin'].' = '.$sEntityType.'.'.ucfirst($sEntityType).'_ID');
-            $oWh->equalTo('category_tag_custom.'.$aWhere['multi_tag_custom-keylike'],$aWhere['multi_tag_custom']);
-        }
-        if(array_key_exists('tag_like',$aWhere)) {
-            $sEntityType = explode('-',$this->sSingleForm)[0];
-            $oSel->join(['category_tag'=>'core_entity_tag_entity'],'category_tag.entity_idfs = '.$sEntityType.'.'.ucfirst($sEntityType).'_ID');
-            $oSel->join(['entity_tag' => 'core_entity_tag'],'entity_tag.Entitytag_ID = category_tag.entity_tag_idfs',['Entitytag_ID','tag_value','tag_idfs']);
-            $oWh->like('entity_tag.tag_value','%'.$aWhere['tag_like'].'%');
-            //$oWh->like('category_tag.entity_type',explode('-',$this->sSingleForm)[0]);
-        }
-        $oSel->where($oWh);
         $oSel->order($sSort);
 
         if($iLimit != 0) {

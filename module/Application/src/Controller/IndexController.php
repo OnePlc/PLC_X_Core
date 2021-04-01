@@ -25,6 +25,22 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 class IndexController extends CoreController
 {
+
+    /**
+     * Home Router - go to Webpage or login or api
+     * depending in mode this oneplace is working in
+     *
+     * @return mixed
+     * @since 1.0.34
+     */
+    public function routeAction()
+    {
+        if(isset(CoreController::$aGlobalSettings['home-route'])) {
+            return $this->redirect()->toRoute(CoreController::$aGlobalSettings['home-route']);
+        } else {
+            return $this->redirect()->toRoute('app-home');
+        }
+    }
     /**
      * Application Home - Main Index
      *
@@ -33,6 +49,14 @@ class IndexController extends CoreController
      */
     public function indexAction()
     {
+        if(!is_dir($_SERVER['DOCUMENT_ROOT'].'/vendor')) {
+            $this->layout('layout/json');
+            echo '<b style="color:red">Assets are missing. Please install them first.</b>';
+            echo '<br>Switch to your onePlace Core Directory (default is /var/www/plc) and execute:';
+            echo '<br><code>yarn install</code><br>Checkout <a href="https://docs.1plc.ch" target="_blank">onePlace Docs</a> for more info';
+            echo '<br/><br/><a href="/logout">Logout</a>';
+            return false;
+        }
         # Set Layout based on users theme
         $this->layout('layout/layout-'.CoreController::$oSession->oUser->getTheme());
 
@@ -46,6 +70,12 @@ class IndexController extends CoreController
         ]);
     }
 
+    /**
+     * Themes Overview
+     *
+     * @return ViewModel - View Object with Data from Controller
+     * @since 1.0.18
+     */
     public function themesAction()
     {
         $this->setThemeBasedLayout('application');
@@ -53,6 +83,12 @@ class IndexController extends CoreController
         return new ViewModel([]);
     }
 
+    /**
+     * System Update Page
+     *
+     * @return ViewModel - View Object with Data from Controller
+     * @since 1.0.18
+     */
     public function updateAction()
     {
         $oRequest = $this->getRequest();

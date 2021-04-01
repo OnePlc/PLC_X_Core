@@ -2,7 +2,7 @@
     "name": "oneplace/oneplace-core",
     "description": "onePlace Core Application",
     "type": "project",
-    "version": "1.0.33",
+    "version": "1.0.34",
     "license": "BSD-3-Clause",
     "keywords": [
         "laminas",
@@ -31,7 +31,7 @@
         "laminas/laminas-session": "^2.9.1",
         "laminas/laminas-paginator": "^2.8",
         "laminas/laminas-mail": "^2.10",
-        "oneplace/oneplace-user": "^1.0.13"
+        "oneplace/oneplace-user": "^1.0.23"
     },
     "autoload": {
         "psr-4": {
