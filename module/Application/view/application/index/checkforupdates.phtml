@@ -76,11 +76,10 @@ $aAlreadyInstalled = [];
                                         $sModNamePath .= "\\".ucfirst($sModPath);
                                     }
                                     $sClass = $sVendor.$sModNamePath."\\Module";
+                                    $sClass = str_replace(['Oneplace'],['OnePlace'],$sClass);
 
                                     try {
-                                        if(is_object($sClass)) {
-                                            $sModVer = $sClass::VERSION;
-                                        }
+                                        $sModVer = $sClass::VERSION;
                                     } catch(\RuntimeException $e) {
 
                                     }
