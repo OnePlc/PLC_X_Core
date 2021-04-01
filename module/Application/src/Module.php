@@ -27,11 +27,16 @@ class Module {
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.34';
+    const VERSION = '1.0.35';
 
     public function getConfig() : array
     {
         return include __DIR__ . '/../config/module.config.php';
+    }
+
+    public static function getModuleDir() : string
+    {
+        return __DIR__.'/../';
     }
 
     function onBootstrap(EventInterface $e)

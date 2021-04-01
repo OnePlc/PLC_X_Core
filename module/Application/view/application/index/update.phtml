@@ -1,44 +1,79 @@
-<?php if(count($aWarnings) > 0) {
-    foreach($aWarnings as $sWarn) { ?>
-        <div class="alert alert-warning">
-            <?=$sWarn?>
+<form action="" method="POST">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Update onePlace Core</h2>
+                </div>
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <?=$this->translate('Current Version')?>
+                        </div>
+                        <div class="col-md-10">
+                            <?=$oCurrentMod->version?>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <?=$this->translate('New Version')?>
+                        </div>
+                        <div class="col-md-10">
+                            <?=\Application\Module::VERSION?>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <?=$this->translate('Changes')?>
+                        </div>
+                        <div class="col-md-10">
+                            <?php
+                            $sChangeLog = \Application\Module::getModuleDir().'../../CHANGELOG.md';
+                            if(file_exists($sChangeLog)) {
+                                $sFile = file_get_contents($sChangeLog);
+                                $sNewChanges = explode('## ['.$oCurrentMod->version.'] -',$sFile)[0];
+                                $sNewChanges = explode('## ['.\Application\Module::VERSION.'] -',$sNewChanges)[1];
+                                $sNewChanges = str_replace([
+                                    '### Added',
+                                    '### Changed',
+                                    '### Fixed',
+                                    '### Removed',
+                                    '## [',
+                                    '- ',
+                                    ']',
+                                ],[
+                                    '<br/><b>Added</b>',
+                                    '<br/><b>Changed</b>',
+                                    '<br/><b>Fixed</b>',
+                                    '<br/><b>Removed</b>',
+                                    '<br/><br/><b>Version: ',
+                                    '<br/>- ',
+                                    '</b>'
+                                ],$sNewChanges);
+                                echo 'Release Date: '.$sNewChanges;
+                            }
+                            ?>
+                            <?php
+                            $sUpdateSQL = \OnePlace\Event\Module::getModuleDir().'data/update_'.$oCurrentModule->version.'-'.\OnePlace\Event\Module::VERSION.'.sql';
+                            if(file_exists($sUpdateSQL)) {
+                                ?>
+                                <div class="alert alert-warning p-2">
+                                    <?=$this->translate('This update contains Database changes. Please backup before you update')?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <?=$this->translate('Update Core')?>
+                    </button>
+                </div>
+            </div>
         </div>
-        <?php
-    }
-} ?>
-<h1>Update</h1>
-Modules that need db installation:
-<ul class="list-group">
-<?php
-if(count($aInfo['install']) > 0) {
-    foreach($aInfo['install'] as $sModule) { ?>
-        <li class="list-group-item"><?=$sModule?></li>
-    <?php
-    }
-}
-?>
-</ul>
-<hr/>
-Modules that need db upgrade:
-<ul class="list-group">
-    <?php
-    if(count($aInfo['update']) > 0) {
-        foreach($aInfo['update'] as $sModule) { ?>
-            <li class="list-group-item"><?=$sModule?></li>
-            <?php
-        }
-    }
-    ?>
-</ul>
-
-<form method="POST" action="">
-    <div class="form-row">
-        <?php if (count($aWarnings) > 0) { ?>
-            <!-- Submit -->
-            <button type="submit" class="btn btn-primary" readonly="readonly" disabled>Correct warnings first</button>
-        <?php } else { ?>
-        <!-- Submit -->
-        <button type="submit" class="btn btn-primary">Update</button>
-        <?php } ?>
     </div>
 </form>

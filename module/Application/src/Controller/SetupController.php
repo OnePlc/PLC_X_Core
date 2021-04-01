@@ -328,7 +328,8 @@ class SetupController extends AbstractActionController {
      * @param AdapterInterface $oAdapter database connection
      * @since 1.0.2.1
      */
-    private function parseSQLInstallFile($sFile,$oAdapter) {
+    private function parseSQLInstallFile($sFile,$oAdapter)
+    {
         $templine = '';
         $lines = file($sFile);
         // Loop through each line

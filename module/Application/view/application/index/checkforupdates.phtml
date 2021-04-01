@@ -2,6 +2,7 @@
 
 use Application\Controller\CoreController;
 
+$aVendors = json_decode(CoreController::$aGlobalSettings['app-vendors']);
 $aAlreadyInstalled = [];
 ?>
 <div class="row">
@@ -34,9 +35,22 @@ $aAlreadyInstalled = [];
                             $sClass = "Application\\Module";
                         }
                         $sInstalledVer = $sClass::VERSION;
+
+                        $sUrl = '';
+                        try {
+                            $sModRoute = substr($oMod->module_key,strlen($aVendors[0].'-'));
+                            $sUrl = $this->url($sModRoute.'-update');
+                        } catch(\RuntimeException $e) {
+
+                        }
                         ?>
                         <li class="list-group-item">
                             <?=$oMod->label?> - <?=$oMod->version?> - <?=$sClass::VERSION?>
+                            <?php if ($sUrl != '' && ($sClass::VERSION != $oMod->version)) { ?>
+                                - <a href="<?=$sUrl?>" title="Update Module">
+                                    Update
+                                </a>
+                            <?php } ?>
                         </li>
                         <?php
                     }
@@ -58,7 +72,6 @@ $aAlreadyInstalled = [];
             <div class="card-body">
                 <ul class="list-group">
                     <?php
-                    $aVendors = json_decode(CoreController::$aGlobalSettings['app-vendors']);
                     foreach ($aVendors as $sVendor) {
                         $aModules = glob('vendor/'.strtolower($sVendor).'/*', GLOB_ONLYDIR);
                         foreach ($aModules as $sMod) {
@@ -88,21 +101,21 @@ $aAlreadyInstalled = [];
                                     try {
 
                                         $sModRoute = substr($sModName,strlen($aVendors[0].'-'));
-                                        echo $sModRoute.'-setup';
                                         $sUrl = $this->url($sModRoute.'-setup');
                                     } catch(\RuntimeException $e) {
 
                                     }
+
+                                    if ($sUrl != '') {
                                     ?>
                                     <li class="list-group-item">
                                         <?=$sModName?> - <?=$sModVer?>
-                                        <?php if ($sUrl != '') { ?>
                                             - <a href="<?=$sUrl?>" title="Run Setup">
                                                 Run setup
                                             </a>
-                                        <?php } ?>
                                     </li>
                                     <?php
+                                    }
                                 }
                             }
                         }

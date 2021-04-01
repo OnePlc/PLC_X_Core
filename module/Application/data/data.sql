@@ -14,6 +14,7 @@ INSERT INTO `settings` (`settings_key`, `settings_value`) VALUES
 
 INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav_href`, `show_in_menu`, `needs_globaladmin`) VALUES
 ('index', 'Application\\Controller\\IndexController', 'Home', 'Home', '/', 0, 0),
+('update', 'Application\\Controller\\IndexController', 'Core Update', '', '', 0, 0),
 ('addtheme', 'Application\\Controller\\UploadController', 'Upload Theme', '', '/application/addtheme', 0, 1),
 ('themes', 'Application\\Controller\\IndexController', 'Theme Selection', '', '/application/themes', 0, 0),
 ('filepond', 'Application\\Controller\\UploadController', 'Upload Featured Image', '', '', 0, 0),

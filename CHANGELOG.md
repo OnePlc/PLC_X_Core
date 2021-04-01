@@ -2,26 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.0.0 - TBD
+## [1.0.35] - 
 
 ### Added
+- Core Update Function
 
-- 100% refactored Codebase
+## [1.0.34] - 2021-04-01
 
 ### Changed
 
-- 100% of 0.9.x Codebase
-
-### Deprecated
-
-- 100% of 0.9.x Codebase
-
-### Removed
-
-- 100% of 0.9.x Codebase
+- Support for new Index Router
 
 ### Fixed
 
-- Login / Session Issues
-- Performance improved
-- Stable version, so tons of smaller bugs fixed
+- Check for Updates Page
+
+## [1.0.33] - 2021-03-27
+
+### Added
+
+- Translator moved from User to Core
+
+### Changed
+
+- Some minor fixes
+- preparing for weekly release cycle

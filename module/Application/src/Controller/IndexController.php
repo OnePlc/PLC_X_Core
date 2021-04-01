@@ -93,110 +93,25 @@ class IndexController extends CoreController
     {
         $oRequest = $this->getRequest();
 
+        $oModTbl = new TableGateway('core_module', CoreUpdateController::$oDbAdapter);
+        $oCurrentMod = $oModTbl->select([
+            'module_key'=>'oneplace-core',
+        ])->current();
+
         if(!$oRequest->isPost()) {
-            $aWarnings = [];
-            if(!is_writable($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace')) {
-                $aWarnings['file-perm'] = 'Need write permissions on docroot for update';
-            }
-
-            $this->setThemeBasedLayout('application');
-
-            $aInfo = [
-                'install' => [],
-                'update' => [],
-            ];
-
-            $sPath = $_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/*';
-
-            foreach(glob($sPath, GLOB_ONLYDIR) as $sModulePath) {
-                $sModule = basename($sModulePath);
-                $sModuleName = explode('-',$sModule)[1];
-
-                # skip plugins
-                if(isset(explode('-',$sModule)[2])) {
-                    continue;
-                }
-
-                if($sModuleName == 'tag') {
-                    $sModuleName = 'core_tag';
-                }
-
-                try {
-                    $oBaseTbl = new TableGateway($sModuleName, CoreController::$oDbAdapter);
-                    $oBaseTbl->select();
-
-                    $sTagPath = $_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/oneplace-'.$sModuleName.'-*';
-
-                    foreach(glob($sTagPath, GLOB_ONLYDIR) as $sPluginName) {
-                        $sPluginTbl = str_replace(['-'],['_'],substr(basename($sPluginName),strlen('oneplace-')));
-                        echo $sPluginTbl;
-                        if(file_exists($sPluginName.'/data/install.sql')) {
-                            try {
-                                $oPluginTbl = new TableGateway($sPluginTbl,CoreController::$oDbAdapter);
-                                $oPluginTbl->select();
-                                echo 'got tbl';
-                            } catch(\RuntimeException $e) {
-                                echo 'no tbl';
-                                $aInfo['install'][] = basename($sPluginName);
-                            }
-                        }
-                    }
-                } catch(\RuntimeException $e) {
-                    $aInfo['install'][] = $sModuleName;
-                }
-            }
-
             return new ViewModel([
-                'aInfo'=>$aInfo,
-                'aWarnings'=>$aWarnings,
+                'oCurrentMod' => $oCurrentMod,
             ]);
-        } else {
-            $aInfo = [
-                'install' => [],
-                'update' => [],
-            ];
-
-            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/*', GLOB_ONLYDIR) as $sModulePath) {
-                $sModule = basename($sModulePath);
-                $sModuleName = explode('-',$sModule)[1];
-
-                # skip plugins
-                if(isset(explode('-',$sModule)[2])) {
-                    continue;
-                }
-
-                if($sModuleName == 'tag') {
-                    $sModuleName = 'core_tag';
-                }
-
-                try {
-                    $oBaseTbl = new TableGateway($sModuleName,CoreController::$oDbAdapter);
-                    $oBaseTbl->select();
-                } catch(\RuntimeException $e) {
-                    $aInfo['install'][] = $sModule;
-                }
-
-                if(isset($oBaseTbl)) {
-                    foreach(glob($_SERVER['DOCUMENT_ROOT'].'/../vendor/oneplace/oneplace-'.$sModuleName.'-*', GLOB_ONLYDIR) as $sPluginName) {
-                        if(file_exists($sPluginName.'/data/install.sql')) {
-                            $this->parseSQLInstallFile($sPluginName.'/data/install.sql', CoreController::$oDbAdapter);
-                            unlink($sPluginName.'/data/install.sql');
-                        }
-                    }
-                }
-            }
-
-            $this->layout('layout/json');
-            foreach($aInfo['install'] as $sInstallMod) {
-                # Core DB Structure
-                $filename = $_SERVER['DOCUMENT_ROOT'] . '/../vendor/oneplace/'.$sInstallMod.'/data/install.sql';
-                if (file_exists($filename)) {
-                    $this->parseSQLInstallFile($filename, CoreController::$oDbAdapter);
-                }
-            }
-
-            return $this->redirect()->toRoute('home');
         }
+
+        $sNewVer = \Application\Module::VERSION;
+        $oModTbl->update([
+            'version' => $sNewVer,
+        ],[
+            'module_key'=>'oneplace-core',
+        ]);
+        return $this->redirect()->toRoute('home');
+
     }
 
     /**

@@ -34,6 +34,16 @@ return [
                     ],
                 ],
             ],
+            'core-update' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/coreupdate',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'update',
+                    ],
+                ],
+            ],
             'home' => [
                 'type'    => Literal::class,
                 'options' => [
