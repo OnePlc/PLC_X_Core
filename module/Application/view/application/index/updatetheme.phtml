@@ -1,0 +1,69 @@
+<form action="" method="POST">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Update Theme <?=ucfirst($sTheme)?></h2>
+                </div>
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <?=$this->translate('Current Version')?>
+                        </div>
+                        <div class="col-md-10">
+                            <?=$oThemeInfo->version?>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <?=$this->translate('New Version on github.com')?>
+                        </div>
+                        <div class="col-md-10">
+                            <?=$oNewInfo->tag_name?>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <?=$this->translate('Changes')?>
+                        </div>
+                        <div class="col-md-10">
+                            <?php
+                            $sNewChanges = explode('## ['.$oThemeInfo->version.'] -',$sChangeLog)[0];
+                            $sNewChanges = explode('## ['.$oNewInfo->tag_name.'] -',$sNewChanges)[1];
+                            $sNewChanges = str_replace([
+                                '### Added',
+                                '### Changed',
+                                '### Fixed',
+                                '### Removed',
+                                '- '
+                            ],[
+                                '<br/><b>Added</b>',
+                                '<br/><b>Changed</b>',
+                                '<br/><b>Fixed</b>',
+                                '<br/><b>Removed</b>',
+                                '<br/>- '
+                            ],$sNewChanges);
+                            echo 'Release Date: '.$sNewChanges;
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <?php if($oThemeInfo->version != $oNewInfo->tag_name) { ?>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <?=$this->translate('Update '.ucfirst($sTheme))?>
+                    </button>
+                    <?php } else { ?>
+                        <div class="alert alert-success p-2">
+                            You already have the newest version of this theme
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

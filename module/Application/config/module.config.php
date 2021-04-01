@@ -127,6 +127,19 @@ return [
                     ],
                 ],
             ],
+            'theme-update' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/application/updatetheme[/:theme]',
+                    'constraints' => [
+                        'theme'     => '[a-zA-Z0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'updatetheme',
+                    ],
+                ],
+            ],
             'form-updatetabsort' => [
                 'type'    => Literal::class,
                 'options' => [

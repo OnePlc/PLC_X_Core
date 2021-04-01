@@ -640,4 +640,118 @@ class IndexController extends CoreController
 
         return false;
     }
+
+    public function updatethemeAction()
+    {
+        $this->setThemeBasedLayout('core');
+
+        $sTheme = $this->params()->fromRoute('theme', 'default');
+        $sThemeFile = \Application\Module::getModuleDir().'../../public/themes/'.$sTheme.'/theme.json';
+        $oThemeInfo = false;
+        if(file_exists($sThemeFile)) {
+            $oThemeInfo = json_decode(file_get_contents($sThemeFile));
+        }
+
+        $opts = [
+            'http' => [
+                'method' => 'GET',
+                'header' => [
+                    'User-Agent: PHP'
+                ]
+            ]
+        ];
+        $oContext = stream_context_create($opts);
+
+        $sNewInfo = file_get_contents('https://api.github.com/repos/OnePlc/oneplace-theme-'.$sTheme.'/releases/latest', false, $oContext);
+        $oNewInfo = json_decode($sNewInfo);
+
+        $sChangeLog = file_get_contents('https://github.com/OnePlc/oneplace-theme-'.$sTheme.'/raw/'.$oNewInfo->tag_name.'/CHANGELOG.md', false, $oContext);
+        $oRequest = $this->getRequest();
+
+        if(!$oRequest->isPost()) {
+            return new ViewModel([
+                'sTheme' => $sTheme,
+                'oThemeInfo' => $oThemeInfo,
+                'oNewInfo' => $oNewInfo,
+                'sChangeLog' => $sChangeLog,
+            ]);
+        }
+
+        $this->layout('layout/json');
+        $oNewTheme = file_get_contents('https://github.com/OnePlc/oneplace-theme-'.$sTheme.'/archive/refs/tags/'.$oNewInfo->tag_name.'.zip', false, $oContext);
+        file_put_contents($_SERVER['DOCUMENT_ROOT'].'/themes/'.$sTheme.'-update.zip',$oNewTheme);
+        # unzip theme
+        $zip = new \ZipArchive();
+        $x = $zip->open($_SERVER['DOCUMENT_ROOT'].'/themes/'.$sTheme.'-update.zip');
+        if ($x === true) {
+            $zip->extractTo($_SERVER['DOCUMENT_ROOT'].'/themes/'); // change this to the correct site path
+            $zip->close();
+
+            unlink($_SERVER['DOCUMENT_ROOT'].'/themes/'.$sTheme.'-update.zip');
+            IndexController::deleteDir($_SERVER['DOCUMENT_ROOT'].'/themes/oneplace-theme-'.$sTheme.'-'.$oNewInfo->tag_name.'/assets');
+            IndexController::recurseCopy($_SERVER['DOCUMENT_ROOT'].'/themes/'.$sTheme.'/assets', $_SERVER['DOCUMENT_ROOT'].'/themes/oneplace-theme-'.$sTheme.'-'.$oNewInfo->tag_name.'/assets');
+            IndexController::deleteDir($_SERVER['DOCUMENT_ROOT'].'/themes/'.$sTheme);
+            rename($_SERVER['DOCUMENT_ROOT'].'/themes/oneplace-theme-'.$sTheme.'-'.$oNewInfo->tag_name,$_SERVER['DOCUMENT_ROOT'].'/themes/'.$sTheme);
+
+            $this->setThemeBasedLayout('core');
+            return new ViewModel([
+                'sTheme' => $sTheme,
+                'oThemeInfo' => $oThemeInfo,
+                'oNewInfo' => $oNewInfo,
+                'sChangeLog' => $sChangeLog,
+            ]);
+        }
+    }
+
+    private static function recurseCopy($src,$dst, $childFolder='') {
+
+        $dir = opendir($src);
+        mkdir($dst);
+        if ($childFolder!='') {
+            mkdir($dst.'/'.$childFolder);
+
+            while(false !== ( $file = readdir($dir)) ) {
+                if (( $file != '.' ) && ( $file != '..' )) {
+                    if ( is_dir($src . '/' . $file) ) {
+                        IndexController::recurseCopy($src . '/' . $file,$dst.'/'.$childFolder . '/' . $file);
+                    }
+                    else {
+                        copy($src . '/' . $file, $dst.'/'.$childFolder . '/' . $file);
+                    }
+                }
+            }
+        }else{
+            // return $cc;
+            while(false !== ( $file = readdir($dir)) ) {
+                if (( $file != '.' ) && ( $file != '..' )) {
+                    if ( is_dir($src . '/' . $file) ) {
+                        IndexController::recurseCopy($src . '/' . $file,$dst . '/' . $file);
+                    }
+                    else {
+                        copy($src . '/' . $file, $dst . '/' . $file);
+                    }
+                }
+            }
+        }
+
+        closedir($dir);
+    }
+
+    private static function deleteDir($dirPath) {
+        if (! is_dir($dirPath)) {
+            throw new InvalidArgumentException("$dirPath must be a directory");
+        }
+        if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
+            $dirPath .= '/';
+        }
+        $files = glob($dirPath . '*', GLOB_MARK);
+        foreach ($files as $file) {
+            if (is_dir($file)) {
+                self::deleteDir($file);
+            } else {
+                unlink($file);
+            }
+        }
+        rmdir($dirPath);
+    }
 }

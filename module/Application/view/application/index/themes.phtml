@@ -21,7 +21,7 @@ use Application\Controller\CoreController; ?>
                         <li class="list-group-item">
                             <?=ucfirst($sTheme)?>
                             <?=(CoreController::$oSession->oUser->getTheme() != $sTheme)
-                                ? '<a href="/user/settheme/'.$sTheme.'">'.$this->translate('Activate').'</a>' : ''?>
+                                ? '<a href="/user/settheme/'.$sTheme.'">'.$this->translate('Activate').'</a>' : '<a href="/application/updatetheme/'.$sTheme.'">'.$this->translate('Check for Update').'</a>'?>
                         </li>
                     <?php } ?>
                 </ul>
