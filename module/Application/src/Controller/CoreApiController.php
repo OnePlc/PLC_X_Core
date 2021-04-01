@@ -66,7 +66,7 @@ class CoreApiController extends CoreController {
      * @return bool - no View File
      * @since 1.0.0
      */
-    public function listAction() {
+    public function listAction($aWhere = []) {
         $this->layout('layout/json');
 
         $sEntityType = explode('-',$this->sSingleForm)[0];
@@ -137,7 +137,6 @@ class CoreApiController extends CoreController {
         }
 
         $bPaginated = false;
-        $aWhere = [];
         if(isset($_REQUEST['filter'])) {
             $aFilters = json_decode($_REQUEST['filter']);
             if(is_array($aFilters)) {
