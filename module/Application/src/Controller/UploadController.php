@@ -51,60 +51,75 @@ class UploadController extends CoreController {
             $source = $_FILES["zip_file"]["tmp_name"];
             $type = $_FILES["zip_file"]["type"];
 
-            # Check file extension
-            $name = explode(".", $filename);
-            $accepted_types = array('application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed');
-            foreach($accepted_types as $mime_type) {
-                if($mime_type == $type) {
-                    $okay = true;
-                    break;
+            if($filename) {
+
+                # Check file extension
+                $name = explode(".", $filename);
+                $accepted_types = array('application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed');
+                foreach ($accepted_types as $mime_type) {
+                    if ($mime_type == $type) {
+                        $okay = true;
+                        break;
+                    }
                 }
-            }
 
-            # allow only zip
-            $continue = strtolower($name[1]) == 'zip' ? true : false;
-            if(!$continue) {
-                $message = "The file you are trying to upload is not a .zip file. Please try again.";
-            }
-
-            # create theme dir if its the first theme
-            if(!is_dir($_SERVER['DOCUMENT_ROOT'].'/../data/themes')) {
-                mkdir($_SERVER['DOCUMENT_ROOT'].'/../data/themes');
-            }
-
-            # upload theme
-            $target_path = $_SERVER['DOCUMENT_ROOT'].'/themes/'.$filename;  // change this to the correct site path
-            if(move_uploaded_file($source, $target_path)) {
-                # unzip theme
-                $zip = new \ZipArchive();
-                $x = $zip->open($target_path);
-                if ($x === true) {
-                    $zip->extractTo($_SERVER['DOCUMENT_ROOT'].'/themes/'); // change this to the correct site path
-                    $zip->close();
-
-                    unlink($target_path);
+                # allow only zip
+                $continue = strtolower($name[1]) == 'zip' ? true : false;
+                if (!$continue) {
+                    $message = "The file you are trying to upload is not a .zip file. Please try again.";
                 }
-                $message = "Your .zip file was uploaded and unpacked.";
+
+                # create theme dir if its the first theme
+                if (!is_dir($_SERVER['DOCUMENT_ROOT'] . '/../data/themes')) {
+                    mkdir($_SERVER['DOCUMENT_ROOT'] . '/../data/themes');
+                }
+
+                # upload theme
+                $target_path = $_SERVER['DOCUMENT_ROOT'] . '/themes/' . $filename;  // change this to the correct site path
+                if (move_uploaded_file($source, $target_path)) {
+                    # unzip theme
+                    $zip = new \ZipArchive();
+                    $x = $zip->open($target_path);
+                    if ($x === true) {
+                        $zip->extractTo($_SERVER['DOCUMENT_ROOT'] . '/themes/'); // change this to the correct site path
+                        $zip->close();
+
+                        unlink($target_path);
+                    }
+                    $message = "Your .zip file was uploaded and unpacked.";
+                } else {
+                    $message = "There was a problem with the upload. Please try again.";
+                }
+
+                echo $message;
+
+                # todo: theme name MUST be dynamic - define how to determine correct name, maybe add a json to theme
+                # because currently we only have zip name as indicator which is like nothing
+                $sThemeName = explode('-',$filename)[0];
+
+                # Install Layouts
+                foreach (glob($_SERVER['DOCUMENT_ROOT'] . '/themes/' . $sThemeName . '/view/layout/*', GLOB_NOSORT) as $sThemeFile) {
+                    rename($sThemeFile, $_SERVER['DOCUMENT_ROOT'] . '/../module/Application/view/layout/' . basename($sThemeFile));
+                }
+                # Install Partials
+                if(!is_dir($_SERVER['DOCUMENT_ROOT'] . '/../module/Application/view/theme/')) {
+                    mkdir($_SERVER['DOCUMENT_ROOT'] . '/../module/Application/view/theme/');
+                }
+                if(!is_dir($_SERVER['DOCUMENT_ROOT'] . '/../module/Application/view/theme/'.$sThemeName)) {
+                    mkdir($_SERVER['DOCUMENT_ROOT'] . '/../module/Application/view/theme/'.$sThemeName);
+                }
+                foreach (glob($_SERVER['DOCUMENT_ROOT'] . '/themes/' . $sThemeName . '/view/theme/'.$sThemeName.'/*', GLOB_NOSORT) as $sThemeFile) {
+                    rename($sThemeFile, $_SERVER['DOCUMENT_ROOT'] . '/../module/Application/view/theme/'.$sThemeName.'/' . basename($sThemeFile));
+                }
+                # Install Partials
+                foreach (glob($_SERVER['DOCUMENT_ROOT'] . '/themes/' . $sThemeName . '/view/partial/*', GLOB_NOSORT) as $sThemeFile) {
+                    rename($sThemeFile, $_SERVER['DOCUMENT_ROOT'] . '/../module/Application/view/partial/' . basename($sThemeFile));
+                }
+
+                echo 'theme files installed';
             } else {
-                $message = "There was a problem with the upload. Please try again.";
+                echo 'theme was not uploaded';
             }
-
-            echo $message;
-
-            # todo: theme name MUST be dynamic - define how to determine correct name, maybe add a json to theme
-            # because currently we only have zip name as indicator which is like nothing
-            $sThemeName = 'vuze';
-
-            # Install Layouts
-            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/themes/'.$sThemeName.'/view/layout/*',GLOB_NOSORT) as $sThemeFile) {
-                rename($sThemeFile,$_SERVER['DOCUMENT_ROOT'].'/../module/Application/view/layout/'.basename($sThemeFile));
-            }
-            # Install Partials
-            foreach(glob($_SERVER['DOCUMENT_ROOT'].'/themes/'.$sThemeName.'/view/partial/*',GLOB_NOSORT) as $sThemeFile) {
-                rename($sThemeFile,$_SERVER['DOCUMENT_ROOT'].'/../module/Application/view/partial/'.basename($sThemeFile));
-            }
-
-            echo 'theme files installed';
 
             return $this->redirect()->toRoute('application',['action'=>'themes']);
         }

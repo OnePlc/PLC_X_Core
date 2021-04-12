@@ -434,6 +434,68 @@ class CoreController extends AbstractActionController {
     }
 
     /**
+     * Get Custom TableGateway
+     *
+     * @param $sTableName
+     * @return TableGateway
+     * @since 1.0.36
+     */
+    protected function getCustomTable($sTableName)
+    {
+        return new TableGateway($sTableName, CoreController::$oDbAdapter);
+    }
+
+    /**
+     * Fetch Custom Table via Gateway
+     *
+     * @param string $sTableName
+     * @param array|object $oWhere
+     * @return mixed
+     * @since 1.0.36
+     */
+    protected function fetchCustomTable($sTableName,$oWhere = []) {
+        $oTbl = $this->getCustomTable($sTableName);
+
+        return $oTbl->select($oWhere);
+    }
+
+    /**
+     * Insert Data to Custom Table
+     *
+     * @param $sTableName
+     * @param $aData
+     * @return false
+     * @since 1.0.36
+     */
+    protected function insertToCustomTable($sTableName,$aData) {
+        $oTbl = $this->getCustomTable($sTableName);
+
+        if($oTbl->insert($aData)) {
+            return $oTbl->lastInsertValue;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Update Data in custom table
+     *
+     * @param $sTableName
+     * @param $aData
+     * @param $aWhere
+     * @return bool
+     * @since 1.0.36
+     */
+    protected function updateCustomTable($sTableName,$aData,$aWhere) {
+        $oTbl = $this->getCustomTable($sTableName);
+        if($oTbl->update($aData,$aWhere)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Load all permissions based on Modules
      *
      * @return array

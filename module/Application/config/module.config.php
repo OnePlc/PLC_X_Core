@@ -64,36 +64,6 @@ return [
                     ],
                 ],
             ],
-            'web-contact' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/contact',
-                    'defaults' => [
-                        'controller' => Controller\WebController::class,
-                        'action'     => 'contact',
-                    ],
-                ],
-            ],
-            'web-blog' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/blog',
-                    'defaults' => [
-                        'controller' => Controller\WebController::class,
-                        'action'     => 'blog',
-                    ],
-                ],
-            ],
-            'web-map' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/towns/map',
-                    'defaults' => [
-                        'controller' => Controller\WebController::class,
-                        'action'     => 'map',
-                    ],
-                ],
-            ],
             'filepond' => [
                 'type'    => Literal::class,
                 'options' => [
