@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ## [1.0.36] - 
 
 ### Added
+- getCustomTable and fetchCustomTable
 
 ## [1.0.35] - 2021-04-01
 
